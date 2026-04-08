@@ -1,4 +1,5 @@
-/// System folders to skip during scanning
+/// System folders to skip during scanning (platform-specific)
+#[cfg(target_os = "windows")]
 pub const SYSTEM_FOLDERS: &[&str] = &[
     "Windows",
     "Program Files",
@@ -8,6 +9,35 @@ pub const SYSTEM_FOLDERS: &[&str] = &[
     "System Volume Information",
     "Recovery",
     "PerfLogs",
+];
+
+#[cfg(target_os = "macos")]
+pub const SYSTEM_FOLDERS: &[&str] = &[
+    "Library",
+    "System",
+    "Applications",
+    ".Trashes",
+    ".vol",
+    "Volumes",
+    "private",
+    "Network",
+];
+
+#[cfg(target_os = "linux")]
+pub const SYSTEM_FOLDERS: &[&str] = &[
+    "proc",
+    "sys",
+    "dev",
+    "run",
+    "snap",
+    "flatpak",
+    "boot",
+    "lib64",
+    "sbin",
+    "bin",
+    "usr",
+    "etc",
+    "var",
 ];
 
 /// Folders to ignore when scanning (common non-game subdirectories)
