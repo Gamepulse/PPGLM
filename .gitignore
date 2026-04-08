@@ -41,3 +41,4 @@ yarn-error.log*
 
 # Tauri
 src-tauri/target/
+*.msi
