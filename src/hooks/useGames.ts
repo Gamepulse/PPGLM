@@ -109,6 +109,16 @@ export function useGames() {
     }
   }, []);
 
+  const deleteGamesByScanPath = useCallback(async (scanPath: string): Promise<number> => {
+    try {
+      const count = await invoke<number>("delete_games_by_scan_path", { scanPath });
+      return count;
+    } catch (e) {
+      setError(String(e));
+      return 0;
+    }
+  }, []);
+
   const deleteAllGames = useCallback(async (): Promise<boolean> => {
     try {
       await invoke<boolean>("delete_all_games");
@@ -162,6 +172,7 @@ export function useGames() {
     createTag,
     deleteTag,
     searchGames,
+    deleteGamesByScanPath,
     deleteGame,
     deleteAllGames,
     updateGameDisplayName,

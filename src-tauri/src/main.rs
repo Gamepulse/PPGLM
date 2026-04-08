@@ -27,6 +27,7 @@ pub fn run() {
             commands::database::get_games,
             commands::database::get_game_by_id,
             commands::database::save_game,
+            commands::database::delete_games_by_scan_path,
             commands::database::delete_game,
             commands::database::update_game_rating,
             commands::database::update_game_notes,

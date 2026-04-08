@@ -12,7 +12,7 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
     // First, get the main game data
     let mut stmt = conn
         .prepare(
-            "SELECT id, folder_name, folder_path, display_name, igdb_id, \
+            "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
              personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at \
              FROM games WHERE id = ?1",
         )
@@ -26,14 +26,15 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
                 folder_path: row.get(2)?,
                 display_name: row.get(3)?,
                 igdb_id: row.get(4)?,
-                personal_rating: row.get(5)?,
-                igdb_rating: row.get(6)?,
-                notes: row.get(7)?,
-                cover_url: row.get(8)?,
-                synopsis: row.get(9)?,
-                release_date: row.get(10)?,
-                created_at: row.get(11)?,
-                updated_at: row.get(12)?,
+                igdb_slug: row.get(5)?,
+                personal_rating: row.get(6)?,
+                igdb_rating: row.get(7)?,
+                notes: row.get(8)?,
+                cover_url: row.get(9)?,
+                synopsis: row.get(10)?,
+                release_date: row.get(11)?,
+                created_at: row.get(12)?,
+                updated_at: row.get(13)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
@@ -375,7 +376,7 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
     let conn = db.lock_conn()?;
     
     let mut query = String::from(
-        "SELECT id, folder_name, folder_path, display_name, igdb_id, \
+        "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
          personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at \
          FROM games WHERE 1=1"
     );
@@ -444,14 +445,15 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
                 folder_path: row.get(2)?,
                 display_name: row.get(3)?,
                 igdb_id: row.get(4)?,
-                personal_rating: row.get(5)?,
-                igdb_rating: row.get(6)?,
-                notes: row.get(7)?,
-                cover_url: row.get(8)?,
-                synopsis: row.get(9)?,
-                release_date: row.get(10)?,
-                created_at: row.get(11)?,
-                updated_at: row.get(12)?,
+                igdb_slug: row.get(5)?,
+                personal_rating: row.get(6)?,
+                igdb_rating: row.get(7)?,
+                notes: row.get(8)?,
+                cover_url: row.get(9)?,
+                synopsis: row.get(10)?,
+                release_date: row.get(11)?,
+                created_at: row.get(12)?,
+                updated_at: row.get(13)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
@@ -486,6 +488,21 @@ pub fn save_game(game: Game, db: State<'_, Database>) -> Result<Game, String> {
 
     let id = conn.last_insert_rowid();
     Ok(Game { id, ..game })
+}
+
+#[tauri::command]
+pub fn delete_games_by_scan_path(scan_path: String, db: State<'_, Database>) -> Result<u64, String> {
+    let conn = db.lock_conn()?;
+    // Use exact match OR child paths only (with separator) to avoid
+    // e.g. deleting D:\Games\Steam when targeting D:\Games\Ste
+    conn.execute(
+        "DELETE FROM games WHERE folder_path = ?1 \
+         OR folder_path LIKE ?1 || '/%' \
+         OR folder_path LIKE ?1 || '\\%'",
+        rusqlite::params![scan_path, scan_path, scan_path],
+    )
+    .map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(conn.changes() as u64)
 }
 
 #[tauri::command]
@@ -778,13 +795,14 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
         
         // Insert game with all IGDB fields
         match conn.execute(
-            "INSERT INTO games (folder_name, folder_path, display_name, igdb_id, cover_url, synopsis, release_date, igdb_rating) \
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+            "INSERT INTO games (folder_name, folder_path, display_name, igdb_id, igdb_slug, cover_url, synopsis, release_date, igdb_rating) \
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
             rusqlite::params![
                 result.folder_name,
                 result.folder_path,
                 result.display_name,
                 result.igdb_id,
+                result.igdb_slug,
                 result.cover_url,
                 result.synopsis,
                 result.release_date,
@@ -805,6 +823,7 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
                     folder_path: result.folder_path.clone(),
                     display_name: result.display_name.clone(),
                     igdb_id: result.igdb_id,
+                    igdb_slug: result.igdb_slug.clone(),
                     personal_rating: None,
                     igdb_rating: result.igdb_rating,
                     notes: None,
@@ -931,7 +950,7 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
     
     let mut stmt = conn
         .prepare(
-            "SELECT id, folder_name, folder_path, display_name, igdb_id, \
+            "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
              personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at \
              FROM games \
              WHERE display_name LIKE ?1 OR folder_name LIKE ?1 \
@@ -948,14 +967,15 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
                 folder_path: row.get(2)?,
                 display_name: row.get(3)?,
                 igdb_id: row.get(4)?,
-                personal_rating: row.get(5)?,
-                igdb_rating: row.get(6)?,
-                notes: row.get(7)?,
-                cover_url: row.get(8)?,
-                synopsis: row.get(9)?,
-                release_date: row.get(10)?,
-                created_at: row.get(11)?,
-                updated_at: row.get(12)?,
+                igdb_slug: row.get(5)?,
+                personal_rating: row.get(6)?,
+                igdb_rating: row.get(7)?,
+                notes: row.get(8)?,
+                cover_url: row.get(9)?,
+                synopsis: row.get(10)?,
+                release_date: row.get(11)?,
+                created_at: row.get(12)?,
+                updated_at: row.get(13)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),

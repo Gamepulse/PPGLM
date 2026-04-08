@@ -6,7 +6,6 @@ import type { ScanResult, IgdbCredentials, Game, ConsoleLog, ScanProgress, ScanR
 import { ScanResults } from "./ScanResults";
 import { FolderList } from "./FolderList";
 import { ScanControls } from "./ScanControls";
-import { ScanConsole } from "./ScanConsole";
 import { IgdbNotConfigured } from "./IgdbNotConfigured";
 import { useI18n } from "../../i18n";
 import { useConsole } from "../Layout/ConsolePanel";
@@ -18,7 +17,7 @@ interface FolderPickerProps {
 
 export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
   const { t } = useI18n();
-  const { logs: consoleLogs, log: consoleLog, clear: clearConsole } = useConsole();
+  const { log: consoleLog, clear: clearConsole } = useConsole();
   const [folders, setFolders] = useState<{ path: string }[]>([]);
   const [results, setResults] = useState<ScanResult[]>([]);
   const [scanning, setScanning] = useState(false);
@@ -28,10 +27,8 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
   const [igdbConfigured, setIgdbConfigured] = useState(false);
   const [progress, setProgress] = useState<ScanProgress | null>(null);
   const [showResults, setShowResults] = useState(false);
-  const [consoleMinimized, setConsoleMinimized] = useState(false);
   const accumulatedResultsRef = useRef<ScanResult[]>([]);
 
-  useEffect(() => { if (!scanning && consoleLogs.length > 0) setConsoleMinimized(true); }, [scanning, consoleLogs.length]);
   useEffect(() => { loadScannedFolders(); checkIgdbConfig(); }, []);
 
   async function loadScannedFolders() {
@@ -106,10 +103,9 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
 
   return (
     <div className="p-6 space-y-6">
-      <FolderList folders={folders} onAddFolder={handleAddFolder} onRemoveFolder={handleRemoveFolder} />
+      <FolderList folders={folders} onAddFolder={handleAddFolder} onRemoveFolder={handleRemoveFolder} onGamesDeleted={onGamesSaved} />
       <ScanControls scanning={scanning} isStopping={isStopping} hasFolders={folders.length > 0}
         resultCount={results.length} progress={progress} onScan={handleScanAll} onStop={handleStopScan} />
-      <ScanConsole minimized={consoleMinimized} onToggleMinimize={() => setConsoleMinimized(!consoleMinimized)} />
       {(showResults || results.length > 0) && !scanning && (
         <div className="space-y-4 theme-border border-t pt-4">
           <div className="flex items-center justify-between">
