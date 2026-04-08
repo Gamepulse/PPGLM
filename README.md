@@ -1,4 +1,4 @@
-# Pascal - Game Library Manager
+# Pascal's Personal Game Library Manager (PPGLM)
 
 A modern desktop application for managing your game library. Scans your folders, automatically fetches game metadata from IGDB, and organizes your collection with tags, ratings, and notes.
 
