@@ -1,7 +1,7 @@
 import React from "react";
 import type { Game } from "../../types";
 import { formatRating, formatDate } from "../../utils/formatters";
-import { TAG_CATEGORIES } from "../../utils/constants";
+import { getCategoryColor } from "../../utils/colors";
 import { useI18n } from "../../i18n";
 
 interface GameCardProps {
@@ -22,24 +22,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
     
     return (
       <div className="flex flex-wrap gap-1 mt-2">
-        {displayedTags.map((tag) => {
-          const category = TAG_CATEGORIES[tag.category as keyof typeof TAG_CATEGORIES] || "Personnalisé";
-          const categoryColors: Record<string, string> = {
-            "Genre": "bg-blue-600 text-white",
-            "Développeur": "bg-green-600 text-white", 
-            "Éditeur": "bg-purple-600 text-white",
-            "Personnalisé": "bg-purple-600 text-white"
-          };
-          
-          return (
-            <span
-              key={tag.id}
-              className={`px-2 py-0.5 text-xs rounded-full ${categoryColors[category] || "bg-purple-600 text-white"}`}
-            >
-              {tag.name}
-            </span>
-          );
-        })}
+        {displayedTags.map((tag) => (
+          <span
+            key={tag.id}
+            className={`px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)}`}
+          >
+            {tag.name}
+          </span>
+        ))}
         
         {remainingCount > 0 && (
           <span className="px-2 py-0.5 text-xs theme-text-muted bg-gray-700 rounded-full">

@@ -1,24 +1,11 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { MainLayout } from "./components/Layout/MainLayout";
 import { FolderPicker } from "./components/Scanner/FolderPicker";
 import { GameList } from "./components/Library/GameList";
 import { GameDetail } from "./components/Library/GameDetail";
 import { SettingsPage } from "./components/Settings/SettingsPage";
-import { useTheme } from "./theme";
 
 function App() {
-  const { theme } = useTheme();
-  
-  // Apply theme class to document
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
   const [currentView, setCurrentView] = useState<string>("library");
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");

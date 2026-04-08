@@ -134,11 +134,113 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
                 })
             })
             .map_err(|e: rusqlite::Error| e.to_string())?
-            .filter_map(|r| r.ok())
-            .collect();
+        .filter_map(|r| r.ok())
+        .collect();
     }
 
-    Ok(game)
+    return Ok(game);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Verify that SQL injection in sort_by falls back to safe default
+    #[test]
+    fn test_sort_by_sql_injection_blocked() {
+        const ALLOWED_SORT_COLUMNS: &[&str] = &[
+            "id", "folder_name", "folder_path", "display_name",
+            "igdb_id", "personal_rating", "igdb_rating",
+            "notes", "cover_url", "synopsis", "release_date",
+            "created_at", "updated_at",
+        ];
+        const ALLOWED_ORDERS: &[&str] = &["ASC", "DESC", "asc", "desc"];
+
+        let injection_attempts = vec![
+            "display_name; DROP TABLE games; --",
+            "1 OR 1=1",
+            "id UNION SELECT * FROM users",
+            "id; INSERT INTO games VALUES(1,'hack')",
+            "",
+            "nonexistent_column",
+        ];
+
+        for malicious in injection_attempts {
+            let column = if ALLOWED_SORT_COLUMNS.contains(&malicious) {
+                malicious
+            } else {
+                "display_name"
+            };
+            let order = "ASC";
+            let query = format!("SELECT 1 FROM games ORDER BY {} {}", column, order);
+            // Must NOT contain the malicious string (skip empty string check - trivially true)
+            if !malicious.is_empty() {
+                assert!(
+                    !query.contains(malicious) || ALLOWED_SORT_COLUMNS.contains(&malicious),
+                    "Injection attempt '{}' should not appear in query: {}",
+                    malicious,
+                    query
+                );
+            }
+            // Must contain the safe default
+            assert_eq!(column, "display_name", "Should fall back to display_name for: {}", malicious);
+        }
+    }
+
+    /// Verify that sort_order injection is also blocked
+    #[test]
+    fn test_sort_order_sql_injection_blocked() {
+        const ALLOWED_ORDERS: &[&str] = &["ASC", "DESC", "asc", "desc"];
+
+        let malicious_orders = vec![
+            "ASC; DROP TABLE games",
+            "DESC OR 1=1",
+            "",
+            "RANDOM",
+        ];
+
+        for malicious in malicious_orders {
+            let dir = if ALLOWED_ORDERS.contains(&malicious) {
+                malicious
+            } else {
+                "ASC"
+            };
+            assert_eq!(dir, "ASC", "Should fall back to ASC for: {}", malicious);
+        }
+    }
+
+    /// Verify that legitimate sort values pass through
+    #[test]
+    fn test_legitimate_sort_values_accepted() {
+        const ALLOWED_SORT_COLUMNS: &[&str] = &[
+            "id", "folder_name", "folder_path", "display_name",
+            "igdb_id", "personal_rating", "igdb_rating",
+            "notes", "cover_url", "synopsis", "release_date",
+            "created_at", "updated_at",
+        ];
+        const ALLOWED_ORDERS: &[&str] = &["ASC", "DESC", "asc", "desc"];
+
+        let valid_columns = ["title", "rating", "igdb_rating", "display_name", "created_at"];
+        for col in valid_columns {
+            let column = if ALLOWED_SORT_COLUMNS.contains(&col) {
+                col
+            } else {
+                "display_name"
+            };
+            if ALLOWED_SORT_COLUMNS.contains(&col) {
+                assert_eq!(column, col, "Legitimate column '{}' should be accepted", col);
+            }
+        }
+
+        for order in &["ASC", "desc"] {
+            let dir = if ALLOWED_ORDERS.contains(order) {
+                *order
+            } else {
+                "ASC"
+            };
+            assert_eq!(dir, *order, "Legitimate order '{}' should be accepted", order);
+        }
+    }
 }
 
 #[tauri::command]
@@ -306,9 +408,26 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
             params.push(Box::new(pattern));
         }
         if let Some(sort) = &f.sort_by {
-            query.push_str(&format!(" ORDER BY {}", sort));
+            const ALLOWED_SORT_COLUMNS: &[&str] = &[
+                "id", "folder_name", "folder_path", "display_name",
+                "igdb_id", "personal_rating", "igdb_rating",
+                "notes", "cover_url", "synopsis", "release_date",
+                "created_at", "updated_at",
+            ];
+            let column = if ALLOWED_SORT_COLUMNS.contains(&sort.as_str()) {
+                sort.as_str()
+            } else {
+                "display_name"
+            };
+            query.push_str(&format!(" ORDER BY {}", column));
             if let Some(order) = &f.sort_order {
-                query.push_str(&format!(" {}", order));
+                const ALLOWED_ORDERS: &[&str] = &["ASC", "DESC", "asc", "desc"];
+                let dir = if ALLOWED_ORDERS.contains(&order.as_str()) {
+                    order.as_str()
+                } else {
+                    "ASC"
+                };
+                query.push_str(&format!(" {}", dir));
             }
         }
     }

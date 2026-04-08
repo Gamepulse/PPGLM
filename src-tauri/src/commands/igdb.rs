@@ -4,13 +4,12 @@ use crate::commands::database::save_game_metadata;
 use crate::models::igdb::*;
 use crate::models::scan_result::{IgdbGenreSimple, MatchCandidate, ScanResult};
 use crate::models::igdb::IgdbGame;
+use crate::utils::{format_cover_url, levenshtein};
 
-#[tauri::command]
-pub fn get_igdb_credentials(
-    db: State<'_, Database>,
-) -> Result<Option<IgdbCredentials>, String> {
+/// Internal helper to get IGDB credentials from a Database reference
+pub fn get_igdb_credentials_from_db(db: &Database) -> Result<Option<IgdbCredentials>, String> {
     let conn = db.lock_conn()?;
-    
+
     let result = conn.query_row(
         "SELECT client_id, client_secret FROM igdb_credentials WHERE id = 1",
         [],
@@ -25,6 +24,13 @@ pub fn get_igdb_credentials(
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
         Err(e) => Err(e.to_string()),
     }
+}
+
+#[tauri::command]
+pub fn get_igdb_credentials(
+    db: State<'_, Database>,
+) -> Result<Option<IgdbCredentials>, String> {
+    get_igdb_credentials_from_db(&db)
 }
 
 #[tauri::command]
@@ -256,39 +262,7 @@ pub async fn match_folders_with_igdb(
     Ok(matched_results)
 }
 
-fn levenshtein(a: &str, b: &str) -> usize {
-    let a_len = a.chars().count();
-    let b_len = b.chars().count();
 
-    if a_len == 0 {
-        return b_len;
-    }
-    if b_len == 0 {
-        return a_len;
-    }
-
-    let mut matrix = vec![vec![0; b_len + 1]; a_len + 1];
-
-    for (i, row) in matrix.iter_mut().enumerate() {
-        row[0] = i;
-    }
-
-    for j in 1..=b_len {
-        matrix[0][j] = j;
-    }
-
-    for (i, ca) in a.chars().enumerate() {
-        for (j, cb) in b.chars().enumerate() {
-            let cost = if ca == cb { 0 } else { 1 };
-            matrix[i + 1][j + 1] = std::cmp::min(
-                std::cmp::min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1),
-                matrix[i][j] + cost,
-            );
-        }
-    }
-
-    matrix[a_len][b_len]
-}
 
 /// Clear IGDB cache - removes all cached data but keeps credentials
 #[tauri::command]
@@ -371,18 +345,7 @@ pub async fn refresh_game_from_igdb(
         });
     
     // Format cover URL
-    let cover_url = igdb_game.cover.as_ref().map(|c| {
-        let url = &c.url;
-        if url.starts_with("//") {
-            format!("https:{}", url.replace("t_thumb", "t_cover_big"))
-        } else if url.starts_with("http://") {
-            url.replace("http://", "https://").replace("t_thumb", "t_cover_big")
-        } else if url.starts_with("https://") {
-            url.replace("t_thumb", "t_cover_big")
-        } else {
-            format!("https://{}", url.replace("t_thumb", "t_cover_big"))
-        }
-    });
+    let cover_url = igdb_game.cover.as_ref().map(|c| format_cover_url(&c.url));
     
     // Update game in database
     let conn = db.lock_conn()?;

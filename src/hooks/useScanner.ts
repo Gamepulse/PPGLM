@@ -1,25 +1,7 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
-import type { ScanResult, ScannedFolder } from "../types";
-
-interface ScanProgress {
-  folders_scanned: number;
-  games_found: number;
-  current_path: string;
-  operation: string;
-}
-
-interface ConsoleLog {
-  timestamp: string;
-  level: string;
-  message: string;
-}
-
-interface ScanResultEvent {
-  result: ScanResult;
-  total_found: number;
-}
+import type { ScanResult, ScannedFolder, ConsoleLog, ScanProgress, ScanResultEvent } from "../types";
 
 export function useScanner() {
   const [results, setResults] = useState<ScanResult[]>([]);
@@ -71,6 +53,14 @@ export function useScanner() {
   const stopListening = useCallback(() => {
     unlistenersRef.current.forEach((unlisten) => unlisten());
     unlistenersRef.current = [];
+  }, []);
+
+  // Cleanup listeners on unmount
+  useEffect(() => {
+    return () => {
+      unlistenersRef.current.forEach((unlisten) => unlisten());
+      unlistenersRef.current = [];
+    };
   }, []);
 
   const match = useCallback(async (scanResults: ScanResult[]) => {

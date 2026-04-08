@@ -4,10 +4,7 @@ export function LanguageSelector() {
   const { language, setLanguage, t } = useI18n();
 
   const handleLanguageChange = (lang: 'en' | 'fr') => {
-    console.log(`[LanguageSelector] Changing language from ${language} to ${lang}`);
     setLanguage(lang);
-    // Force reload to ensure all components pick up new language
-    window.location.reload();
   };
 
   return (

@@ -1,9 +1,13 @@
 mod commands;
 mod db;
+mod errors;
 mod models;
+mod utils;
 
 use db::Database;
+use std::sync::Mutex;
 use tauri::Manager;
+use tokio_util::sync::CancellationToken;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,11 +17,11 @@ pub fn run() {
         .setup(|app| {
             let db = Database::new(app)?;
             app.manage(db);
+            app.manage(Mutex::new(CancellationToken::new()));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             commands::scanner::scan_folders,
-            commands::scanner::scan_folders_streaming,
             commands::scanner::scan_folders_smart,
             commands::scanner::stop_scan,
             commands::database::get_games,
@@ -30,9 +34,6 @@ pub fn run() {
             commands::database::update_game_display_name,
             commands::database::update_game_cover_url,
             commands::database::delete_all_games,
-            commands::database::delete_game,
-            commands::database::update_game_notes,
-            commands::database::update_game_tags,
             commands::database::get_tags,
             commands::database::create_tag,
             commands::database::delete_tag,

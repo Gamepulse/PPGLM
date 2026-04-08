@@ -4,10 +4,7 @@ export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
 
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
-    console.log(`[ThemeSelector] Changing theme from ${theme} to ${newTheme}`);
     setTheme(newTheme);
-    // Force reload to apply theme changes
-    window.location.reload();
   };
 
   return (

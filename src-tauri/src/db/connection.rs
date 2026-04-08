@@ -5,7 +5,7 @@ use tauri::{App, Manager};
 use super::migrations;
 
 pub struct Database {
-    pub conn: Mutex<Connection>,
+    conn: Mutex<Connection>,
 }
 
 impl Database {

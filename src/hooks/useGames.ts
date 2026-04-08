@@ -8,15 +8,12 @@ export function useGames() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchGames = useCallback(async (filters?: GameFilters) => {
-    console.log("[useGames.fetchGames] Starting with filters:", filters);
     setLoading(true);
     setError(null);
     try {
       const result = await invoke<Game[]>("get_games", {
         filters: filters ?? {},
       });
-      console.log("[useGames.fetchGames] SUCCESS: Got", result.length, "games");
-      console.log("[useGames.fetchGames] Games:", result.map(g => ({ id: g.id, name: g.display_name })));
       setGames(result);
     } catch (e) {
       console.error("[useGames.fetchGames] ERROR:", e);
