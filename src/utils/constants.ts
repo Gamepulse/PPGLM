@@ -9,6 +9,9 @@ export const TAG_CATEGORIES: Record<string, string> = {
   genre: "Genre",
   developer: "Développeur",
   publisher: "Éditeur",
+  platform: "Plateforme",
+  theme: "Thème",
+  gamemode: "Mode de jeu",
   custom: "Personnalisé",
 };
 

@@ -104,3 +104,35 @@ export interface GameFilters {
   sort_by?: string;
   sort_order?: string;
 }
+
+/** Consolidated from FolderPicker.tsx and useScanner.ts */
+export interface ConsoleLog {
+  timestamp: string;
+  level: string;
+  message: string;
+}
+
+/** Consolidated from FolderPicker.tsx (ScanProgressData) and useScanner.ts (ScanProgress) */
+export interface ScanProgress {
+  folders_scanned: number;
+  games_found: number;
+  current_path: string;
+  operation: string;
+}
+
+/** Consolidated from FolderPicker.tsx and useScanner.ts */
+export interface ScanResultEvent {
+  result: ScanResult;
+  total_found: number;
+}
+
+export type ViewType = "library" | "scanner" | "settings" | "game-detail";
+
+export type TagCategory = "genre" | "developer" | "publisher" | "custom";
+
+export const TAG_CATEGORY_LABELS: Record<TagCategory, string> = {
+  genre: "Genre",
+  developer: "Développeur",
+  publisher: "Éditeur",
+  custom: "Personnalisé",
+};

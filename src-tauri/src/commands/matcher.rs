@@ -1,9 +1,10 @@
 use tauri::State;
 
-use crate::commands::igdb::get_igdb_token;
+use crate::commands::igdb::{get_igdb_credentials_from_db, get_igdb_token};
 use crate::db::Database;
 use crate::models::igdb::IgdbCover;
 use crate::models::scan_result::{MatchCandidate, MatchConfidence, ScanResult};
+use crate::utils::{format_cover_url, levenshtein};
 
 /// Match folder names with IGDB database
 /// Returns results with cover images
@@ -13,7 +14,7 @@ pub async fn match_folder_names(
     db: State<'_, Database>,
 ) -> Result<Vec<ScanResult>, String> {
     let token = get_igdb_token(&db).await?;
-    let creds = get_igdb_credentials(&db)?
+    let creds = get_igdb_credentials_from_db(&db)?
         .ok_or_else(|| "IGDB credentials not configured. Please configure in Settings.".to_string())?;
 
     let mut matched_results = Vec::new();
@@ -148,70 +149,4 @@ struct IgdbGameWithCover {
     pub cover: Option<IgdbCover>,
 }
 
-/// Format IGDB cover URL to full size
-fn format_cover_url(url: &str) -> String {
-    // IGDB returns URLs like "//images.igdb.com/..."
-    // Convert to https:// and get large version
-    if url.starts_with("//") {
-        format!("https:{}", url.replace("t_thumb", "t_cover_big"))
-    } else if url.starts_with("http://") {
-        url.replace("http://", "https://").replace("t_thumb", "t_cover_big")
-    } else if url.starts_with("https://") {
-        url.replace("t_thumb", "t_cover_big")
-    } else {
-        format!("https://{}", url.replace("t_thumb", "t_cover_big"))
-    }
-}
 
-pub fn get_igdb_credentials(db: &Database) -> Result<Option<crate::models::igdb::IgdbCredentials>, String> {
-    let conn = db.lock_conn()?;
-    
-    let result = conn.query_row(
-        "SELECT client_id, client_secret FROM igdb_credentials WHERE id = 1",
-        [],
-        |row| Ok(crate::models::igdb::IgdbCredentials {
-            client_id: row.get(0)?,
-            client_secret: row.get(1)?,
-        }),
-    );
-
-    match result {
-        Ok(creds) => Ok(Some(creds)),
-        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-fn levenshtein(a: &str, b: &str) -> usize {
-    let a_len = a.chars().count();
-    let b_len = b.chars().count();
-
-    if a_len == 0 {
-        return b_len;
-    }
-    if b_len == 0 {
-        return a_len;
-    }
-
-    let mut matrix = vec![vec![0; b_len + 1]; a_len + 1];
-
-    for (i, row) in matrix.iter_mut().enumerate() {
-        row[0] = i;
-    }
-
-    for j in 1..=b_len {
-        matrix[0][j] = j;
-    }
-
-    for (i, ca) in a.chars().enumerate() {
-        for (j, cb) in b.chars().enumerate() {
-            let cost = if ca == cb { 0 } else { 1 };
-            matrix[i + 1][j + 1] = std::cmp::min(
-                std::cmp::min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1),
-                matrix[i][j] + cost,
-            );
-        }
-    }
-
-    matrix[a_len][b_len]
-}

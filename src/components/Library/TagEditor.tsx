@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type ChangeEvent } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Tag } from "../../types";
+import { getCategoryColor } from "../../utils/colors";
 
 interface TagEditorProps {
   gameId: number;
@@ -105,16 +106,6 @@ export function TagEditor({ gameId, tags, onTagsChanged }: TagEditorProps) {
     } catch (error) {
       console.error("Failed to remove tag:", error);
     }
-  };
-
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      genre: "bg-blue-600",
-      developer: "bg-green-600",
-      publisher: "bg-amber-600",
-      custom: "bg-purple-600"
-    };
-    return colors[category] || "bg-gray-600";
   };
 
   return (

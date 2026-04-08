@@ -33,5 +33,11 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Sync conflict files
+*.sync-conflict*
+
+# Playwright
+.playwright-cli/
+
 # Tauri
 src-tauri/target/

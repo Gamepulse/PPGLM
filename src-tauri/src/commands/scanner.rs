@@ -1,53 +1,15 @@
 use std::path::Path;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex as StdMutex};
 use tokio::sync::Mutex;
+use tokio_util::sync::CancellationToken;
 use tauri::{AppHandle, Emitter, State};
 
 use crate::commands::database::get_exclusion_patterns;
-use crate::commands::igdb::get_igdb_token;
+use crate::commands::igdb::{get_igdb_credentials_from_db, get_igdb_token};
 use crate::db::Database;
 use crate::models::igdb::IgdbCover;
 use crate::models::scan_result::{IgdbGenreSimple, MatchCandidate, MatchConfidence, ScanResult};
-
-// Global cancellation flag for scan operations
-static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
-
-const SYSTEM_FOLDERS: &[&str] = &[
-    "Windows",
-    "Program Files",
-    "Program Files (x86)",
-    "ProgramData",
-    "$Recycle.Bin",
-    "System Volume Information",
-    "Recovery",
-    "PerfLogs",
-];
-
-// Folders to ignore when scanning (common non-game subdirectories)
-const SKIP_FOLDER_PATTERNS: &[&str] = &[
-    "update",
-    "patch",
-    "dlc",
-    "redist",
-    "directx",
-    "vcredist",
-    "installer",
-    "setup",
-    "uninstall",
-    "temp",
-    "tmp",
-    "cache",
-    "logs",
-    "saves",
-    "save",
-    "screenshots",
-    "config",
-    "settings",
-    "docs",
-    "manual",
-    "readme",
-];
+use crate::utils::{clean_folder_name, format_cover_url, levenshtein, should_skip_folder};
 
 /// Maximum recursion depth
 const MAX_DEPTH: usize = 3;
@@ -76,77 +38,7 @@ pub struct ScanResultEvent {
     pub total_found: usize,
 }
 
-/// Check if folder name should be skipped
-fn should_skip_folder(folder_name: &str, custom_exclusions: &[String]) -> bool {
-    let lower = folder_name.to_lowercase();
-    
-    // Skip system folders
-    if SYSTEM_FOLDERS.iter().any(|sf| sf.eq_ignore_ascii_case(folder_name))
-        || folder_name.starts_with('.') {
-        return true;
-    }
-    
-    // Skip common non-game patterns
-    for pattern in SKIP_FOLDER_PATTERNS {
-        if lower.contains(pattern) {
-            return true;
-        }
-    }
-    
-    // Skip custom exclusions from database
-    for pattern in custom_exclusions {
-        if lower.contains(&pattern.to_lowercase()) {
-            return true;
-        }
-    }
-    
-    // Skip folders with version numbers only (like "1.0.0", "v2.1")
-    if regex::Regex::new(r"^v?\d+(\.\d+)*$").unwrap().is_match(folder_name) {
-        return true;
-    }
-    
-    // Skip very short names (less than 2 chars)
-    if folder_name.len() < 2 {
-        return true;
-    }
-    
-    false
-}
 
-/// Calculate Levenshtein distance between two strings
-fn levenshtein(a: &str, b: &str) -> usize {
-    let a_len = a.chars().count();
-    let b_len = b.chars().count();
-
-    if a_len == 0 {
-        return b_len;
-    }
-    if b_len == 0 {
-        return a_len;
-    }
-
-    let mut matrix = vec![vec![0; b_len + 1]; a_len + 1];
-
-    for (i, row) in matrix.iter_mut().enumerate() {
-        row[0] = i;
-    }
-
-    for j in 1..=b_len {
-        matrix[0][j] = j;
-    }
-
-    for (i, ca) in a.chars().enumerate() {
-        for (j, cb) in b.chars().enumerate() {
-            let cost = if ca == cb { 0 } else { 1 };
-            matrix[i + 1][j + 1] = std::cmp::min(
-                std::cmp::min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1),
-                matrix[i][j] + cost,
-            );
-        }
-    }
-
-    matrix[a_len][b_len]
-}
 
 /// IGDB response with cover for smart scan matching
 #[derive(Debug, serde::Deserialize)]
@@ -163,18 +55,7 @@ struct IgdbGameWithCover {
     pub themes: Option<Vec<IgdbGenreSimple>>,
 }
 
-/// Format IGDB cover URL to full size
-fn format_cover_url(url: &str) -> String {
-    if url.starts_with("//") {
-        format!("https:{}", url.replace("t_thumb", "t_cover_big"))
-    } else if url.starts_with("http://") {
-        url.replace("http://", "https://").replace("t_thumb", "t_cover_big")
-    } else if url.starts_with("https://") {
-        url.replace("t_thumb", "t_cover_big")
-    } else {
-        format!("https://{}", url.replace("t_thumb", "t_cover_big"))
-    }
-}
+
 
 /// Try to match a folder name with IGDB
 /// Returns Some(ScanResult) if match found, None otherwise
@@ -285,19 +166,9 @@ async fn try_match_folder(
 
 /// Stop the current scan operation
 #[tauri::command]
-pub fn stop_scan() -> Result<bool, String> {
-    SCAN_CANCELLED.store(true, Ordering::SeqCst);
+pub fn stop_scan(cancel_token: State<'_, StdMutex<CancellationToken>>) -> Result<bool, String> {
+    cancel_token.lock().unwrap().cancel();
     Ok(true)
-}
-
-/// Reset the cancellation flag (call at start of new scan)
-fn reset_scan_cancellation() {
-    SCAN_CANCELLED.store(false, Ordering::SeqCst);
-}
-
-/// Check if scan should be cancelled
-fn is_scan_cancelled() -> bool {
-    SCAN_CANCELLED.load(Ordering::SeqCst)
 }
 
 /// Smart scan with early exit - only descends if no match found
@@ -305,17 +176,23 @@ fn is_scan_cancelled() -> bool {
 pub async fn scan_folders_smart(
     paths: Vec<String>,
     db: State<'_, Database>,
+    cancel_token: State<'_, StdMutex<CancellationToken>>,
     app_handle: AppHandle,
 ) -> Result<(), String> {
-    // Reset cancellation flag at start
-    reset_scan_cancellation();
+    // Create a fresh CancellationToken for this scan and store it in state
+    let scan_token = {
+        let new_token = CancellationToken::new();
+        let mut guard = cancel_token.lock().unwrap();
+        *guard = new_token.clone();
+        new_token
+    };
     
     log_to_console(&app_handle, "INFO", "Starting smart scan with early exit...");
     log_to_console(&app_handle, "INFO", "Tip: Click 'Stop Scan' to cancel at any time");
     
     // Get IGDB credentials
     let token = get_igdb_token(&db).await?;
-    let creds = crate::commands::matcher::get_igdb_credentials(&db)?
+    let creds = get_igdb_credentials_from_db(&db)?
         .ok_or_else(|| "IGDB credentials not configured. Please configure in Settings.".to_string())?;
 
     let existing_paths: Vec<String> = {
@@ -360,7 +237,7 @@ pub async fn scan_folders_smart(
     // Process each root path
     for path_str in &paths {
         // Check for cancellation at start of each folder
-        if is_scan_cancelled() {
+        if scan_token.is_cancelled() {
             log_to_console(&app_handle, "WARN", "Scan cancelled by user");
             let _ = app_handle.emit("scan:cancelled", ());
             break;
@@ -394,10 +271,11 @@ pub async fn scan_folders_smart(
             &app_handle,
             &creds.client_id,
             &token,
+            scan_token.clone(),
         ).await?;
         
         // Check for cancellation after each root path
-        if is_scan_cancelled() {
+        if scan_token.is_cancelled() {
             log_to_console(&app_handle, "WARN", "Scan cancelled by user");
             let _ = app_handle.emit("scan:cancelled", ());
             break;
@@ -406,7 +284,7 @@ pub async fn scan_folders_smart(
     
     let final_count = *games_found.lock().await;
     
-    if is_scan_cancelled() {
+    if scan_token.is_cancelled() {
         log_to_console(&app_handle, "INFO", &format!("Scan stopped. Found {} games before cancellation", final_count));
     } else {
         log_to_console(&app_handle, "INFO", &format!("Smart scan complete! Found {} games", final_count));
@@ -432,6 +310,7 @@ async fn scan_directory_smart(
     app_handle: &AppHandle,
     client_id: &str,
     token: &str,
+    cancel_token: CancellationToken,
 ) -> Result<(), String> {
     if depth > MAX_DEPTH {
         log_to_console(app_handle, "DEBUG", &format!("Max depth reached for: {}", parent.display()));
@@ -485,7 +364,7 @@ async fn scan_directory_smart(
     // Process files first (if any)
     for (entry_path, file_name) in files {
         // Check for cancellation
-        if is_scan_cancelled() {
+        if cancel_token.is_cancelled() {
             return Ok(());
         }
         
@@ -542,7 +421,7 @@ async fn scan_directory_smart(
     // Process each subdirectory
     for (entry_path, folder_name) in subdirs {
         // Check for cancellation
-        if is_scan_cancelled() {
+        if cancel_token.is_cancelled() {
             return Ok(());
         }
         
@@ -553,7 +432,7 @@ async fn scan_directory_smart(
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
         
         // Check for cancellation after rate limiting
-        if is_scan_cancelled() {
+        if cancel_token.is_cancelled() {
             return Ok(());
         }
         
@@ -624,6 +503,7 @@ async fn scan_directory_smart(
                     app_handle,
                     client_id,
                     token,
+                    cancel_token.clone(),
                 )).await?;
             }
         }
@@ -646,24 +526,7 @@ fn log_to_console(app_handle: &AppHandle, level: &str, message: &str) {
     println!("[{}] {}: {}", chrono::Local::now().format("%H:%M:%S"), level, message);
 }
 
-fn clean_folder_name(name: &str) -> String {
-    let re_scene = regex::Regex::new(
-        r"(?i)\s*[\[(].*?(fitgirl|codex|skidrow|reloaded|plaza|cpy|elmomomo|darck|gog|steam|epic).*?[\])]",
-    ).unwrap();
-    let re_version = regex::Regex::new(r"(?i)\s*v?\d+\.\d+(\.\d+)*(\s+build\s+\d+)?").unwrap();
-    let re_platform = regex::Regex::new(r"(?i)\s*[\[(](windows|linux|mac|multi\d*).*?[\])]").unwrap();
-    let re_lang = regex::Regex::new(r"(?i)\s*[\[(](fr|en|de|es|it|ru|multi|multilang).*?[\])]").unwrap();
-    let re_fill = regex::Regex::new(r"[._]{2,}").unwrap();
 
-    let cleaned = re_scene.replace_all(name, "");
-    let cleaned = re_version.replace_all(&cleaned, "");
-    let cleaned = re_platform.replace_all(&cleaned, "");
-    let cleaned = re_lang.replace_all(&cleaned, "");
-    let cleaned = re_fill.replace_all(&cleaned, " ");
-    let cleaned = cleaned.trim().to_string();
-
-    if cleaned.is_empty() { name.trim().to_string() } else { cleaned }
-}
 
 // Legacy synchronous version - simplified for folder names only
 #[tauri::command]
@@ -776,15 +639,4 @@ fn scan_subdirectories_blocking(
     }
 
     Ok(())
-}
-
-/// Legacy streaming scan - kept for backward compatibility
-#[tauri::command]
-pub async fn scan_folders_streaming(
-    paths: Vec<String>,
-    db: State<'_, Database>,
-    app_handle: AppHandle,
-) -> Result<(), String> {
-    // Delegate to smart scan now
-    scan_folders_smart(paths, db, app_handle).await
 }

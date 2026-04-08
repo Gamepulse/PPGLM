@@ -23,14 +23,11 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
   const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
-    console.log("[GameList] Fetching games...", { sortBy, sortOrder, searchQuery });
     const query = searchQuery?.trim() || undefined;
     fetchGames({
       sort_by: sortBy,
       sort_order: sortOrder,
       ...(query ? { search_query: query } : {}),
-    }).then(() => {
-      console.log("[GameList] Fetch complete, games count:", games.length);
     });
   }, [fetchGames, sortBy, sortOrder, searchQuery]);
 
@@ -102,7 +99,6 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
           </button>
           <button
             onClick={() => {
-              console.log("[GameList] Manual refresh clicked");
               fetchGames({ sort_by: sortBy, sort_order: sortOrder });
             }}
             className="px-3 py-2 text-sm theme-accent text-white rounded-lg hover:theme-accent-hover transition-colors"

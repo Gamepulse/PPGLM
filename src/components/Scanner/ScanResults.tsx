@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-shell";
 import type { ScanResult, MatchCandidate } from "../../types";
 import { useI18n } from "../../i18n";
+import { getBadgeColor } from "../../utils/colors";
 
 interface ScanResultsProps {
   results: ScanResult[];
@@ -43,17 +44,6 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
   const nonMatches = editableResults.filter(
     (r) => r.match_confidence === "None"
   );
-
-  const badgeColor = (confidence: string) => {
-    switch (confidence) {
-      case "Exact":
-        return "bg-green-600";
-      case "Fuzzy":
-        return "bg-blue-600";
-      default:
-        return "bg-gray-600";
-    }
-  };
 
   const handleUpdateDisplayName = useCallback((folderPath: string, newName: string) => {
     setEditableResults((prev) =>
@@ -198,7 +188,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                 </button>
               )}
               <span
-                className={`px-2 py-1 text-xs rounded-full ${badgeColor(
+                className={`px-2 py-1 text-xs rounded-full ${getBadgeColor(
                   result.match_confidence
                 )} text-white whitespace-nowrap`}
               >

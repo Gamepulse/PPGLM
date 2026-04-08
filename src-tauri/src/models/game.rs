@@ -70,34 +70,3 @@ pub struct GameFilters {
     pub sort_order: Option<String>,
 }
 
-/// Statistics about the game collection
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CollectionStats {
-    pub total_games: i64,
-    pub games_with_rating: i64,
-    pub average_rating: Option<f64>,
-    pub total_tags: i64,
-    pub total_scanned_folders: i64,
-    pub games_by_rating: Vec<RatingBucket>,
-    pub top_tags: Vec<TagCount>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RatingBucket {
-    pub rating: i64,
-    pub count: i64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TagCount {
-    pub tag: Tag,
-    pub count: i64,
-}
-
-/// Potential duplicate game pair
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PotentialDuplicate {
-    pub game1: Game,
-    pub game2: Game,
-    pub similarity_score: f64,
-}
