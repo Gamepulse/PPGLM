@@ -43,7 +43,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
 
   const handleSelectCandidate = useCallback((folderPath: string, candidate: MatchCandidate) => {
     setEditableResults((prev) => prev.map((r) => r.folder_path === folderPath ? {
-      ...r, igdb_id: candidate.id, display_name: candidate.name,
+      ...r, igdb_id: candidate.id, igdb_slug: candidate.slug || null, display_name: candidate.name,
       match_confidence: candidate.distance === 0 ? "Exact" : "Fuzzy",
       match_source: candidate.distance === 0 ? "igdb_exact" : "igdb_fuzzy",
     } : r));
@@ -67,8 +67,9 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
     } catch (e) { alert("Failed to create exclusion: " + e); }
   }, [onCreateExclusion]);
 
-  const handleOpenIgdb = useCallback(async (igdbId: number) => {
-    const url = `https://www.igdb.com/games/${igdbId}`;
+  const handleOpenIgdb = useCallback(async (igdbId: number, igdbSlug?: string | null) => {
+    const slug = igdbSlug || String(igdbId);
+    const url = `https://www.igdb.com/games/${slug}`;
     try { await open(url); } catch { window.open(url, "_blank"); }
   }, []);
 

@@ -34,7 +34,7 @@ pub async fn match_folder_names(
             .header("Client-ID", &creds.client_id)
             .header("Authorization", format!("Bearer {}", token))
             .body(format!(
-                "search \"{}\"; fields id,name,cover.url; limit 5;",
+                "search \"{}\"; fields id,name,slug,cover.url; limit 5;",
                 display_lower
             ))
             .send()
@@ -71,6 +71,7 @@ pub async fn match_folder_names(
                                 name: g.name.clone(),
                                 distance: std::cmp::min(d_display, d_folder),
                                 cover_url: g.cover.as_ref().map(|c| format_cover_url(&c.url)),
+                                slug: g.slug.clone(),
                             }
                         })
                         .collect();
@@ -78,6 +79,7 @@ pub async fn match_folder_names(
                     if best_distance == 0 {
                         // Exact match
                         result.igdb_id = Some(best_match.id);
+                        result.igdb_slug = best_match.slug.clone();
                         result.match_confidence = MatchConfidence::Exact;
                         result.match_source = format!("igdb_exact_{}", name_used);
                         result.candidates = candidates.clone();
@@ -86,6 +88,7 @@ pub async fn match_folder_names(
                     } else if best_distance <= 2 {
                         // Fuzzy match
                         result.igdb_id = Some(best_match.id);
+                        result.igdb_slug = best_match.slug.clone();
                         result.match_confidence = MatchConfidence::Fuzzy;
                         result.match_source = format!("igdb_fuzzy_{}", name_used);
                         result.candidates = candidates.clone();
@@ -146,6 +149,7 @@ pub async fn match_folder_names(
 struct IgdbGameWithCover {
     pub id: i64,
     pub name: String,
+    pub slug: Option<String>,
     pub cover: Option<IgdbCover>,
 }
 

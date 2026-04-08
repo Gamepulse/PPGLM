@@ -45,6 +45,7 @@ pub struct ScanResultEvent {
 struct IgdbGameWithCover {
     pub id: i64,
     pub name: String,
+    pub slug: Option<String>,
     pub cover: Option<IgdbCover>,
     pub rating: Option<f64>,
     pub summary: Option<String>,
@@ -76,7 +77,7 @@ async fn try_match_folder(
         .header("Client-ID", client_id)
         .header("Authorization", format!("Bearer {}", token))
         .body(format!(
-            "search \"{}\"; fields id,name,cover.url,rating,summary,genres.name,game_modes.name,player_perspectives.name,themes.name,first_release_date; limit 5;",
+            "search \"{}\"; fields id,name,slug,cover.url,rating,summary,genres.name,game_modes.name,player_perspectives.name,themes.name,first_release_date; limit 5;",
             display_lower
         ))
         .send()
@@ -113,6 +114,7 @@ async fn try_match_folder(
                             name: g.name.clone(),
                             distance: std::cmp::min(d_display, d_folder),
                             cover_url: g.cover.as_ref().map(|c| format_cover_url(&c.url)),
+                            slug: g.slug.clone(),
                         }
                     })
                     .collect();
@@ -146,6 +148,7 @@ async fn try_match_folder(
                         match_confidence,
                         candidates,
                         igdb_id: Some(best_match.id),
+                        igdb_slug: best_match.slug.clone(),
                         match_source,
                         cover_url: best_match.cover.as_ref().map(|c| format_cover_url(&c.url)),
                         synopsis: best_match.summary.clone(),
@@ -620,6 +623,7 @@ fn scan_subdirectories_blocking(
             match_confidence: MatchConfidence::None,
             candidates: Vec::new(),
             igdb_id: None,
+            igdb_slug: None,
             match_source: "heuristic".to_string(),
             cover_url: None,
             synopsis: None,

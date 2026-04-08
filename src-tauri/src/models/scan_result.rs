@@ -8,6 +8,7 @@ pub struct ScanResult {
     pub match_confidence: MatchConfidence,
     pub candidates: Vec<MatchCandidate>,
     pub igdb_id: Option<i64>,
+    pub igdb_slug: Option<String>,
     pub match_source: String,
     pub cover_url: Option<String>,
     pub synopsis: Option<String>,
@@ -40,4 +41,5 @@ pub struct MatchCandidate {
     pub name: String,
     pub distance: usize,
     pub cover_url: Option<String>,
+    pub slug: Option<String>,
 }

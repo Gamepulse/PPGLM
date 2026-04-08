@@ -113,4 +113,5 @@ pub struct IgdbCollection {
 pub struct IgdbSearchResult {
     pub id: i64,
     pub name: String,
+    pub slug: Option<String>,
 }

@@ -59,6 +59,12 @@ pub fn run(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
         mark_migration_applied(conn, "008_game_metadata")?;
     }
 
+    // Migration 009: Add igdb_slug to games table
+    if !is_migration_applied(conn, "009_igdb_slug")? {
+        ensure_column_exists(conn, "games", "igdb_slug", "TEXT")?;
+        mark_migration_applied(conn, "009_igdb_slug")?;
+    }
+
     Ok(())
 }
 

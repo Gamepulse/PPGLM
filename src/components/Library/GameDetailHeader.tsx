@@ -1,4 +1,5 @@
 import type { Game } from "../../types";
+import { open } from "@tauri-apps/plugin-shell";
 import { useI18n } from "../../i18n";
 
 interface GameDetailHeaderProps {
@@ -9,6 +10,12 @@ interface GameDetailHeaderProps {
 
 export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHeaderProps) {
   const { t } = useI18n();
+
+  const handleOpenIgdb = async () => {
+    const slug = game.igdb_slug || String(game.igdb_id);
+    const url = `https://www.igdb.com/games/${slug}`;
+    try { await open(url); } catch { window.open(url, "_blank"); }
+  };
 
   return (
     <div className="flex gap-6">
@@ -29,7 +36,10 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
         {game.igdb_id && (
           <div className="flex items-center gap-2">
             <span className="px-2 py-1 text-xs rounded-full bg-green-600 text-white">{t('igdbMatched')}</span>
-            <span className="theme-text-muted text-xs">ID: {game.igdb_id}</span>
+            <button type="button" onClick={handleOpenIgdb}
+              className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1 bg-blue-900/30 rounded hover:bg-blue-900/50 transition-colors">
+              {t('igdbPage')} ↗
+            </button>
             <button type="button" onClick={onRefresh} disabled={refreshing}
               className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors">
               {refreshing ? t('refreshingFromIgdb') : t('refreshFromIgdb')}

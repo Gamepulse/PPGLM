@@ -1,0 +1,1 @@
+-- Add igdb_slug column to games table for constructing IGDB game page URLs

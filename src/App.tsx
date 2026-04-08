@@ -14,6 +14,7 @@ function App() {
     const handleNavigate = useCallback((view: string) => {
         setCurrentView(view);
         setSelectedGameId(null);
+        if (view === "library") setSearchQuery("");
     }, []);
 
     const handleSelectGame = useCallback((id: number) => {
@@ -24,6 +25,7 @@ function App() {
     const handleBack = useCallback(() => {
         setCurrentView("library");
         setSelectedGameId(null);
+        setSearchQuery("");
     }, []);
 
     const handleSearch = useCallback((query: string) => {

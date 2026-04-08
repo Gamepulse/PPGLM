@@ -12,7 +12,7 @@ interface ResultCardProps {
   onDelete: (folderPath: string) => void;
   onCreateExclusion: (folderName: string) => void;
   onSetEditing: (path: string | null) => void;
-  onOpenIgdb: (igdbId: number) => void;
+  onOpenIgdb: (igdbId: number, igdbSlug?: string | null) => void;
 }
 
 export function ResultCard({
@@ -60,7 +60,7 @@ export function ResultCard({
             </div>
             <div className="flex items-center gap-2 ml-2">
               {result.igdb_id && (
-                <button onClick={() => onOpenIgdb(result.igdb_id!)} title={t('viewOnIgdb')}
+                <button onClick={() => onOpenIgdb(result.igdb_id!, result.igdb_slug)} title={t('viewOnIgdb')}
                   className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1 bg-blue-900/30 rounded hover:bg-blue-900/50 transition-colors">
                   IGDB ↗
                 </button>

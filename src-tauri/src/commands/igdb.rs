@@ -217,7 +217,7 @@ pub async fn match_folders_with_igdb(
             .header("Client-ID", &creds.client_id)
             .header("Authorization", format!("Bearer {}", token))
             .body(format!(
-                "search \"{}\"; fields id,name; limit 5;",
+                "search \"{}\"; fields id,name,slug; limit 5;",
                 display_lower
             ))
             .send()
@@ -230,6 +230,7 @@ pub async fn match_folders_with_igdb(
                     
                     if distance <= 2 {
                         result.igdb_id = Some(best_match.id);
+                        result.igdb_slug = best_match.slug.clone();
                         result.match_source = if distance == 0 {
                             "igdb_exact".to_string()
                         } else {
@@ -242,6 +243,7 @@ pub async fn match_folders_with_igdb(
                                 name: g.name.clone(),
                                 distance: levenshtein(&display_lower, &g.name.to_lowercase()),
                                 cover_url: None,
+                                slug: g.slug.clone(),
                             })
                             .collect();
                     }

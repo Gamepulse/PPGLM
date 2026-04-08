@@ -7,6 +7,7 @@ pub struct Game {
     pub folder_path: String,
     pub display_name: String,
     pub igdb_id: Option<i64>,
+    pub igdb_slug: Option<String>,
     pub personal_rating: Option<i64>,
     pub igdb_rating: Option<f64>,
     pub notes: Option<String>,

@@ -4,6 +4,7 @@ export interface Game {
   folder_path: string;
   display_name: string;
   igdb_id: number | null;
+  igdb_slug: string | null;
   personal_rating: number | null;
   igdb_rating: number | null;
   notes: string | null;
@@ -56,6 +57,7 @@ export interface ScanResult {
   folder_path: string;
   display_name: string;
   igdb_id: number | null;
+  igdb_slug?: string | null;
   match_source: string;
   match_confidence: "Exact" | "Fuzzy" | "None";
   candidates: MatchCandidate[];
@@ -75,6 +77,7 @@ export interface MatchCandidate {
   name: string;
   distance: number;
   cover_url: string | null;
+  slug?: string | null;
 }
 
 export interface IgdbCredentials {
