@@ -89,6 +89,7 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
           >
             <option value="display_name">{t('name')}</option>
             <option value="personal_rating">{t('rating')}</option>
+            <option value="igdb_rating">{t('communityRating')}</option>
             <option value="created_at">{t('dateAdded')}</option>
           </select>
           <button

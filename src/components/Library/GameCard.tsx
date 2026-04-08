@@ -12,7 +12,7 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
   const { t } = useI18n();
-  const { display_name, cover_url, igdb_id, personal_rating, tags, release_date } = game;
+  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date } = game;
   
   const renderTags = () => {
     if (tags.length === 0) return null;
@@ -100,9 +100,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
           <h3 className="theme-text-primary font-semibold text-lg mb-2 truncate">{display_name}</h3>
           
           <div className="flex items-center justify-between mb-3">
-            <span className="text-yellow-400 font-medium">
-              {formatRating(personal_rating)}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-yellow-400 font-medium">
+                {formatRating(personal_rating)}
+              </span>
+              {igdb_rating != null && (
+                <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">
+                  ★ {igdb_rating.toFixed(0)}
+                </span>
+              )}
+            </div>
             {release_date && (
               <span className="theme-text-muted text-sm">
                 {formatDate(release_date)}
@@ -136,6 +143,11 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
           <span className="text-yellow-400 font-medium">
             {formatRating(personal_rating)}
           </span>
+          {igdb_rating != null && (
+            <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">
+              ★ {igdb_rating.toFixed(0)}
+            </span>
+          )}
           {release_date && (
             <span className="theme-text-muted text-sm">
               {formatDate(release_date)}
