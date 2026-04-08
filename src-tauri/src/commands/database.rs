@@ -173,13 +173,15 @@ mod tests {
             };
             let order = "ASC";
             let query = format!("SELECT 1 FROM games ORDER BY {} {}", column, order);
-            // Must NOT contain the malicious string
-            assert!(
-                !query.contains(malicious) || ALLOWED_SORT_COLUMNS.contains(&malicious),
-                "Injection attempt '{}' should not appear in query: {}",
-                malicious,
-                query
-            );
+            // Must NOT contain the malicious string (skip empty string check - trivially true)
+            if !malicious.is_empty() {
+                assert!(
+                    !query.contains(malicious) || ALLOWED_SORT_COLUMNS.contains(&malicious),
+                    "Injection attempt '{}' should not appear in query: {}",
+                    malicious,
+                    query
+                );
+            }
             // Must contain the safe default
             assert_eq!(column, "display_name", "Should fall back to display_name for: {}", malicious);
         }

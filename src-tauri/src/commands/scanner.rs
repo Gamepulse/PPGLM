@@ -330,6 +330,10 @@ async fn scan_directory_smart(
     let mut files: Vec<(std::path::PathBuf, String)> = Vec::new();
     
     for entry in entries.filter_map(|e| e.ok()) {
+        // Check for cancellation at start of each entry
+        if cancel_token.is_cancelled() {
+            return Ok(());
+        }
         let entry_path = entry.path();
 
         if entry_path.is_dir() {
