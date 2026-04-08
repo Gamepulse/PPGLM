@@ -1,0 +1,790 @@
+use std::path::Path;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use tokio::sync::Mutex;
+use tauri::{AppHandle, Emitter, State};
+
+use crate::commands::database::get_exclusion_patterns;
+use crate::commands::igdb::get_igdb_token;
+use crate::db::Database;
+use crate::models::igdb::IgdbCover;
+use crate::models::scan_result::{IgdbGenreSimple, MatchCandidate, MatchConfidence, ScanResult};
+
+// Global cancellation flag for scan operations
+static SCAN_CANCELLED: AtomicBool = AtomicBool::new(false);
+
+const SYSTEM_FOLDERS: &[&str] = &[
+    "Windows",
+    "Program Files",
+    "Program Files (x86)",
+    "ProgramData",
+    "$Recycle.Bin",
+    "System Volume Information",
+    "Recovery",
+    "PerfLogs",
+];
+
+// Folders to ignore when scanning (common non-game subdirectories)
+const SKIP_FOLDER_PATTERNS: &[&str] = &[
+    "update",
+    "patch",
+    "dlc",
+    "redist",
+    "directx",
+    "vcredist",
+    "installer",
+    "setup",
+    "uninstall",
+    "temp",
+    "tmp",
+    "cache",
+    "logs",
+    "saves",
+    "save",
+    "screenshots",
+    "config",
+    "settings",
+    "docs",
+    "manual",
+    "readme",
+];
+
+/// Maximum recursion depth
+const MAX_DEPTH: usize = 3;
+
+/// Progress event emitted during scanning
+#[derive(Clone, serde::Serialize)]
+pub struct ScanProgress {
+    pub folders_scanned: usize,
+    pub games_found: usize,
+    pub current_path: String,
+    pub operation: String,
+}
+
+/// Console log event for frontend display
+#[derive(Clone, serde::Serialize)]
+pub struct ConsoleLog {
+    pub timestamp: String,
+    pub level: String,
+    pub message: String,
+}
+
+/// Scan result with game found
+#[derive(Clone, serde::Serialize)]
+pub struct ScanResultEvent {
+    pub result: ScanResult,
+    pub total_found: usize,
+}
+
+/// Check if folder name should be skipped
+fn should_skip_folder(folder_name: &str, custom_exclusions: &[String]) -> bool {
+    let lower = folder_name.to_lowercase();
+    
+    // Skip system folders
+    if SYSTEM_FOLDERS.iter().any(|sf| sf.eq_ignore_ascii_case(folder_name))
+        || folder_name.starts_with('.') {
+        return true;
+    }
+    
+    // Skip common non-game patterns
+    for pattern in SKIP_FOLDER_PATTERNS {
+        if lower.contains(pattern) {
+            return true;
+        }
+    }
+    
+    // Skip custom exclusions from database
+    for pattern in custom_exclusions {
+        if lower.contains(&pattern.to_lowercase()) {
+            return true;
+        }
+    }
+    
+    // Skip folders with version numbers only (like "1.0.0", "v2.1")
+    if regex::Regex::new(r"^v?\d+(\.\d+)*$").unwrap().is_match(folder_name) {
+        return true;
+    }
+    
+    // Skip very short names (less than 2 chars)
+    if folder_name.len() < 2 {
+        return true;
+    }
+    
+    false
+}
+
+/// Calculate Levenshtein distance between two strings
+fn levenshtein(a: &str, b: &str) -> usize {
+    let a_len = a.chars().count();
+    let b_len = b.chars().count();
+
+    if a_len == 0 {
+        return b_len;
+    }
+    if b_len == 0 {
+        return a_len;
+    }
+
+    let mut matrix = vec![vec![0; b_len + 1]; a_len + 1];
+
+    for (i, row) in matrix.iter_mut().enumerate() {
+        row[0] = i;
+    }
+
+    for j in 1..=b_len {
+        matrix[0][j] = j;
+    }
+
+    for (i, ca) in a.chars().enumerate() {
+        for (j, cb) in b.chars().enumerate() {
+            let cost = if ca == cb { 0 } else { 1 };
+            matrix[i + 1][j + 1] = std::cmp::min(
+                std::cmp::min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1),
+                matrix[i][j] + cost,
+            );
+        }
+    }
+
+    matrix[a_len][b_len]
+}
+
+/// IGDB response with cover for smart scan matching
+#[derive(Debug, serde::Deserialize)]
+struct IgdbGameWithCover {
+    pub id: i64,
+    pub name: String,
+    pub cover: Option<IgdbCover>,
+    pub rating: Option<f64>,
+    pub summary: Option<String>,
+    pub first_release_date: Option<i64>,
+    pub genres: Option<Vec<IgdbGenreSimple>>,
+    pub game_modes: Option<Vec<IgdbGenreSimple>>,
+    pub player_perspectives: Option<Vec<IgdbGenreSimple>>,
+    pub themes: Option<Vec<IgdbGenreSimple>>,
+}
+
+/// Format IGDB cover URL to full size
+fn format_cover_url(url: &str) -> String {
+    if url.starts_with("//") {
+        format!("https:{}", url.replace("t_thumb", "t_cover_big"))
+    } else if url.starts_with("http://") {
+        url.replace("http://", "https://").replace("t_thumb", "t_cover_big")
+    } else if url.starts_with("https://") {
+        url.replace("t_thumb", "t_cover_big")
+    } else {
+        format!("https://{}", url.replace("t_thumb", "t_cover_big"))
+    }
+}
+
+/// Try to match a folder name with IGDB
+/// Returns Some(ScanResult) if match found, None otherwise
+async fn try_match_folder(
+    folder_name: &str,
+    folder_path: &str,
+    client_id: &str,
+    token: &str,
+) -> Option<ScanResult> {
+    let display_name = clean_folder_name(folder_name);
+    let display_lower = display_name.to_lowercase();
+    let folder_lower = folder_name.to_lowercase();
+
+    // Search IGDB with full game data
+    let client = reqwest::Client::new();
+    let response = client
+        .post("https://api.igdb.com/v4/games")
+        .header("Client-ID", client_id)
+        .header("Authorization", format!("Bearer {}", token))
+        .body(format!(
+            "search \"{}\"; fields id,name,cover.url,rating,summary,genres.name,game_modes.name,player_perspectives.name,themes.name,first_release_date; limit 5;",
+            display_lower
+        ))
+        .send()
+        .await;
+
+    if let Ok(resp) = response {
+        if let Ok(igdb_results) = resp.json::<Vec<IgdbGameWithCover>>().await {
+            if let Some(best_match) = igdb_results.first() {
+                let igdb_name_lower = best_match.name.to_lowercase();
+                
+                // Calculate distances using both folder_name and display_name
+                let distance_display = levenshtein(&display_lower, &igdb_name_lower);
+                let distance_folder = levenshtein(&folder_lower, &igdb_name_lower);
+                
+                // Use the best (minimum) distance of the two
+                let best_distance = std::cmp::min(distance_display, distance_folder);
+                
+                // Track which name was used for the match
+                let name_used = if distance_folder <= distance_display {
+                    "folder_name"
+                } else {
+                    "display_name"
+                };
+
+                // Build candidates list with covers
+                let candidates: Vec<MatchCandidate> = igdb_results
+                    .iter()
+                    .map(|g| {
+                        let igdb_lower = g.name.to_lowercase();
+                        let d_display = levenshtein(&display_lower, &igdb_lower);
+                        let d_folder = levenshtein(&folder_lower, &igdb_lower);
+                        MatchCandidate {
+                            id: g.id,
+                            name: g.name.clone(),
+                            distance: std::cmp::min(d_display, d_folder),
+                            cover_url: g.cover.as_ref().map(|c| format_cover_url(&c.url)),
+                        }
+                    })
+                    .collect();
+
+                if best_distance <= 2 {
+                    // It's a match!
+                    let match_confidence = if best_distance == 0 {
+                        MatchConfidence::Exact
+                    } else {
+                        MatchConfidence::Fuzzy
+                    };
+                    
+                    let match_source = if best_distance == 0 {
+                        format!("igdb_exact_{}", name_used)
+                    } else {
+                        format!("igdb_fuzzy_{}", name_used)
+                    };
+
+                    // Format release date from timestamp
+                    let release_date = best_match.first_release_date
+                        .map(|ts| {
+                            chrono::DateTime::from_timestamp(ts, 0)
+                                .map(|dt| dt.format("%Y-%m-%d").to_string())
+                                .unwrap_or_default()
+                        });
+
+                    return Some(ScanResult {
+                        folder_name: folder_name.to_string(),
+                        folder_path: folder_path.to_string(),
+                        display_name,
+                        match_confidence,
+                        candidates,
+                        igdb_id: Some(best_match.id),
+                        match_source,
+                        cover_url: best_match.cover.as_ref().map(|c| format_cover_url(&c.url)),
+                        synopsis: best_match.summary.clone(),
+                        release_date,
+                        igdb_rating: best_match.rating,
+                        genres: best_match.genres.clone().unwrap_or_default(),
+                        game_modes: best_match.game_modes.clone().unwrap_or_default(),
+                        player_perspectives: best_match.player_perspectives.clone().unwrap_or_default(),
+                        themes: best_match.themes.clone().unwrap_or_default(),
+                    });
+                }
+            }
+        }
+    }
+
+    None
+}
+
+/// Stop the current scan operation
+#[tauri::command]
+pub fn stop_scan() -> Result<bool, String> {
+    SCAN_CANCELLED.store(true, Ordering::SeqCst);
+    Ok(true)
+}
+
+/// Reset the cancellation flag (call at start of new scan)
+fn reset_scan_cancellation() {
+    SCAN_CANCELLED.store(false, Ordering::SeqCst);
+}
+
+/// Check if scan should be cancelled
+fn is_scan_cancelled() -> bool {
+    SCAN_CANCELLED.load(Ordering::SeqCst)
+}
+
+/// Smart scan with early exit - only descends if no match found
+#[tauri::command]
+pub async fn scan_folders_smart(
+    paths: Vec<String>,
+    db: State<'_, Database>,
+    app_handle: AppHandle,
+) -> Result<(), String> {
+    // Reset cancellation flag at start
+    reset_scan_cancellation();
+    
+    log_to_console(&app_handle, "INFO", "Starting smart scan with early exit...");
+    log_to_console(&app_handle, "INFO", "Tip: Click 'Stop Scan' to cancel at any time");
+    
+    // Get IGDB credentials
+    let token = get_igdb_token(&db).await?;
+    let creds = crate::commands::matcher::get_igdb_credentials(&db)?
+        .ok_or_else(|| "IGDB credentials not configured. Please configure in Settings.".to_string())?;
+
+    let existing_paths: Vec<String> = {
+        let conn = db.lock_conn()?;
+        let mut stmt = conn
+            .prepare("SELECT folder_path FROM games")
+            .map_err(|e: rusqlite::Error| e.to_string())?;
+        let rows: Result<Vec<String>, rusqlite::Error> = stmt
+            .query_map([], |row: &rusqlite::Row<'_>| row.get(0))
+            .map(|iter| iter.filter_map(|r: Result<String, rusqlite::Error>| r.ok()).collect());
+        rows.map_err(|e| e.to_string())?
+    };
+    
+    // Load custom exclusions from database
+    let custom_exclusions = get_exclusion_patterns(&db)?;
+    
+    // Load scan_files setting
+    let scan_files = {
+        let conn = db.lock_conn()?;
+        let result: Option<String> = conn
+            .query_row(
+                "SELECT value FROM app_settings WHERE key = 'scan_files'",
+                [],
+                |row| row.get(0),
+            )
+            .ok();
+        result.as_deref() == Some("true")
+    };
+    
+    log_to_console(&app_handle, "INFO", &format!("Found {} existing games in database", existing_paths.len()));
+    log_to_console(&app_handle, "INFO", &format!("Loaded {} custom exclusion patterns", custom_exclusions.len()));
+    if scan_files {
+        log_to_console(&app_handle, "INFO", "File scanning enabled - will also scan individual files");
+    }
+
+    let existing_paths = Arc::new(existing_paths);
+    let custom_exclusions = Arc::new(custom_exclusions);
+    let games_found = Arc::new(Mutex::new(0usize));
+    let folders_scanned = Arc::new(Mutex::new(0usize));
+    let scan_files = Arc::new(scan_files);
+
+    // Process each root path
+    for path_str in &paths {
+        // Check for cancellation at start of each folder
+        if is_scan_cancelled() {
+            log_to_console(&app_handle, "WARN", "Scan cancelled by user");
+            let _ = app_handle.emit("scan:cancelled", ());
+            break;
+        }
+        
+        let path = Path::new(path_str);
+        if !path.is_dir() {
+            log_to_console(&app_handle, "WARN", &format!("Path is not a directory: {}", path_str));
+            continue;
+        }
+        
+        log_to_console(&app_handle, "INFO", &format!("Scanning root folder: {}", path_str));
+
+        // Emit initial progress
+        let _ = app_handle.emit("scan:progress", ScanProgress {
+            folders_scanned: 0,
+            games_found: 0,
+            current_path: path_str.clone(),
+            operation: "scanning".to_string(),
+        });
+
+        // Scan with smart early-exit logic
+        scan_directory_smart(
+            path,
+            0,
+            Arc::clone(&existing_paths),
+            Arc::clone(&custom_exclusions),
+            Arc::clone(&games_found),
+            Arc::clone(&folders_scanned),
+            Arc::clone(&scan_files),
+            &app_handle,
+            &creds.client_id,
+            &token,
+        ).await?;
+        
+        // Check for cancellation after each root path
+        if is_scan_cancelled() {
+            log_to_console(&app_handle, "WARN", "Scan cancelled by user");
+            let _ = app_handle.emit("scan:cancelled", ());
+            break;
+        }
+    }
+    
+    let final_count = *games_found.lock().await;
+    
+    if is_scan_cancelled() {
+        log_to_console(&app_handle, "INFO", &format!("Scan stopped. Found {} games before cancellation", final_count));
+    } else {
+        log_to_console(&app_handle, "INFO", &format!("Smart scan complete! Found {} games", final_count));
+    }
+    
+    // Emit completion event
+    let _ = app_handle.emit("scan:complete", final_count);
+
+    Ok(())
+}
+
+/// Scan directory with smart early-exit logic
+/// If a folder matches with IGDB, it's considered a game and we don't scan its children
+/// If no match, we recursively scan its subdirectories
+async fn scan_directory_smart(
+    parent: &Path,
+    depth: usize,
+    existing_paths: Arc<Vec<String>>,
+    custom_exclusions: Arc<Vec<String>>,
+    games_found: Arc<Mutex<usize>>,
+    folders_scanned: Arc<Mutex<usize>>,
+    scan_files: Arc<bool>,
+    app_handle: &AppHandle,
+    client_id: &str,
+    token: &str,
+) -> Result<(), String> {
+    if depth > MAX_DEPTH {
+        log_to_console(app_handle, "DEBUG", &format!("Max depth reached for: {}", parent.display()));
+        return Ok(());
+    }
+
+    let entries = match std::fs::read_dir(parent) {
+        Ok(e) => e,
+        Err(e) => {
+            log_to_console(app_handle, "ERROR", &format!("Cannot read directory {}: {}", parent.display(), e));
+            return Ok(());
+        }
+    };
+
+    // Collect all subdirectories and optionally files
+    let mut subdirs: Vec<(std::path::PathBuf, String)> = Vec::new();
+    let mut files: Vec<(std::path::PathBuf, String)> = Vec::new();
+    
+    for entry in entries.filter_map(|e| e.ok()) {
+        let entry_path = entry.path();
+
+        if entry_path.is_dir() {
+            // Process directory
+            let folder_name = match entry_path.file_name().and_then(|n| n.to_str()) {
+                Some(name) => name.to_string(),
+                None => continue,
+            };
+
+            // Skip if should be ignored
+            if should_skip_folder(&folder_name, &custom_exclusions) {
+                continue;
+            }
+
+            subdirs.push((entry_path, folder_name));
+        } else if *scan_files && entry_path.is_file() {
+            // Process file (if scan_files enabled)
+            let file_name = match entry_path.file_stem().and_then(|n| n.to_str()) {
+                Some(name) => name.to_string(),
+                None => continue,
+            };
+
+            // Skip if should be ignored
+            if should_skip_folder(&file_name, &custom_exclusions) {
+                continue;
+            }
+
+            files.push((entry_path, file_name));
+        }
+    }
+
+    // Process files first (if any)
+    for (entry_path, file_name) in files {
+        // Check for cancellation
+        if is_scan_cancelled() {
+            return Ok(());
+        }
+        
+        let file_path_str = entry_path.to_string_lossy().to_string();
+        
+        // Skip if already in database
+        if existing_paths.contains(&file_path_str) {
+            log_to_console(app_handle, "DEBUG", &format!("Skipping file already in db: {}", file_name));
+            continue;
+        }
+        
+        let display_name = clean_folder_name(&file_name);
+        
+        log_to_console(app_handle, "INFO", &format!("Found file: {}", display_name));
+        
+        // Try to match this file with IGDB (treat it like a folder)
+        match try_match_folder(&file_name, &file_path_str, client_id, token).await {
+            Some(result) => {
+                // MATCH FOUND! This is a game
+                log_to_console(app_handle, "SUCCESS", &format!("✓ Matched file: {} → {} (confidence: {:?})", 
+                    display_name, 
+                    result.candidates.first().map(|c| c.name.clone()).unwrap_or_default(),
+                    result.match_confidence
+                ));
+
+                // Increment counter
+                let mut count = games_found.lock().await;
+                *count += 1;
+                let total = *count;
+                drop(count);
+
+                // Emit result immediately
+                let _ = app_handle.emit("scan:result", ScanResultEvent {
+                    result,
+                    total_found: total,
+                });
+
+                // Update progress
+                let folders = *folders_scanned.lock().await;
+                let _ = app_handle.emit("scan:progress", ScanProgress {
+                    folders_scanned: folders,
+                    games_found: total,
+                    current_path: display_name.clone(),
+                    operation: "matched_file".to_string(),
+                });
+            }
+            None => {
+                // No match for this file
+                log_to_console(app_handle, "DEBUG", &format!("No match for file: {}", display_name));
+            }
+        }
+    }
+
+    // Process each subdirectory
+    for (entry_path, folder_name) in subdirs {
+        // Check for cancellation
+        if is_scan_cancelled() {
+            return Ok(());
+        }
+        
+        let folder_path_str = entry_path.to_string_lossy().to_string();
+        let display_name = clean_folder_name(&folder_name);
+        
+        // Rate limiting for API calls
+        tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+        
+        // Check for cancellation after rate limiting
+        if is_scan_cancelled() {
+            return Ok(());
+        }
+        
+        log_to_console(app_handle, "INFO", &format!("Trying to match: {}", display_name));
+
+        // Try to match this folder with IGDB
+        match try_match_folder(&folder_name, &folder_path_str, client_id, token).await {
+            Some(result) => {
+                // MATCH FOUND! This is a game, don't scan its children
+                log_to_console(app_handle, "SUCCESS", &format!("✓ Matched: {} → {} (confidence: {:?})", 
+                    display_name, 
+                    result.candidates.first().map(|c| c.name.clone()).unwrap_or_default(),
+                    result.match_confidence
+                ));
+
+                // Increment counter
+                let mut count = games_found.lock().await;
+                *count += 1;
+                let total = *count;
+                drop(count);
+
+                // Emit result immediately
+                let _ = app_handle.emit("scan:result", ScanResultEvent {
+                    result,
+                    total_found: total,
+                });
+
+                // Update progress
+                let folders = *folders_scanned.lock().await;
+                let _ = app_handle.emit("scan:progress", ScanProgress {
+                    folders_scanned: folders,
+                    games_found: total,
+                    current_path: display_name.clone(),
+                    operation: "matched".to_string(),
+                });
+                
+                // EARLY EXIT: Don't scan children of this folder
+                continue;
+            }
+            None => {
+                // NO MATCH - Descend into subdirectories
+                log_to_console(app_handle, "DEBUG", &format!("No match for: {}, scanning deeper...", display_name));
+                
+                // Increment folders scanned counter
+                let mut folders = folders_scanned.lock().await;
+                *folders += 1;
+                let folders_count = *folders;
+                drop(folders);
+                
+                // Emit progress
+                let games = *games_found.lock().await;
+                let _ = app_handle.emit("scan:progress", ScanProgress {
+                    folders_scanned: folders_count,
+                    games_found: games,
+                    current_path: display_name.clone(),
+                    operation: "scanning".to_string(),
+                });
+
+                // Recurse into this subdirectory
+                Box::pin(scan_directory_smart(
+                    &entry_path,
+                    depth + 1,
+                    Arc::clone(&existing_paths),
+                    Arc::clone(&custom_exclusions),
+                    Arc::clone(&games_found),
+                    Arc::clone(&folders_scanned),
+                    Arc::clone(&scan_files),
+                    app_handle,
+                    client_id,
+                    token,
+                )).await?;
+            }
+        }
+        
+        // Yield to keep UI responsive
+        tokio::task::yield_now().await;
+    }
+
+    Ok(())
+}
+
+fn log_to_console(app_handle: &AppHandle, level: &str, message: &str) {
+    let timestamp = chrono::Local::now().format("%H:%M:%S").to_string();
+    let log = ConsoleLog {
+        timestamp,
+        level: level.to_string(),
+        message: message.to_string(),
+    };
+    let _ = app_handle.emit("console:log", log);
+    println!("[{}] {}: {}", chrono::Local::now().format("%H:%M:%S"), level, message);
+}
+
+fn clean_folder_name(name: &str) -> String {
+    let re_scene = regex::Regex::new(
+        r"(?i)\s*[\[(].*?(fitgirl|codex|skidrow|reloaded|plaza|cpy|elmomomo|darck|gog|steam|epic).*?[\])]",
+    ).unwrap();
+    let re_version = regex::Regex::new(r"(?i)\s*v?\d+\.\d+(\.\d+)*(\s+build\s+\d+)?").unwrap();
+    let re_platform = regex::Regex::new(r"(?i)\s*[\[(](windows|linux|mac|multi\d*).*?[\])]").unwrap();
+    let re_lang = regex::Regex::new(r"(?i)\s*[\[(](fr|en|de|es|it|ru|multi|multilang).*?[\])]").unwrap();
+    let re_fill = regex::Regex::new(r"[._]{2,}").unwrap();
+
+    let cleaned = re_scene.replace_all(name, "");
+    let cleaned = re_version.replace_all(&cleaned, "");
+    let cleaned = re_platform.replace_all(&cleaned, "");
+    let cleaned = re_lang.replace_all(&cleaned, "");
+    let cleaned = re_fill.replace_all(&cleaned, " ");
+    let cleaned = cleaned.trim().to_string();
+
+    if cleaned.is_empty() { name.trim().to_string() } else { cleaned }
+}
+
+// Legacy synchronous version - simplified for folder names only
+#[tauri::command]
+pub fn scan_folders(
+    paths: Vec<String>,
+    db: State<'_, Database>,
+    app_handle: AppHandle,
+) -> Result<Vec<ScanResult>, String> {
+    let mut all_results = Vec::new();
+    
+    let existing_paths: Vec<String> = {
+        let conn = db.lock_conn()?;
+        let mut stmt = conn
+            .prepare("SELECT folder_path FROM games")
+            .map_err(|e: rusqlite::Error| e.to_string())?;
+        let rows: Result<Vec<String>, rusqlite::Error> = stmt
+            .query_map([], |row: &rusqlite::Row<'_>| row.get(0))
+            .map(|iter| iter.filter_map(|r: Result<String, rusqlite::Error>| r.ok()).collect());
+        rows.map_err(|e| e.to_string())?
+    };
+
+    // Load custom exclusions from database
+    let custom_exclusions = get_exclusion_patterns(&db)?;
+
+    let existing_paths = Arc::new(existing_paths);
+    let custom_exclusions = Arc::new(custom_exclusions);
+
+    for path_str in &paths {
+        let path = Path::new(path_str);
+        if !path.is_dir() { continue; }
+
+        scan_subdirectories_blocking(
+            path,
+            0,
+            Arc::clone(&existing_paths),
+            Arc::clone(&custom_exclusions),
+            &mut all_results,
+            &app_handle,
+        )?;
+    }
+
+    Ok(all_results)
+}
+
+fn scan_subdirectories_blocking(
+    parent: &Path,
+    depth: usize,
+    existing_paths: Arc<Vec<String>>,
+    custom_exclusions: Arc<Vec<String>>,
+    results: &mut Vec<ScanResult>,
+    app_handle: &AppHandle,
+) -> Result<(), String> {
+    if depth > MAX_DEPTH { return Ok(()); }
+
+    let entries = match std::fs::read_dir(parent) {
+        Ok(e) => e,
+        Err(_) => return Ok(()),
+    };
+
+    for entry in entries.filter_map(|e| e.ok()) {
+        let entry_path = entry.path();
+        if !entry_path.is_dir() { continue; }
+
+        let folder_name = match entry_path.file_name().and_then(|n| n.to_str()) {
+            Some(name) => name.to_string(),
+            None => continue,
+        };
+
+        // Skip if should be ignored
+        if should_skip_folder(&folder_name, &custom_exclusions) {
+            continue;
+        }
+
+        let folder_path_str = entry_path.to_string_lossy().to_string();
+
+        if existing_paths.contains(&folder_path_str) { continue; }
+
+        // Every folder is a potential game
+        let display_name = clean_folder_name(&folder_name);
+        
+        log_to_console(app_handle, "SUCCESS", &format!("Found: {}", display_name));
+
+        results.push(ScanResult {
+            folder_name: folder_name.clone(),
+            folder_path: folder_path_str.clone(),
+            display_name,
+            match_confidence: MatchConfidence::None,
+            candidates: Vec::new(),
+            igdb_id: None,
+            match_source: "heuristic".to_string(),
+            cover_url: None,
+            synopsis: None,
+            release_date: None,
+            igdb_rating: None,
+            genres: Vec::new(),
+            game_modes: Vec::new(),
+            player_perspectives: Vec::new(),
+            themes: Vec::new(),
+        });
+
+        // Scan deeper
+        scan_subdirectories_blocking(
+            &entry_path,
+            depth + 1,
+            Arc::clone(&existing_paths),
+            Arc::clone(&custom_exclusions),
+            results,
+            app_handle,
+        )?;
+    }
+
+    Ok(())
+}
+
+/// Legacy streaming scan - kept for backward compatibility
+#[tauri::command]
+pub async fn scan_folders_streaming(
+    paths: Vec<String>,
+    db: State<'_, Database>,
+    app_handle: AppHandle,
+) -> Result<(), String> {
+    // Delegate to smart scan now
+    scan_folders_smart(paths, db, app_handle).await
+}

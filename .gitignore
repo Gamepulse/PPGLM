@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+
+# IDE / OS
+.DS_Store
+._.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Session files
+.sisyphus/
+._.sisyphus
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Tauri
+src-tauri/target/
