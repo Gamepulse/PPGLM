@@ -50,7 +50,7 @@ export function AddGameModal({ onClose, onSaved }: AddGameModalProps) {
       const folderName = folderPath ? folderPath.split(/[\\/]/).filter(Boolean).pop() || "" : displayName;
       const game: Game = {
         id: 0, folder_name: folderName, folder_path: folderPath || `manual://${displayName}`,
-        display_name: displayName.trim(), igdb_id: igdbId, personal_rating: null, igdb_rating: null,
+        display_name: displayName.trim(), igdb_id: igdbId, igdb_slug: null, personal_rating: null, igdb_rating: null,
         notes: notes.trim() || null, cover_url: coverUrl, synopsis: null, release_date: null,
         created_at: "", updated_at: "", tags: [], genres: [], game_modes: [],
         player_perspectives: [], themes: [],
@@ -80,19 +80,6 @@ export function AddGameModal({ onClose, onSaved }: AddGameModalProps) {
               autoFocus />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Folder Path (optional)</label>
-            <div className="flex gap-2">
-              <input type="text" value={folderPath} onChange={(e) => setFolderPath(e.target.value)}
-                placeholder="D:\Games\Witcher3"
-                className="flex-1 bg-gray-900 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-indigo-500 focus:outline-none text-sm font-mono" />
-              <button onClick={handleBrowseFolder}
-                className="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 hover:text-white text-sm whitespace-nowrap">
-                Browse
-              </button>
-            </div>
-          </div>
-
           {igdbId ? (
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">IGDB Link</label>
@@ -106,6 +93,19 @@ export function AddGameModal({ onClose, onSaved }: AddGameModalProps) {
           )}
 
           <CoverPreview coverUrl={coverUrl} />
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Folder Path (optional)</label>
+            <div className="flex gap-2">
+              <input type="text" value={folderPath} onChange={(e) => setFolderPath(e.target.value)}
+                placeholder="D:\Games\Witcher3"
+                className="flex-1 bg-gray-900 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-indigo-500 focus:outline-none text-sm font-mono" />
+              <button onClick={handleBrowseFolder}
+                className="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 hover:text-white text-sm whitespace-nowrap">
+                Browse
+              </button>
+            </div>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Notes (optional)</label>
