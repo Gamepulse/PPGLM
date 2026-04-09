@@ -8,6 +8,7 @@ import { GameDetailInfo } from "./GameDetailInfo";
 import { GameDetailTags } from "./GameDetailTags";
 import { formatDate } from "../../utils/formatters";
 import { useI18n } from "../../i18n";
+import { open } from "@tauri-apps/plugin-dialog";
 
 interface GameDetailProps {
   gameId: number;
@@ -26,6 +27,7 @@ export function GameDetail({ gameId, onBack }: GameDetailProps) {
     updateCompletionStatus,
     updateFavorite,
     launchGame,
+    updateExecutablePath,
   } = useGames();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,6 +92,26 @@ export function GameDetail({ gameId, onBack }: GameDetailProps) {
     await launchGame(game.id);
   };
 
+  const handleBrowseExecutable = async () => {
+    const selected = await open({
+      directory: false,
+      multiple: false,
+      filters: [
+        { name: "Executables", extensions: ["exe", "sh", "app", "bat", "cmd"] },
+        { name: "All Files", extensions: ["*"] },
+      ],
+    });
+    if (selected && typeof selected === "string") {
+      await updateExecutablePath(game.id, selected);
+      setGame({ ...game, executable_path: selected });
+    }
+  };
+
+  const handleClearExecutable = async () => {
+    await updateExecutablePath(game.id, null);
+    setGame({ ...game, executable_path: null });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <button type="button" onClick={onBack} className="text-indigo-400 hover:text-indigo-300 mb-6 flex items-center gap-2">
@@ -101,18 +123,45 @@ export function GameDetail({ gameId, onBack }: GameDetailProps) {
       <GameDetailInfo game={game} />
 
       <div className="pt-4 theme-border border-t mt-4 space-y-4">
-        {/* Launch Game Button */}
-        {game.executable_path && (
-          <div>
+        {/* Launch Path / Executable */}
+        <div>
+          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('executablePath')}</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={game.executable_path || ''}
+              readOnly
+              placeholder={t('browse')}
+              className="flex-1 px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500 text-sm"
+            />
+            <button
+              type="button"
+              onClick={handleBrowseExecutable}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+            >
+              {t('browse')}
+            </button>
+            {game.executable_path && (
+              <button
+                type="button"
+                onClick={handleClearExecutable}
+                className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                title="Clear executable path"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          {game.executable_path && (
             <button
               type="button"
               onClick={handleLaunch}
-              className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 font-medium"
+              className="w-full mt-3 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 font-medium"
             >
               ▶ {t('launchGame')}
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Favorite Button */}
         <div>
