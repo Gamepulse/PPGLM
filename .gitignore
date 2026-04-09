@@ -42,3 +42,6 @@ yarn-error.log*
 # Tauri
 src-tauri/target/
 *.msi
+
+# Windows SDK packages and generated files
+.winapp
