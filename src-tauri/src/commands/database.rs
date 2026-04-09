@@ -1,6 +1,6 @@
 use tauri::State;
 use crate::db::Database;
-use crate::models::game::{Game, Tag, Genre, GameMode, PlayerPerspective, Theme, ScannedFolder, GameFilters};
+use crate::models::game::{Game, Tag, Genre, GameMode, PlayerPerspective, Theme, ScannedFolder, GameFilters, Collection, Screenshot, SearchHistoryEntry, GameStatistics, StatusCount, GenreCount};
 use crate::models::scan_result::{IgdbGenreSimple, ScanResult};
 
 // === Game CRUD ===
@@ -9,11 +9,12 @@ use crate::models::scan_result::{IgdbGenreSimple, ScanResult};
 pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, String> {
     let conn = db.lock_conn()?;
     
-    // First, get the main game data
+    // First, get the main game data (with new fields)
     let mut stmt = conn
         .prepare(
             "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
-             personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at \
+             personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
              FROM games WHERE id = ?1",
         )
         .map_err(|e: rusqlite::Error| e.to_string())?;
@@ -35,6 +36,12 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
                 release_date: row.get(11)?,
                 created_at: row.get(12)?,
                 updated_at: row.get(13)?,
+                play_time: row.get(14)?,
+                completion_status: row.get(15)?,
+                is_favorite: row.get::<_, Option<i64>>(16)?.map(|v| v != 0),
+                last_played: row.get(17)?,
+                executable_path: row.get(18)?,
+                store_links: row.get(19)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
@@ -377,7 +384,8 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
     
     let mut query = String::from(
         "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
-         personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at \
+         personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
+         play_time, completion_status, is_favorite, last_played, executable_path, store_links \
          FROM games WHERE 1=1"
     );
     let mut params: Vec<Box<dyn rusqlite::ToSql>> = Vec::new();
@@ -408,12 +416,37 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
             params.push(Box::new(pattern.clone()));
             params.push(Box::new(pattern));
         }
+        // New filter: completion_status
+        if let Some(status) = &f.completion_status {
+            query.push_str(" AND completion_status = ?");
+            params.push(Box::new(status.clone()));
+        }
+        // New filter: is_favorite
+        if let Some(fav) = f.is_favorite {
+            query.push_str(" AND is_favorite = ?");
+            params.push(Box::new(if fav { 1i64 } else { 0i64 }));
+        }
+        // New filter: collection_id
+        if let Some(collection_id) = f.collection_id {
+            query.push_str(" AND id IN (SELECT game_id FROM game_collections WHERE collection_id = ?)");
+            params.push(Box::new(collection_id));
+        }
+        // New filter: play_time range
+        if let Some(min_time) = f.min_play_time {
+            query.push_str(" AND play_time >= ?");
+            params.push(Box::new(min_time));
+        }
+        if let Some(max_time) = f.max_play_time {
+            query.push_str(" AND play_time <= ?");
+            params.push(Box::new(max_time));
+        }
         if let Some(sort) = &f.sort_by {
             const ALLOWED_SORT_COLUMNS: &[&str] = &[
                 "id", "folder_name", "folder_path", "display_name",
                 "igdb_id", "personal_rating", "igdb_rating",
                 "notes", "cover_url", "synopsis", "release_date",
-                "created_at", "updated_at",
+                "created_at", "updated_at", "play_time", "completion_status",
+                "is_favorite", "last_played",
             ];
             let column = if ALLOWED_SORT_COLUMNS.contains(&sort.as_str()) {
                 sort.as_str()
@@ -454,6 +487,12 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
                 release_date: row.get(11)?,
                 created_at: row.get(12)?,
                 updated_at: row.get(13)?,
+                play_time: row.get(14)?,
+                completion_status: row.get(15)?,
+                is_favorite: row.get::<_, Option<i64>>(16)?.map(|v| v != 0),
+                last_played: row.get(17)?,
+                executable_path: row.get(18)?,
+                store_links: row.get(19)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
@@ -837,6 +876,12 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
                     game_modes: Vec::new(),
                     player_perspectives: Vec::new(),
                     themes: Vec::new(),
+                    play_time: None,
+                    completion_status: None,
+                    is_favorite: Some(false),
+                    last_played: None,
+                    executable_path: None,
+                    store_links: None,
                 });
             }
             Err(e) => {
@@ -951,7 +996,8 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
     let mut stmt = conn
         .prepare(
             "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
-             personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at \
+             personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
              FROM games \
              WHERE display_name LIKE ?1 OR folder_name LIKE ?1 \
              ORDER BY display_name \
@@ -976,6 +1022,12 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
                 release_date: row.get(11)?,
                 created_at: row.get(12)?,
                 updated_at: row.get(13)?,
+                play_time: row.get(14)?,
+                completion_status: row.get(15)?,
+                is_favorite: row.get::<_, Option<i64>>(16)?.map(|v| v != 0),
+                last_played: row.get(17)?,
+                executable_path: row.get(18)?,
+                store_links: row.get(19)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
@@ -988,4 +1040,511 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
         .collect();
 
     Ok(games)
+}
+
+// === Play Time & Completion Status Commands ===
+
+#[tauri::command]
+pub fn update_game_play_time(id: i64, hours: f64, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET play_time = ?1, updated_at = datetime('now') WHERE id = ?2",
+        rusqlite::params![hours, id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn update_game_completion_status(id: i64, status: String, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET completion_status = ?1, updated_at = datetime('now') WHERE id = ?2",
+        rusqlite::params![status, id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn update_game_favorite(id: i64, is_favorite: bool, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET is_favorite = ?1, updated_at = datetime('now') WHERE id = ?2",
+        rusqlite::params![if is_favorite { 1i64 } else { 0i64 }, id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn update_game_executable_path(id: i64, path: Option<String>, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET executable_path = ?1, updated_at = datetime('now') WHERE id = ?2",
+        rusqlite::params![path, id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn update_game_store_links(id: i64, links: Option<String>, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET store_links = ?1, updated_at = datetime('now') WHERE id = ?2",
+        rusqlite::params![links, id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn record_game_played(id: i64, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET last_played = datetime('now'), updated_at = datetime('now') WHERE id = ?1",
+        rusqlite::params![id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+// === Collections Commands ===
+
+#[tauri::command]
+pub fn get_collections(db: State<'_, Database>) -> Result<Vec<Collection>, String> {
+    let conn = db.lock_conn()?;
+    let mut stmt = conn
+        .prepare("SELECT id, name, description, icon, color, is_system, created_at, updated_at FROM collections ORDER BY is_system DESC, name")
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+
+    let collections: Vec<Collection> = stmt
+        .query_map([], |row| {
+            Ok(Collection {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                description: row.get(2)?,
+                icon: row.get(3)?,
+                color: row.get(4)?,
+                is_system: row.get::<_, i64>(5)? != 0,
+                created_at: row.get(6)?,
+                updated_at: row.get(7)?,
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+
+    Ok(collections)
+}
+
+#[tauri::command]
+pub fn create_collection(name: String, description: Option<String>, color: Option<String>, db: State<'_, Database>) -> Result<Collection, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "INSERT INTO collections (name, description, color, is_system) VALUES (?1, ?2, ?3, 0)",
+        rusqlite::params![name, description, color],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    let id = conn.last_insert_rowid();
+    Ok(Collection {
+        id,
+        name,
+        description,
+        icon: None,
+        color,
+        is_system: false,
+        created_at: String::new(),
+        updated_at: String::new(),
+    })
+}
+
+#[tauri::command]
+pub fn add_game_to_collection(game_id: i64, collection_id: i64, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "INSERT OR IGNORE INTO game_collections (game_id, collection_id) VALUES (?1, ?2)",
+        rusqlite::params![game_id, collection_id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn remove_game_from_collection(game_id: i64, collection_id: i64, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "DELETE FROM game_collections WHERE game_id = ?1 AND collection_id = ?2",
+        rusqlite::params![game_id, collection_id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn get_game_collections(game_id: i64, db: State<'_, Database>) -> Result<Vec<Collection>, String> {
+    let conn = db.lock_conn()?;
+    let mut stmt = conn
+        .prepare(
+            "SELECT c.id, c.name, c.description, c.icon, c.color, c.is_system, c.created_at, c.updated_at \
+             FROM collections c \
+             JOIN game_collections gc ON c.id = gc.collection_id \
+             WHERE gc.game_id = ?1 \
+             ORDER BY c.name"
+        )
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+
+    let collections: Vec<Collection> = stmt
+        .query_map(rusqlite::params![game_id], |row| {
+            Ok(Collection {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                description: row.get(2)?,
+                icon: row.get(3)?,
+                color: row.get(4)?,
+                is_system: row.get::<_, i64>(5)? != 0,
+                created_at: row.get(6)?,
+                updated_at: row.get(7)?,
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+
+    Ok(collections)
+}
+
+// === Screenshots Commands ===
+
+#[tauri::command]
+pub fn add_screenshot(game_id: i64, file_path: String, caption: Option<String>, db: State<'_, Database>) -> Result<Screenshot, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "INSERT INTO screenshots (game_id, file_path, caption) VALUES (?1, ?2, ?3)",
+        rusqlite::params![game_id, file_path, caption],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    let id = conn.last_insert_rowid();
+    Ok(Screenshot {
+        id,
+        game_id,
+        file_path,
+        caption,
+        is_cover: false,
+        created_at: String::new(),
+    })
+}
+
+#[tauri::command]
+pub fn get_screenshots(game_id: i64, db: State<'_, Database>) -> Result<Vec<Screenshot>, String> {
+    let conn = db.lock_conn()?;
+    let mut stmt = conn
+        .prepare("SELECT id, game_id, file_path, caption, is_cover, created_at FROM screenshots WHERE game_id = ?1 ORDER BY created_at DESC")
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+
+    let screenshots: Vec<Screenshot> = stmt
+        .query_map(rusqlite::params![game_id], |row| {
+            Ok(Screenshot {
+                id: row.get(0)?,
+                game_id: row.get(1)?,
+                file_path: row.get(2)?,
+                caption: row.get(3)?,
+                is_cover: row.get::<_, i64>(4)? != 0,
+                created_at: row.get(5)?,
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+
+    Ok(screenshots)
+}
+
+#[tauri::command]
+pub fn delete_screenshot(id: i64, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "DELETE FROM screenshots WHERE id = ?1",
+        rusqlite::params![id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+// === Search History Commands ===
+
+#[tauri::command]
+pub fn add_search_history(query: String, filters: Option<String>, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    
+    // Insert new search
+    conn.execute(
+        "INSERT INTO search_history (query, filters) VALUES (?1, ?2)",
+        rusqlite::params![query, filters],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    // Keep only last 20 searches
+    conn.execute(
+        "DELETE FROM search_history WHERE id NOT IN (SELECT id FROM search_history ORDER BY searched_at DESC LIMIT 20)",
+        [],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    Ok(true)
+}
+
+#[tauri::command]
+pub fn get_search_history(db: State<'_, Database>) -> Result<Vec<SearchHistoryEntry>, String> {
+    let conn = db.lock_conn()?;
+    let mut stmt = conn
+        .prepare("SELECT id, query, filters, searched_at FROM search_history ORDER BY searched_at DESC LIMIT 20")
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+
+    let history: Vec<SearchHistoryEntry> = stmt
+        .query_map([], |row| {
+            Ok(SearchHistoryEntry {
+                id: row.get(0)?,
+                query: row.get(1)?,
+                filters: row.get(2)?,
+                searched_at: row.get(3)?,
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+
+    Ok(history)
+}
+
+#[tauri::command]
+pub fn clear_search_history(db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute("DELETE FROM search_history", [])
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+// === Statistics Commands ===
+
+#[tauri::command]
+pub fn get_game_statistics(db: State<'_, Database>) -> Result<GameStatistics, String> {
+    let conn = db.lock_conn()?;
+    
+    // Total games
+    let total_games: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games",
+        [],
+        |row| row.get(0),
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    // Total play time
+    let total_play_time: f64 = conn.query_row(
+        "SELECT COALESCE(SUM(play_time), 0) FROM games",
+        [],
+        |row| row.get(0),
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    // Average rating
+    let average_rating: f64 = conn.query_row(
+        "SELECT COALESCE(AVG(personal_rating), 0) FROM games WHERE personal_rating IS NOT NULL",
+        [],
+        |row| row.get(0),
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    // Games by status
+    let mut status_stmt = conn
+        .prepare("SELECT completion_status, COUNT(*) as count FROM games GROUP BY completion_status")
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+    let games_by_status: Vec<StatusCount> = status_stmt
+        .query_map([], |row| {
+            Ok(StatusCount {
+                status: row.get::<_, Option<String>>(0)?.unwrap_or_else(|| "not_started".to_string()),
+                count: row.get(1)?,
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Games by genre
+    let mut genre_stmt = conn
+        .prepare(
+            "SELECT g.name, COUNT(*) as count FROM genres g \
+             JOIN game_genres gg ON g.id = gg.genre_id \
+             GROUP BY g.name ORDER BY count DESC LIMIT 10"
+        )
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+    let games_by_genre: Vec<GenreCount> = genre_stmt
+        .query_map([], |row| {
+            Ok(GenreCount {
+                genre: row.get(0)?,
+                count: row.get(1)?,
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Recently added games (last 5)
+    let mut recent_stmt = conn
+        .prepare(
+            "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
+             personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+             FROM games ORDER BY created_at DESC LIMIT 5"
+        )
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+    let recently_added: Vec<Game> = recent_stmt
+        .query_map([], |row| {
+            Ok(Game {
+                id: row.get(0)?,
+                folder_name: row.get(1)?,
+                folder_path: row.get(2)?,
+                display_name: row.get(3)?,
+                igdb_id: row.get(4)?,
+                igdb_slug: row.get(5)?,
+                personal_rating: row.get(6)?,
+                igdb_rating: row.get(7)?,
+                notes: row.get(8)?,
+                cover_url: row.get(9)?,
+                synopsis: row.get(10)?,
+                release_date: row.get(11)?,
+                created_at: row.get(12)?,
+                updated_at: row.get(13)?,
+                play_time: row.get(14)?,
+                completion_status: row.get(15)?,
+                is_favorite: row.get::<_, Option<i64>>(16)?.map(|v| v != 0),
+                last_played: row.get(17)?,
+                executable_path: row.get(18)?,
+                store_links: row.get(19)?,
+                tags: Vec::new(),
+                genres: Vec::new(),
+                game_modes: Vec::new(),
+                player_perspectives: Vec::new(),
+                themes: Vec::new(),
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    Ok(GameStatistics {
+        total_games,
+        total_play_time,
+        average_rating,
+        games_by_status,
+        games_by_genre,
+        recently_added,
+    })
+}
+
+// === Bulk Operations ===
+
+#[tauri::command]
+pub fn bulk_update_games(
+    game_ids: Vec<i64>,
+    completion_status: Option<String>,
+    add_tags: Option<Vec<i64>>,
+    remove_tags: Option<Vec<i64>>,
+    db: State<'_, Database>,
+) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    
+    for game_id in &game_ids {
+        // Update completion status if provided
+        if let Some(ref status) = completion_status {
+            conn.execute(
+                "UPDATE games SET completion_status = ?1, updated_at = datetime('now') WHERE id = ?2",
+                rusqlite::params![status, game_id],
+            ).map_err(|e: rusqlite::Error| e.to_string())?;
+        }
+        
+        // Add tags if provided
+        if let Some(ref tags) = add_tags {
+            for tag_id in tags {
+                conn.execute(
+                    "INSERT OR IGNORE INTO game_tags (game_id, tag_id) VALUES (?1, ?2)",
+                    rusqlite::params![game_id, tag_id],
+                ).map_err(|e: rusqlite::Error| e.to_string())?;
+            }
+        }
+        
+        // Remove tags if provided
+        if let Some(ref tags) = remove_tags {
+            for tag_id in tags {
+                conn.execute(
+                    "DELETE FROM game_tags WHERE game_id = ?1 AND tag_id = ?2",
+                    rusqlite::params![game_id, tag_id],
+                ).map_err(|e: rusqlite::Error| e.to_string())?;
+            }
+        }
+    }
+    
+    Ok(true)
+}
+
+// === Duplicate Detection ===
+
+#[tauri::command]
+pub fn find_duplicate_games(db: State<'_, Database>) -> Result<Vec<Vec<Game>>, String> {
+    let conn = db.lock_conn()?;
+    
+    // Find potential duplicates by display_name similarity
+    let mut stmt = conn
+        .prepare(
+            "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
+             personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+             FROM games WHERE display_name IN (
+                SELECT display_name FROM games GROUP BY display_name HAVING COUNT(*) > 1
+             ) ORDER BY display_name"
+        )
+        .map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    let games: Vec<Game> = stmt
+        .query_map([], |row| {
+            Ok(Game {
+                id: row.get(0)?,
+                folder_name: row.get(1)?,
+                folder_path: row.get(2)?,
+                display_name: row.get(3)?,
+                igdb_id: row.get(4)?,
+                igdb_slug: row.get(5)?,
+                personal_rating: row.get(6)?,
+                igdb_rating: row.get(7)?,
+                notes: row.get(8)?,
+                cover_url: row.get(9)?,
+                synopsis: row.get(10)?,
+                release_date: row.get(11)?,
+                created_at: row.get(12)?,
+                updated_at: row.get(13)?,
+                play_time: row.get(14)?,
+                completion_status: row.get(15)?,
+                is_favorite: row.get::<_, Option<i64>>(16)?.map(|v| v != 0),
+                last_played: row.get(17)?,
+                executable_path: row.get(18)?,
+                store_links: row.get(19)?,
+                tags: Vec::new(),
+                genres: Vec::new(),
+                game_modes: Vec::new(),
+                player_perspectives: Vec::new(),
+                themes: Vec::new(),
+            })
+        })
+        .map_err(|e: rusqlite::Error| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Group by display_name
+    let mut groups: Vec<Vec<Game>> = Vec::new();
+    let mut current_group: Vec<Game> = Vec::new();
+    let mut current_name = String::new();
+    
+    for game in games {
+        if game.display_name != current_name {
+            if !current_group.is_empty() {
+                groups.push(current_group);
+            }
+            current_group = vec![game.clone()];
+            current_name = game.display_name.clone();
+        } else {
+            current_group.push(game);
+        }
+    }
+    if !current_group.is_empty() {
+        groups.push(current_group);
+    }
+    
+    Ok(groups)
 }

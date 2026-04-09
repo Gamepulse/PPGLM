@@ -65,6 +65,34 @@ pub fn run(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
         mark_migration_applied(conn, "009_igdb_slug")?;
     }
 
+    // Migration 010: Add play_time, completion_status, and other game enhancements
+    if !is_migration_applied(conn, "010_game_enhancements")? {
+        conn.execute_batch(include_str!("010_game_enhancements.sql"))
+            .map_err(|e| format!("Migration 010_game_enhancements failed: {}", e))?;
+        mark_migration_applied(conn, "010_game_enhancements")?;
+    }
+
+    // Migration 011: Create collections table
+    if !is_migration_applied(conn, "011_collections")? {
+        conn.execute_batch(include_str!("011_collections.sql"))
+            .map_err(|e| format!("Migration 011_collections failed: {}", e))?;
+        mark_migration_applied(conn, "011_collections")?;
+    }
+
+    // Migration 012: Create screenshots table
+    if !is_migration_applied(conn, "012_screenshots")? {
+        conn.execute_batch(include_str!("012_screenshots.sql"))
+            .map_err(|e| format!("Migration 012_screenshots failed: {}", e))?;
+        mark_migration_applied(conn, "012_screenshots")?;
+    }
+
+    // Migration 013: Add search history table
+    if !is_migration_applied(conn, "013_search_history")? {
+        conn.execute_batch(include_str!("013_search_history.sql"))
+            .map_err(|e| format!("Migration 013_search_history failed: {}", e))?;
+        mark_migration_applied(conn, "013_search_history")?;
+    }
+
     Ok(())
 }
 
