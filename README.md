@@ -2,7 +2,7 @@
 
 A modern desktop application for managing your game library. Scans your folders, automatically fetches game metadata from IGDB, and organizes your collection with tags, ratings, and notes.
 
-![Pascal](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Pascal](https://img.shields.io/badge/version-0.4.1-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -16,6 +16,16 @@ A modern desktop application for managing your game library. Scans your folders,
 - **🌓 Themes** - Dark and light mode
 - **💾 Local Database** - All data stored locally in SQLite
 - **📤 Export/Import** - Backup and restore your collection
+- **🚀 Game Launcher** - Launch games directly from the app
+- **➕ Quick Add** - Manually add games with IGDB integration
+- **📊 Statistics** - View library analytics and insights
+- **📁 Collections** - Organize games into custom collections
+- **📸 Screenshots** - Add and manage game screenshots
+- **🔍 Search History** - Track your search activity
+- **⭐ Favorites** - Mark games as favorites
+- **⏱️ Play Time** - Track hours played per game
+- **🎯 Completion Status** - Track game completion (Not Started, Playing, Completed, Dropped, Wishlist)
+- **💿 Cross-Platform** - Windows, macOS, and Linux support
 
 ## Screenshots
 
@@ -30,8 +40,17 @@ Download the latest installer for your platform from the [Releases page](https:/
 | Platform | File | Instructions |
 |----------|------|--------------|
 | Windows | `.msi` | Run the installer |
+| Windows | `.msix` | Microsoft Store package (install via Store or sideload) |
 | macOS | `.dmg` | Open the DMG, drag to Applications |
 | Linux | `.AppImage` or `.deb` | `chmod +x` then run, or install with `dpkg` |
+
+### Microsoft Store (Recommended for Windows)
+
+Get the official release from the Microsoft Store for automatic updates and trusted installation:
+- No Windows SmartScreen warnings
+- Automatic updates
+- Clean installation/uninstallation
+- [Pascal on Microsoft Store](https://apps.microsoft.com/) *(coming soon)*
 
 ### Build from Source
 
@@ -96,10 +115,20 @@ Click on any game to see its details:
 - **Personal Rating** - Your own 1-100 rating
 - **Notes** - Your personal comments
 - **Tags** - Custom organization
+- **Completion Status** - Track your progress
+- **Play Time** - Hours played
+- **Favorites** - Mark games you love
+- **Screenshots** - View and add screenshots
+- **Launch** - Start the game directly
 
 ### Refresh from IGDB
 
 If game data is missing or outdated, click "Refresh from IGDB" on the game detail page to fetch the latest information.
+
+### Collections & Statistics
+
+- **Collections** - Group games into custom collections (e.g., "Favorites", "To Play", "Completed")
+- **Statistics** - View insights about your library: total games, play time, ratings distribution, completion status
 
 ## Configuration
 
@@ -112,6 +141,8 @@ If game data is missing or outdated, click "Refresh from IGDB" on the game detai
 | IGDB Credentials | API access for game metadata |
 | Scan Files | Also scan individual game files |
 | Folder Exclusions | Patterns to exclude from scanning |
+| Quick Add | Manually add games to your library |
+| CSV Export | Export your collection to CSV format |
 
 ### Database Location
 
