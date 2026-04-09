@@ -111,7 +111,7 @@ export function useGames() {
 
   const deleteGamesByScanPath = useCallback(async (scanPath: string): Promise<number> => {
     try {
-      const count = await invoke<number>("delete_games_by_scan_path", { scanPath });
+      const count = await invoke<number>("delete_games_by_scan_path", { scan_path: scanPath });
       return count;
     } catch (e) {
       setError(String(e));
@@ -159,6 +159,77 @@ export function useGames() {
     }
   }, []);
 
+  // New commands for features 1-5
+  const updatePlayTime = useCallback(async (gameId: number, hours: number): Promise<boolean> => {
+    try {
+      await invoke<boolean>("update_game_play_time", { id: gameId, hours });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
+  const updateCompletionStatus = useCallback(async (gameId: number, status: string): Promise<boolean> => {
+    try {
+      await invoke<boolean>("update_game_completion_status", { id: gameId, status });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
+  const updateFavorite = useCallback(async (gameId: number, isFavorite: boolean): Promise<boolean> => {
+    try {
+      await invoke<boolean>("update_game_favorite", { id: gameId, isFavorite });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
+  const updateExecutablePath = useCallback(async (gameId: number, path: string | null): Promise<boolean> => {
+    try {
+      await invoke<boolean>("update_game_executable_path", { id: gameId, path });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
+  const updateStoreLinks = useCallback(async (gameId: number, links: string | null): Promise<boolean> => {
+    try {
+      await invoke<boolean>("update_game_store_links", { id: gameId, links });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
+  const recordGamePlayed = useCallback(async (gameId: number): Promise<boolean> => {
+    try {
+      await invoke<boolean>("record_game_played", { id: gameId });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
+  const launchGame = useCallback(async (gameId: number): Promise<boolean> => {
+    try {
+      await invoke<boolean>("launch_game", { gameId });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
   return {
     games,
     loading,
@@ -178,5 +249,13 @@ export function useGames() {
     updateGameDisplayName,
     updateGameCoverUrl,
     refreshGameFromIgdb,
+    // New methods
+    updatePlayTime,
+    updateCompletionStatus,
+    updateFavorite,
+    updateExecutablePath,
+    updateStoreLinks,
+    recordGamePlayed,
+    launchGame,
   };
 }

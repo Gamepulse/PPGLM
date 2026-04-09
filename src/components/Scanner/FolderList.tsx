@@ -31,7 +31,7 @@ export function FolderList({ folders, onAddFolder, onRemoveFolder, onGamesDelete
     setDeleting(true);
     setDeleteMessage(null);
     try {
-      const count = await invoke<number>("delete_games_by_scan_path", { scanPath: confirmPath });
+      const count = await invoke<number>("delete_games_by_scan_path", { scan_path: confirmPath });
       setDeleteMessage(t('gamesDeleted').replace('{{count}}', String(count)));
       onGamesDeleted?.();
     } catch (e) {
