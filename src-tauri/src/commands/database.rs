@@ -293,11 +293,27 @@ pub fn delete_all_games(db: State<'_, Database>) -> Result<bool, String> {
     Ok(true)
 }
 
-/// Default exclusion patterns that are always recreated after reset
-const DEFAULT_EXCLUSION_PATTERNS: &[&str] = &[
-    // System folders
+/// Platform-specific system folder exclusion patterns
+#[cfg(target_os = "windows")]
+const PLATFORM_EXCLUSION_PATTERNS: &[&str] = &[
     "windows", "program files", "program files (x86)", "programdata",
     "$recycle.bin", "system volume information", "recovery", "perflogs",
+];
+
+#[cfg(target_os = "macos")]
+const PLATFORM_EXCLUSION_PATTERNS: &[&str] = &[
+    "library", "system", "applications", ".trashes", ".vol",
+    "volumes", "private", "network",
+];
+
+#[cfg(target_os = "linux")]
+const PLATFORM_EXCLUSION_PATTERNS: &[&str] = &[
+    "proc", "sys", "dev", "run", "snap", "flatpak",
+    "boot", "lib64", "sbin", "bin", "usr", "etc", "var",
+];
+
+/// Common exclusion patterns shared across all platforms
+const COMMON_EXCLUSION_PATTERNS: &[&str] = &[
     // Common non-game subdirectories
     "update", "patch", "dlc", "redist", "directx", "vcredist",
     "installer", "setup", "uninstall", "temp", "tmp", "cache",
@@ -314,14 +330,16 @@ const DEFAULT_EXCLUSION_PATTERNS: &[&str] = &[
 fn recreate_default_exclusions(conn: &rusqlite::Connection) -> Result<(), String> {
     println!("[recreate_default_exclusions] Inserting default exclusions...");
     
-    for pattern in DEFAULT_EXCLUSION_PATTERNS {
+    let mut count = 0;
+    for pattern in PLATFORM_EXCLUSION_PATTERNS.iter().chain(COMMON_EXCLUSION_PATTERNS.iter()) {
         conn.execute(
             "INSERT OR IGNORE INTO folder_exclusions (pattern, is_regex) VALUES (?1, 0)",
             rusqlite::params![pattern],
         ).map_err(|e| format!("Failed to insert exclusion '{}': {}", pattern, e))?;
+        count += 1;
     }
     
-    println!("[recreate_default_exclusions] Inserted {} default exclusions", DEFAULT_EXCLUSION_PATTERNS.len());
+    println!("[recreate_default_exclusions] Inserted {} default exclusions", count);
     Ok(())
 }
 
@@ -533,7 +551,7 @@ pub fn save_game(game: Game, db: State<'_, Database>) -> Result<Game, String> {
 pub fn delete_games_by_scan_path(scan_path: String, db: State<'_, Database>) -> Result<u64, String> {
     let conn = db.lock_conn()?;
     // Use exact match OR child paths only (with separator) to avoid
-    // e.g. deleting D:\Games\Steam when targeting D:\Games\Ste
+    // e.g. deleting /Games/Steam when targeting /Games/Ste
     conn.execute(
         "DELETE FROM games WHERE folder_path = ?1 \
          OR folder_path LIKE ?1 || '/%' \

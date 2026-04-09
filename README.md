@@ -3,7 +3,7 @@
 A modern desktop application for managing your game library. Scans your folders, automatically fetches game metadata from IGDB, and organizes your collection with tags, ratings, and notes.
 
 ![Pascal](https://img.shields.io/badge/version-0.1.0-blue.svg)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Features
@@ -23,10 +23,15 @@ A modern desktop application for managing your game library. Scans your folders,
 
 ## Installation
 
-### From Release (Windows)
+### From Release
 
-1. Download the latest `pascal.exe` from the [Releases page](../../releases)
-2. Run the executable - no installation required
+Download the latest installer for your platform from the [Releases page](https://github.com/Gamepulse/PPGLM/releases):
+
+| Platform | File | Instructions |
+|----------|------|--------------|
+| Windows | `.msi` | Run the installer |
+| macOS | `.dmg` | Open the DMG, drag to Applications |
+| Linux | `.AppImage` or `.deb` | `chmod +x` then run, or install with `dpkg` |
 
 ### Build from Source
 
@@ -36,12 +41,20 @@ A modern desktop application for managing your game library. Scans your folders,
 - [Rust](https://www.rust-lang.org/) 1.70+
 - [Git](https://git-scm.com/)
 
+**Platform-specific requirements:**
+
+| Platform | Additional Requirements |
+|----------|------------------------|
+| Linux | `libwebkit2gtk-4.1-dev`, `build-essential`, `libssl-dev`, `libayatana-appindicator3-dev`, `librsvg2-dev` |
+| macOS | Xcode Command Line Tools (`xcode-select --install`) |
+| Windows | Microsoft Visual Studio C++ Build Tools |
+
 #### Steps
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/pascal.git
-cd pascal
+git clone https://github.com/Gamepulse/PPGLM.git
+cd PPGLM
 
 # Install dependencies
 npm install
@@ -53,7 +66,7 @@ npm run tauri dev
 npm run tauri build
 ```
 
-The built executable will be in `src-tauri/target/release/pascal.exe`
+The built installer will be in `src-tauri/target/release/bundle/` (subfolder varies by platform)
 
 ## Usage
 
@@ -66,7 +79,7 @@ The built executable will be in `src-tauri/target/release/pascal.exe`
 
 2. **Add Game Folders**
    - Go to Scanner → Add Folder
-   - Select your game directories (e.g., `G:\Games`, `D:\SteamLibrary`)
+   - Select your game directories (e.g., `~/Games`, `/mnt/games`, `D:\SteamLibrary`)
 
 3. **Scan**
    - Click "Scan All Folders" to discover games
@@ -104,6 +117,8 @@ If game data is missing or outdated, click "Refresh from IGDB" on the game detai
 
 All data is stored in:
 - Windows: `%APPDATA%\com.pascal.gamemanager\pascal.db`
+- macOS: `~/Library/Application Support/com.pascal.gamemanager/pascal.db`
+- Linux: `~/.local/share/com.pascal.gamemanager/pascal.db`
 
 ## Tech Stack
 
