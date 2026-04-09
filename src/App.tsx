@@ -4,6 +4,7 @@ import { FolderPicker } from "./components/Scanner/FolderPicker";
 import { GameList } from "./components/Library/GameList";
 import { GameDetail } from "./components/Library/GameDetail";
 import { SettingsPage } from "./components/Settings/SettingsPage";
+import { StatisticsDashboard } from "./components/Library/StatisticsDashboard";
 
 function App() {
   const [currentView, setCurrentView] = useState<string>("library");
@@ -54,6 +55,8 @@ function App() {
                 ) : (
                     <GameList key={libraryRefreshKey} onSelectGame={handleSelectGame} searchQuery="" />
                 );
+            case "statistics":
+                return <StatisticsDashboard />;
             default:
                 return <GameList key={libraryRefreshKey} onSelectGame={handleSelectGame} searchQuery="" />;
         }

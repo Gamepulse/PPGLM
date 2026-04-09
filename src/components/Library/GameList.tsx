@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { save, open } from "@tauri-apps/plugin-dialog";
 import GameCard from "./GameCard";
 import { AddGameModal } from "./AddGameModal";
+import { QuickAddModal } from "./QuickAddModal";
 import { useGames } from "../../hooks/useGames";
 import { useI18n } from "../../i18n";
 import { DEFAULT_SORT, DEFAULT_ORDER } from "../../utils/constants";
@@ -21,6 +22,8 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
   const [exportStatus, setExportStatus] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
+  const [csvExportStatus, setCsvExportStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const query = searchQuery?.trim() || undefined;
@@ -71,6 +74,22 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
     }
   };
 
+  const handleExportCSV = async () => {
+    setCsvExportStatus(null);
+    try {
+      const filePath = await save({
+        title: t('exportCSV'),
+        filters: [{ name: "CSV", extensions: ["csv"] }],
+        defaultPath: "pascal-collection.csv",
+      });
+      if (!filePath) return;
+      const savedTo = await invoke<string>("export_collection_csv", { exportPath: filePath });
+      setCsvExportStatus(`${t('exportCSV')} → ${savedTo}`);
+    } catch (e) {
+      setCsvExportStatus(`${t('error')}: ${e}`);
+    }
+  };
+
   return (
     <div className="theme-bg-secondary min-h-screen">
       {/* Toolbar */}
@@ -91,6 +110,9 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
             <option value="personal_rating">{t('rating')}</option>
             <option value="igdb_rating">{t('communityRating')}</option>
             <option value="created_at">{t('dateAdded')}</option>
+            <option value="release_date">{t('releaseDate')}</option>
+            <option value="play_time">{t('playTime')}</option>
+            <option value="completion_status">{t('completionStatus')}</option>
           </select>
           <button
             onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
@@ -108,6 +130,12 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
           </button>
           <div className="ml-auto flex items-center gap-2">
             <button
+              onClick={() => setShowQuickAddModal(true)}
+              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            >
+              + {t('quickAdd')}
+            </button>
+            <button
               onClick={() => setShowAddModal(true)}
               className="px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
             >
@@ -120,6 +148,12 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
               {t('export')}
             </button>
             <button
+              onClick={handleExportCSV}
+              className="px-3 py-2 text-sm theme-bg-tertiary theme-text-secondary rounded-lg hover:theme-bg-secondary hover:theme-text-primary transition-colors"
+            >
+              {t('exportCSV')}
+            </button>
+            <button
               onClick={handleImport}
               className="px-3 py-2 text-sm theme-bg-tertiary theme-text-secondary rounded-lg hover:theme-bg-secondary hover:theme-text-primary transition-colors"
             >
@@ -127,9 +161,10 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
             </button>
           </div>
         </div>
-        {(exportStatus || importStatus) && (
+        {(exportStatus || importStatus || csvExportStatus) && (
           <div className="mt-2 text-sm theme-text-secondary">
             {exportStatus && <span className="mr-4">{exportStatus}</span>}
+            {csvExportStatus && <span className="mr-4">{csvExportStatus}</span>}
             {importStatus && <span>{importStatus}</span>}
           </div>
         )}
@@ -181,6 +216,16 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
         <AddGameModal
           onClose={() => setShowAddModal(false)}
           onSaved={() => {
+            fetchGames({ sort_by: sortBy, sort_order: sortOrder });
+          }}
+        />
+      )}
+
+      {showQuickAddModal && (
+        <QuickAddModal
+          isOpen={showQuickAddModal}
+          onClose={() => setShowQuickAddModal(false)}
+          onGameAdded={() => {
             fetchGames({ sort_by: sortBy, sort_order: sortOrder });
           }}
         />

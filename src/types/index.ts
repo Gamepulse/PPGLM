@@ -18,6 +18,74 @@ export interface Game {
   game_modes: GameMode[];
   player_perspectives: PlayerPerspective[];
   themes: Theme[];
+  // New fields for features 1-5
+  play_time?: number | null;
+  completion_status?: string | null;
+  is_favorite?: boolean | null;
+  last_played?: string | null;
+  executable_path?: string | null;
+  store_links?: string | null;
+}
+
+export type CompletionStatus = 'not_started' | 'playing' | 'completed' | 'dropped' | 'wishlist';
+
+export const COMPLETION_STATUS_LABELS: Record<CompletionStatus, string> = {
+  not_started: 'Not Started',
+  playing: 'Playing',
+  completed: 'Completed',
+  dropped: 'Dropped',
+  wishlist: 'Wishlist',
+};
+
+export interface Collection {
+  id: number;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  color: string | null;
+  is_system: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Screenshot {
+  id: number;
+  game_id: number;
+  file_path: string;
+  caption: string | null;
+  is_cover: boolean;
+  created_at: string;
+}
+
+export interface StoreLink {
+  store: string;
+  url: string;
+}
+
+export interface SearchHistoryEntry {
+  id: number;
+  query: string;
+  filters: string | null;
+  searched_at: string;
+}
+
+export interface GameStatistics {
+  total_games: number;
+  total_play_time: number;
+  average_rating: number;
+  games_by_status: StatusCount[];
+  games_by_genre: GenreCount[];
+  recently_added: Game[];
+}
+
+export interface StatusCount {
+  status: string;
+  count: number;
+}
+
+export interface GenreCount {
+  genre: string;
+  count: number;
 }
 
 export interface Tag {
@@ -106,6 +174,12 @@ export interface GameFilters {
   search_query?: string;
   sort_by?: string;
   sort_order?: string;
+  // New filter fields
+  completion_status?: string;
+  is_favorite?: boolean;
+  collection_id?: number;
+  min_play_time?: number;
+  max_play_time?: number;
 }
 
 /** Consolidated from FolderPicker.tsx and useScanner.ts */

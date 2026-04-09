@@ -33,19 +33,40 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
         <h1 className="text-3xl font-bold theme-text-primary">{game.display_name}</h1>
         <p className="theme-text-muted text-sm font-mono">{game.folder_path}</p>
 
-        {game.igdb_id && (
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-1 text-xs rounded-full bg-green-600 text-white">{t('igdbMatched')}</span>
-            <button type="button" onClick={handleOpenIgdb}
-              className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1 bg-blue-900/30 rounded hover:bg-blue-900/50 transition-colors">
-              {t('igdbPage')} ↗
-            </button>
-            <button type="button" onClick={onRefresh} disabled={refreshing}
-              className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors">
-              {refreshing ? t('refreshingFromIgdb') : t('refreshFromIgdb')}
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-2 flex-wrap">
+          {game.igdb_id && (
+            <>
+              <span className="px-2 py-1 text-xs rounded-full bg-green-600 text-white">{t('igdbMatched')}</span>
+              <button type="button" onClick={handleOpenIgdb}
+                className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1 bg-blue-900/30 rounded hover:bg-blue-900/50 transition-colors">
+                {t('igdbPage')} ↗
+              </button>
+              <button type="button" onClick={onRefresh} disabled={refreshing}
+                className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+                {refreshing ? t('refreshingFromIgdb') : t('refreshFromIgdb')}
+              </button>
+            </>
+          )}
+          {game.is_favorite && (
+            <span className="px-2 py-1 text-xs rounded-full bg-yellow-500 text-white">★ {t('isFavorite')}</span>
+          )}
+          {game.completion_status && (
+            <span className={`px-2 py-1 text-xs rounded-full text-white ${
+              game.completion_status === 'completed' ? 'bg-green-600' :
+              game.completion_status === 'playing' ? 'bg-blue-600' :
+              game.completion_status === 'dropped' ? 'bg-red-600' :
+              game.completion_status === 'wishlist' ? 'bg-purple-600' :
+              'bg-gray-600'
+            }`}>
+              {t(game.completion_status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}
+            </span>
+          )}
+          {game.play_time && game.play_time > 0 && (
+            <span className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white">
+              {game.play_time.toFixed(1)} {t('hours')}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

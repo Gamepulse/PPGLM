@@ -12,7 +12,7 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
   const { t } = useI18n();
-  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date } = game;
+  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite } = game;
   
   const renderTags = () => {
     if (tags.length === 0) return null;
@@ -68,6 +68,38 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
     );
   };
 
+  const renderStatusBadge = () => {
+    if (!completion_status) return null;
+    const statusColors: Record<string, string> = {
+      completed: 'bg-green-600',
+      playing: 'bg-blue-600',
+      dropped: 'bg-red-600',
+      wishlist: 'bg-purple-600',
+      not_started: 'bg-gray-600',
+    };
+    return (
+      <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'}`}>
+        {t(completion_status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}
+      </div>
+    );
+  };
+
+  const renderPlayTime = () => {
+    if (!play_time || play_time <= 0) return null;
+    return (
+      <span className="text-xs theme-text-muted">
+        {play_time.toFixed(1)} {t('hours')}
+      </span>
+    );
+  };
+
+  const renderFavorite = () => {
+    if (!is_favorite) return null;
+    return (
+      <span className="text-yellow-400 text-lg">★</span>
+    );
+  };
+
   const renderIGDBBadge = () => {
     if (igdb_id) {
       return (
@@ -94,10 +126,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
         <div className="relative">
           {renderCover()}
           {renderIGDBBadge()}
+          {renderStatusBadge()}
         </div>
         
         <div className="p-4">
-          <h3 className="theme-text-primary font-semibold text-lg mb-2 truncate">{display_name}</h3>
+          <h3 className="theme-text-primary font-semibold text-lg mb-2 truncate flex items-center gap-2">
+            {display_name}
+            {renderFavorite()}
+          </h3>
           
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -109,6 +145,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
                   ★ {igdb_rating.toFixed(0)}
                 </span>
               )}
+              {renderPlayTime()}
             </div>
             {release_date && (
               <span className="theme-text-muted text-sm">
@@ -129,13 +166,17 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
       className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
       onClick={() => onClick(game.id)}
     >
-      <div className="w-24 h-24 flex-shrink-0">
+      <div className="w-24 h-24 flex-shrink-0 relative">
         {renderCover()}
+        {renderStatusBadge()}
       </div>
       
       <div className="flex-1">
         <div className="flex items-start justify-between">
-          <h3 className="theme-text-primary font-semibold text-lg mb-2">{display_name}</h3>
+          <h3 className="theme-text-primary font-semibold text-lg mb-2 flex items-center gap-2">
+            {display_name}
+            {renderFavorite()}
+          </h3>
           {renderIGDBBadge()}
         </div>
         
@@ -148,6 +189,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
               ★ {igdb_rating.toFixed(0)}
             </span>
           )}
+          {renderPlayTime()}
           {release_date && (
             <span className="theme-text-muted text-sm">
               {formatDate(release_date)}

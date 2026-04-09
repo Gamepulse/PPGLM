@@ -9,6 +9,7 @@ interface SidebarProps {
 const navItems = [
   { id: "scanner", icon: "🔍" },
   { id: "library", icon: "📚" },
+  { id: "statistics", icon: "📊" },
   { id: "settings", icon: "⚙️" },
 ];
 
@@ -27,6 +28,7 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
     switch (id) {
       case 'scanner': return t('scanner');
       case 'library': return t('library');
+      case 'statistics': return t('statistics');
       case 'settings': return t('settings');
       default: return id;
     }
