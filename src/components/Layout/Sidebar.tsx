@@ -40,8 +40,12 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
         expanded ? "w-48" : "w-16"
       } transition-all duration-200 theme-sidebar border-r theme-border flex flex-col h-screen`}
     >
-      <div className="p-4 border-b theme-border overflow-hidden whitespace-nowrap">
-        <span className="text-indigo-500 font-bold text-sm tracking-wider">Pascal</span>
+      <div className="p-4 border-b theme-border overflow-hidden whitespace-nowrap flex items-center justify-center gap-1">
+        <span className="text-indigo-400">◆</span>
+        <span className="text-indigo-500">❖</span>
+        <span className="text-indigo-600 font-bold">◈</span>
+        <span className="text-indigo-500">❖</span>
+        <span className="text-indigo-400">◆</span>
       </div>
       <nav className="flex-1 pt-4">
         {navItems.map((item) => (
