@@ -1,16 +1,73 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 export type Theme = 'light' | 'dark';
+export type ColorSkin = 'indigo' | 'emerald' | 'rose' | 'amber' | 'cyan' | 'violet';
+
+interface SkinConfig {
+  name: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  icon: string;
+}
+
+export const SKIN_CONFIGS: Record<ColorSkin, SkinConfig> = {
+  indigo: {
+    name: 'Indigo',
+    primary: 'indigo',
+    secondary: 'indigo',
+    accent: 'indigo',
+    icon: '🔵',
+  },
+  emerald: {
+    name: 'Emerald',
+    primary: 'emerald',
+    secondary: 'emerald',
+    accent: 'emerald',
+    icon: '🟢',
+  },
+  rose: {
+    name: 'Rose',
+    primary: 'rose',
+    secondary: 'rose',
+    accent: 'rose',
+    icon: '🔴',
+  },
+  amber: {
+    name: 'Amber',
+    primary: 'amber',
+    secondary: 'amber',
+    accent: 'amber',
+    icon: '🟡',
+  },
+  cyan: {
+    name: 'Cyan',
+    primary: 'cyan',
+    secondary: 'cyan',
+    accent: 'cyan',
+    icon: '💎',
+  },
+  violet: {
+    name: 'Violet',
+    primary: 'violet',
+    secondary: 'violet',
+    accent: 'violet',
+    icon: '🟣',
+  },
+};
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  colorSkin: ColorSkin;
+  setColorSkin: (skin: ColorSkin) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 const STORAGE_KEY = 'pascal-theme';
+const STORAGE_KEY_SKIN = 'pascal-color-skin';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
@@ -23,6 +80,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return 'light';
     }
     return 'dark';
+  });
+
+  const [colorSkin, setColorSkinState] = useState<ColorSkin>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY_SKIN);
+    const validSkins: ColorSkin[] = ['indigo', 'emerald', 'rose', 'amber', 'cyan', 'violet'];
+    if (saved && validSkins.includes(saved as ColorSkin)) {
+      return saved as ColorSkin;
+    }
+    return 'indigo';
   });
 
   const setTheme = useCallback((newTheme: Theme) => {
@@ -38,6 +104,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const setColorSkin = useCallback((newSkin: ColorSkin) => {
+    setColorSkinState(newSkin);
+    localStorage.setItem(STORAGE_KEY_SKIN, newSkin);
+    // Apply color skin class to document
+    const validSkins: ColorSkin[] = ['indigo', 'emerald', 'rose', 'amber', 'cyan', 'violet'];
+    validSkins.forEach(skin => {
+      document.documentElement.classList.remove(`skin-${skin}`);
+    });
+    document.documentElement.classList.add(`skin-${newSkin}`);
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   }, [theme, setTheme]);
@@ -51,10 +128,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
     }
-  }, [theme]);
+    // Apply color skin
+    const validSkins: ColorSkin[] = ['indigo', 'emerald', 'rose', 'amber', 'cyan', 'violet'];
+    validSkins.forEach(skin => {
+      document.documentElement.classList.remove(`skin-${skin}`);
+    });
+    document.documentElement.classList.add(`skin-${colorSkin}`);
+  }, [theme, colorSkin]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, colorSkin, setColorSkin }}>
       {children}
     </ThemeContext.Provider>
   );

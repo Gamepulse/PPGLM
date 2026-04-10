@@ -101,3 +101,70 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-border);
 }
+
+/* Color Skin Themes - Accent Color Variations */
+/* Indigo (Default) */
+.skin-indigo {
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+}
+
+.dark.skin-indigo {
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f46e5;
+}
+
+/* Emerald */
+.skin-emerald {
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+}
+
+.dark.skin-emerald {
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+}
+
+/* Rose */
+.skin-rose {
+  --color-accent: #e11d48;
+  --color-accent-hover: #be123c;
+}
+
+.dark.skin-rose {
+  --color-accent: #f43f5e;
+  --color-accent-hover: #e11d48;
+}
+
+/* Amber */
+.skin-amber {
+  --color-accent: #d97706;
+  --color-accent-hover: #b45309;
+}
+
+.dark.skin-amber {
+  --color-accent: #f59e0b;
+  --color-accent-hover: #d97706;
+}
+
+/* Cyan */
+.skin-cyan {
+  --color-accent: #0891b2;
+  --color-accent-hover: #0e7490;
+}
+
+.dark.skin-cyan {
+  --color-accent: #06b6d4;
+  --color-accent-hover: #0891b2;
+}
+
+/* Violet */
+.skin-violet {
+  --color-accent: #7c3aed;
+  --color-accent-hover: #6d28d9;
+}
+
+.dark.skin-violet {
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #7c3aed;
+}

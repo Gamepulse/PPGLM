@@ -1,2 +1,2 @@
-export { ThemeProvider, useTheme } from './ThemeContext';
-export type { Theme } from './ThemeContext';
+export { ThemeProvider, useTheme, SKIN_CONFIGS } from './ThemeContext';
+export type { Theme, ColorSkin } from './ThemeContext';
