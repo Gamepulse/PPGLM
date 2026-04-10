@@ -2,7 +2,22 @@ import { useEffect } from "react";
 import { useStatistics } from "../../hooks/useStatistics";
 import { useI18n } from "../../i18n";
 
-export function StatisticsDashboard() {
+// Status display labels
+const STATUS_LABELS: Record<string, string> = {
+  'not_started': 'Not Started',
+  'not_start': 'Not Started',
+  'playing': 'Playing',
+  'completed': 'Completed',
+  'dropped': 'Dropped',
+  'wishlist': 'Wishlist',
+};
+
+interface StatisticsDashboardProps {
+  onSelectGame?: (id: number) => void;
+  onFilterByGenre?: (genre: string) => void;
+}
+
+export function StatisticsDashboard({ onSelectGame, onFilterByGenre }: StatisticsDashboardProps) {
   const { t } = useI18n();
   const { statistics, loading, fetchStatistics } = useStatistics();
 
@@ -62,7 +77,7 @@ export function StatisticsDashboard() {
                 }`} 
               />
               <span className="theme-text-secondary w-24">
-                {t(status.status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}
+                {STATUS_LABELS[status.status] || status.status}
               </span>
               <div className="flex-1 theme-bg-tertiary rounded-full h-4 overflow-hidden">
                 <div 
@@ -90,10 +105,14 @@ export function StatisticsDashboard() {
           <h3 className="text-lg font-semibold theme-text-primary mb-4">{t('gamesByGenre')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {statistics.games_by_genre.map((genre) => (
-              <div key={genre.genre} className="flex items-center justify-between p-2 theme-bg-tertiary rounded">
+              <button
+                key={genre.genre}
+                onClick={() => onFilterByGenre?.(genre.genre)}
+                className="flex items-center justify-between p-2 theme-bg-tertiary rounded hover:bg-indigo-600/20 transition-colors text-left"
+              >
                 <span className="theme-text-secondary text-sm">{genre.genre}</span>
                 <span className="theme-text-primary font-medium">{genre.count}</span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -105,7 +124,11 @@ export function StatisticsDashboard() {
           <h3 className="text-lg font-semibold theme-text-primary mb-4">{t('recentlyAdded')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {statistics.recently_added.map((game) => (
-              <div key={game.id} className="space-y-2">
+              <button
+                key={game.id}
+                onClick={() => onSelectGame?.(game.id)}
+                className="space-y-2 text-left hover:opacity-80 transition-opacity"
+              >
                 {game.cover_url ? (
                   <img 
                     src={game.cover_url} 
@@ -118,7 +141,7 @@ export function StatisticsDashboard() {
                   </div>
                 )}
                 <div className="text-sm theme-text-primary truncate">{game.display_name}</div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

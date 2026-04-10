@@ -187,6 +187,8 @@ export function DatabaseMaintenance({ onDatabaseReset }: DatabaseMaintenanceProp
                   To confirm, type <strong className="text-white font-mono bg-gray-800 px-2 py-0.5 rounded">DELETE</strong> below:
                 </label>
                 <input
+                  id="delete-confirmation"
+                  name="delete-confirmation"
                   type="text"
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}

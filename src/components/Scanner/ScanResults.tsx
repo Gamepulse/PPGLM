@@ -89,7 +89,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
 
       <div>
         <h3 className="text-sm font-medium theme-text-secondary mb-2">{t('matches')} ({matches.length})</h3>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2 max-h-[32rem] overflow-y-auto">
           {matches.map((r) => (
             <ResultCard key={r.folder_path} result={r} isNonMatch={false}
               isEditing={editingResult === r.folder_path}

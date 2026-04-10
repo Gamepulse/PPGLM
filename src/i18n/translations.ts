@@ -78,6 +78,8 @@ export const translations = {
     
     // Scanner - FolderPicker
     scanFolders: 'Scan Folders',
+    expand: 'Expand',
+    collapse: 'Collapse',
     noFoldersConfigured: 'No folders configured. Click "+ Add Folder" to get started.',
     deleteGamesFromPath: 'Delete associated games',
     confirmDeleteGamesFromPath: 'Delete all games found in "{{path}}" and its subdirectories?',
@@ -174,6 +176,9 @@ export const translations = {
     // GameCard
     manual: 'Manual',
     more: 'more',
+    activeFilters: 'Active Filters',
+    clearAll: 'Clear All',
+    tryAdjustingFilters: 'Try adjusting your filters',
     
     // Errors
     error: 'Error',
@@ -256,6 +261,8 @@ export const translations = {
     
     // Scanner - FolderPicker
     scanFolders: 'Dossiers de scan',
+    expand: 'Développer',
+    collapse: 'Réduire',
     noFoldersConfigured: 'Aucun dossier configuré. Cliquez sur "+ Ajouter un dossier" pour commencer.',
     deleteGamesFromPath: 'Supprimer les jeux associés',
     confirmDeleteGamesFromPath: 'Supprimer tous les jeux trouvés dans "{{path}}" et ses sous-répertoires ?',
@@ -352,6 +359,9 @@ export const translations = {
     // GameCard
     manual: 'Manuel',
     more: 'de plus',
+    activeFilters: 'Filtres actifs',
+    clearAll: 'Tout effacer',
+    tryAdjustingFilters: 'Essayez d\'ajuster vos filtres',
     
     // Errors
     error: 'Erreur',

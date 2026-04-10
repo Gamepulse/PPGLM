@@ -9,6 +9,8 @@ export function ScanFilesToggle() {
       <div className="flex items-center gap-3">
         <label className="flex items-center gap-3 cursor-pointer">
           <input
+            id="scan-files-toggle"
+            name="scan-files-toggle"
             type="checkbox"
             checked={scanFiles}
             onChange={(e) => setScanFiles(e.target.checked)}

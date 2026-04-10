@@ -9,7 +9,7 @@ export const Logo: FC<LogoProps> = ({ onClick }) => {
     <div
       onClick={onClick}
       className="flex items-center gap-2 cursor-pointer group"
-      title="Pascal Personal Game Manager"
+      title="Pascal's Personal Game Manager"
     >
       {/* Logo SVG - Manette de jeu moderne */}
       <div className="relative w-10 h-10 flex items-center justify-center">
@@ -55,7 +55,7 @@ export const Logo: FC<LogoProps> = ({ onClick }) => {
           PPGM
         </span>
         <span className="text-gray-400 text-[10px] leading-tight tracking-wider uppercase">
-          Pascal Game Manager
+          Pascal's Personal Game Manager
         </span>
       </div>
     </div>

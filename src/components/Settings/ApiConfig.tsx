@@ -79,6 +79,8 @@ export function ApiConfig() {
             Client ID
           </label>
           <input
+            id="twitch-client-id"
+            name="twitch-client-id"
             type="text"
             value={clientId}
             onChange={(e) => setClientId(e.target.value)}
@@ -92,6 +94,8 @@ export function ApiConfig() {
             Client Secret
           </label>
           <input
+            id="twitch-client-secret"
+            name="twitch-client-secret"
             type="password"
             value={clientSecret}
             onChange={(e) => setClientSecret(e.target.value)}

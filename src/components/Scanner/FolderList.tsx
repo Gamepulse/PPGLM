@@ -31,7 +31,7 @@ export function FolderList({ folders, onAddFolder, onRemoveFolder, onGamesDelete
     setDeleting(true);
     setDeleteMessage(null);
     try {
-      const count = await invoke<number>("delete_games_by_scan_path", { scan_path: confirmPath });
+      const count = await invoke<number>("delete_games_by_scan_path", { scanPath: confirmPath });
       setDeleteMessage(t('gamesDeleted').replace('{{count}}', String(count)));
       onGamesDeleted?.();
     } catch (e) {
@@ -67,9 +67,9 @@ export function FolderList({ folders, onAddFolder, onRemoveFolder, onGamesDelete
       </div>
 
       <div className="space-y-2">
-        {folders.map((folder) => (
+        {folders.map((folder, index) => (
           <div
-            key={folder.path}
+            key={`${folder.path}-${index}`}
             className="flex items-center justify-between p-3 theme-bg-tertiary rounded-lg hover:bg-gray-700 transition-colors group"
           >
             <span className="theme-text-secondary truncate flex-1 text-sm font-mono">{folder.path}</span>

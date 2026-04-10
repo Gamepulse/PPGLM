@@ -97,6 +97,8 @@ export function FolderExclusions() {
       {/* Add new exclusion */}
       <div className="flex gap-2">
         <input
+          id="folder-exclusion-pattern"
+          name="folder-exclusion-pattern"
           type="text"
           value={newPattern}
           onChange={(e) => setNewPattern(e.target.value)}

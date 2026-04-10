@@ -111,7 +111,7 @@ export function useGames() {
 
   const deleteGamesByScanPath = useCallback(async (scanPath: string): Promise<number> => {
     try {
-      const count = await invoke<number>("delete_games_by_scan_path", { scan_path: scanPath });
+      const count = await invoke<number>("delete_games_by_scan_path", { scanPath });
       return count;
     } catch (e) {
       setError(String(e));
@@ -230,6 +230,24 @@ export function useGames() {
     }
   }, []);
 
+  const discoverExecutablePath = useCallback(async (folderPath: string): Promise<string | null> => {
+    try {
+      return await invoke<string | null>("discover_executable_path", { folderPath });
+    } catch (e) {
+      setError(String(e));
+      return null;
+    }
+  }, []);
+
+  const autoDiscoverAndSaveExecutable = useCallback(async (gameId: number, folderPath: string): Promise<string | null> => {
+    try {
+      return await invoke<string | null>("auto_discover_and_save_executable", { gameId, folderPath });
+    } catch (e) {
+      setError(String(e));
+      return null;
+    }
+  }, []);
+
   return {
     games,
     loading,
@@ -257,5 +275,7 @@ export function useGames() {
     updateStoreLinks,
     recordGamePlayed,
     launchGame,
+    discoverExecutablePath,
+    autoDiscoverAndSaveExecutable,
   };
 }

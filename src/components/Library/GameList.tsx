@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { save, open } from "@tauri-apps/plugin-dialog";
 import GameCard from "./GameCard";
@@ -7,17 +7,25 @@ import { QuickAddModal } from "./QuickAddModal";
 import { useGames } from "../../hooks/useGames";
 import { useI18n } from "../../i18n";
 import { DEFAULT_SORT, DEFAULT_ORDER } from "../../utils/constants";
+import type { Game, GameFilters } from "../../types";
+
+export interface ActiveFilter {
+  type: string;
+  value: string;
+  label: string;
+}
 
 interface GameListProps {
   onSelectGame: (id: number) => void;
   searchQuery?: string;
-  onFilter?: (type: string, value: string) => void;
+  activeFilters?: ActiveFilter[];
+  onFiltersChange?: (filters: ActiveFilter[]) => void;
 }
 
-export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps) {
+export function GameList({ onSelectGame, searchQuery, activeFilters: externalFilters, onFiltersChange }: GameListProps) {
   const { games, loading, fetchGames } = useGames();
   const { t } = useI18n();
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list" | "compact">("grid");
   const [sortBy, setSortBy] = useState(DEFAULT_SORT);
   const [sortOrder, setSortOrder] = useState(DEFAULT_ORDER);
   const [exportStatus, setExportStatus] = useState<string | null>(null);
@@ -25,38 +33,156 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
   const [showAddModal, setShowAddModal] = useState(false);
   const [showQuickAddModal, setShowQuickAddModal] = useState(false);
   const [csvExportStatus, setCsvExportStatus] = useState<string | null>(null);
-
-  useEffect(() => {
-    const query = searchQuery?.trim() || undefined;
-    
-    // Parse filter prefix (genre:, mode:, perspective:, theme:, tag:)
-    const filterPrefixes = ['genre:', 'mode:', 'perspective:', 'theme:', 'tag:'];
-    const activePrefix = filterPrefixes.find(prefix => query?.startsWith(prefix));
-    
-    if (activePrefix) {
-      const filterType = activePrefix.slice(0, -1); // Remove colon
-      const filterValue = query?.slice(activePrefix.length).trim();
-      
-      fetchGames({
-        sort_by: sortBy,
-        sort_order: sortOrder,
-        [filterType]: filterValue,
-      });
+  const [internalFilters, setInternalFilters] = useState<ActiveFilter[]>([]);
+  
+  // Use external filters if provided, otherwise use internal state
+  const activeFilters = externalFilters ?? internalFilters;
+  
+  // Ref to access current filters without triggering re-renders
+  const activeFiltersRef = React.useRef(activeFilters);
+  activeFiltersRef.current = activeFilters;
+  
+  // Helper to update filters (works with both external and internal control)
+  const updateFilters = useCallback((newFilters: ActiveFilter[]) => {
+    if (onFiltersChange) {
+      onFiltersChange(newFilters);
     } else {
-      fetchGames({
-        sort_by: sortBy,
-        sort_order: sortOrder,
-        ...(query ? { search_query: query } : {}),
-      });
+      setInternalFilters(newFilters);
     }
-  }, [fetchGames, sortBy, sortOrder, searchQuery]);
+  }, [onFiltersChange]);
+  
+  // Parse searchQuery for filter prefixes and add to activeFilters
+  useEffect(() => {
+    if (!searchQuery) return;
+    
+    const filterPrefixes = ['tag:', 'genre:', 'mode:', 'perspective:', 'theme:', 'status:'];
+    const prefix = filterPrefixes.find(p => searchQuery.startsWith(p));
+    
+    if (prefix) {
+      const type = prefix.slice(0, -1); // Remove colon
+      const value = searchQuery.slice(prefix.length);
+      
+      const currentFilters = activeFiltersRef.current;
+      const exists = currentFilters.some(f => f.type === type && f.value === value);
+      if (!exists) {
+        updateFilters([...currentFilters, { type, value, label: value }]);
+      }
+    }
+  }, [searchQuery, updateFilters]);
 
-  // Don't apply additional text filter if using a filter prefix
-  const filterPrefixes = ['genre:', 'mode:', 'perspective:', 'theme:', 'tag:'];
-  const isFilterSearch = filterPrefixes.some(prefix => searchQuery?.startsWith(prefix));
-  const filtered = (searchQuery?.trim() && !isFilterSearch)
-    ? games.filter((g) => g.display_name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : games;
+  // Client-side filtering for multiple filters of same type
+  const filterGamesClientSide = useCallback((games: Game[]) => {
+    return games.filter(game => {
+      // Check if game matches ALL active filters (AND logic)
+      return activeFilters.every(filter => {
+        switch (filter.type) {
+          case 'tag':
+            return game.tags.some(t => t.name === filter.value);
+          case 'genre':
+            return game.genres?.some(g => g.name === filter.value);
+          case 'mode':
+            return game.game_modes?.some(m => m.name === filter.value);
+          case 'perspective':
+            return game.player_perspectives?.some(p => p.name === filter.value);
+          case 'theme':
+            return game.themes?.some(t => t.name === filter.value);
+          case 'status':
+            return game.completion_status === filter.value;
+          default:
+            return true;
+        }
+      });
+    });
+  }, [activeFilters]);
+
+  // Fetch games when filters change
+  useEffect(() => {
+    const filters: GameFilters = {
+      sort_by: sortBy,
+      sort_order: sortOrder,
+    };
+
+    // Add search query if present (and not a filter prefix query)
+    if (searchQuery?.trim() && !searchQuery.match(/^(tag|genre|mode|perspective|theme|status):/)) {
+      filters.search_query = searchQuery.trim();
+    }
+
+    // Add only the first filter of each type for backend query
+    const filterTypesAdded = new Set<string>();
+    activeFilters.forEach(filter => {
+      if (filterTypesAdded.has(filter.type)) return;
+      
+      switch (filter.type) {
+        case 'tag':
+          filters.tag = filter.value;
+          filterTypesAdded.add('tag');
+          break;
+        case 'genre':
+          filters.genre = filter.value;
+          filterTypesAdded.add('genre');
+          break;
+        case 'mode':
+          filters.mode = filter.value;
+          filterTypesAdded.add('mode');
+          break;
+        case 'perspective':
+          filters.perspective = filter.value;
+          filterTypesAdded.add('perspective');
+          break;
+        case 'theme':
+          filters.theme = filter.value;
+          filterTypesAdded.add('theme');
+          break;
+        case 'status':
+          filters.completion_status = filter.value;
+          filterTypesAdded.add('status');
+          break;
+      }
+    });
+
+    fetchGames(filters);
+  }, [fetchGames, activeFilters, sortBy, sortOrder, searchQuery]);
+  
+  // Apply client-side filtering
+  const filteredGames = filterGamesClientSide(games);
+
+  // Add a filter
+  const addFilter = useCallback((type: string, value: string, label: string) => {
+    console.log('[GameList] addFilter called:', { type, value, label });
+    // Check if filter already exists
+    const exists = activeFilters.some(f => f.type === type && f.value === value);
+    if (exists) {
+      console.log('[GameList] Filter already exists, skipping');
+      return;
+    }
+    const newFilters = [...activeFilters, { type, value, label }];
+    console.log('[GameList] New filters:', newFilters);
+    updateFilters(newFilters);
+  }, [activeFilters, updateFilters]);
+
+  // Remove a filter
+  const removeFilter = useCallback((type: string, value: string) => {
+    const newFilters = activeFilters.filter(f => !(f.type === type && f.value === value));
+    updateFilters(newFilters);
+  }, [activeFilters, updateFilters]);
+
+  // Clear all filters
+  const clearAllFilters = useCallback(() => {
+    updateFilters([]);
+  }, [updateFilters]);
+
+  // Filter label mapper for display
+  const getFilterLabel = (type: string, value: string): string => {
+    const labels: Record<string, string> = {
+      tag: 'Tag',
+      genre: 'Genre',
+      mode: 'Mode',
+      perspective: 'Perspective',
+      theme: 'Theme',
+      status: 'Status',
+    };
+    return `${labels[type] || type}: ${value}`;
+  };
 
   const handleExport = async () => {
     setExportStatus(null);
@@ -67,13 +193,8 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
         defaultPath: "pascal-collection.json",
       });
       if (!filePath) return;
-      // Export only the filtered/visible games
-      const visibleGameIds = filtered.map(game => game.id);
-      const savedTo = await invoke<string>("export_collection", {
-        exportPath: filePath,
-        gameIds: visibleGameIds
-      });
-      setExportStatus(`${t('export')}: ${visibleGameIds.length} ${t('games')} → ${savedTo}`);
+      const savedTo = await invoke<string>("export_collection", { exportPath: filePath });
+      setExportStatus(`${t('export')} → ${savedTo}`);
     } catch (e) {
       setExportStatus(`${t('error')}: ${e}`);
     }
@@ -108,13 +229,8 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
         defaultPath: "pascal-collection.csv",
       });
       if (!filePath) return;
-      // Export only the filtered/visible games
-      const visibleGameIds = filtered.map(game => game.id);
-      const savedTo = await invoke<string>("export_collection_csv", {
-        exportPath: filePath,
-        gameIds: visibleGameIds
-      });
-      setCsvExportStatus(`${t('exportCSV')}: ${visibleGameIds.length} ${t('games')} → ${savedTo}`);
+      const savedTo = await invoke<string>("export_collection_csv", { exportPath: filePath });
+      setCsvExportStatus(`${t('exportCSV')} → ${savedTo}`);
     } catch (e) {
       setCsvExportStatus(`${t('error')}: ${e}`);
     }
@@ -125,12 +241,29 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
       {/* Toolbar */}
       <div className="theme-bg-tertiary border-b theme-border p-4">
         <div className="flex flex-wrap items-center gap-4">
-          <button
-            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            className="p-2 rounded-lg theme-bg-tertiary theme-text-secondary hover:theme-text-primary theme-border border"
-          >
-            {viewMode === "grid" ? "☰" : "▦"}
-          </button>
+          <div className="flex items-center gap-1 p-1 rounded-lg theme-bg-tertiary border theme-border">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-1.5 rounded ${viewMode === "grid" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
+              title="Grid view"
+            >
+              ▦
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`p-1.5 rounded ${viewMode === "list" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
+              title="List view"
+            >
+              ☰
+            </button>
+            <button
+              onClick={() => setViewMode("compact")}
+              className={`p-1.5 rounded ${viewMode === "compact" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
+              title="Compact view"
+            >
+              ▪
+            </button>
+          </div>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
@@ -198,6 +331,33 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
             {importStatus && <span>{importStatus}</span>}
           </div>
         )}
+        
+        {/* Active Filters Bar */}
+        {activeFilters.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="text-sm theme-text-secondary">{t('activeFilters')}:</span>
+            {activeFilters.map((filter, index) => (
+              <span
+                key={`${filter.type}-${filter.value}-${index}`}
+                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-indigo-600 text-white"
+              >
+                {getFilterLabel(filter.type, filter.value)}
+                <button
+                  onClick={() => removeFilter(filter.type, filter.value)}
+                  className="hover:bg-indigo-700 rounded-full w-4 h-4 flex items-center justify-center"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <button
+              onClick={clearAllFilters}
+              className="text-xs theme-text-secondary hover:theme-text-primary underline"
+            >
+              {t('clearAll')}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -213,12 +373,11 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
             </div>
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : games.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="text-6xl mb-4">🎮</div>
           <h3 className="theme-text-primary text-xl font-semibold mb-2">{t('noGamesYet')}</h3>
           <p className="theme-text-secondary mb-2">{t('scanFoldersToStart')}</p>
-          <p className="theme-text-muted text-sm">({t('games')}: {games.length}, {t('filtered')}: {filtered.length})</p>
           <button
             onClick={() => fetchGames({ sort_by: sortBy, sort_order: sortOrder })}
             className="mt-4 px-4 py-2 theme-accent text-white rounded-lg hover:theme-accent-hover"
@@ -226,19 +385,39 @@ export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps)
             {t('refresh')}
           </button>
         </div>
+      ) : filteredGames.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="text-6xl mb-4">🔍</div>
+          <h3 className="theme-text-primary text-xl font-semibold mb-2">{t('noGamesFound') || 'No games found'}</h3>
+          <p className="theme-text-secondary mb-2">{t('tryAdjustingFilters') || 'Try adjusting your filters'}</p>
+          <button
+            onClick={clearAllFilters}
+            className="mt-4 px-4 py-2 theme-accent text-white rounded-lg hover:theme-accent-hover"
+          >
+            {t('clearAll')}
+          </button>
+        </div>
       ) : viewMode === "grid" ? (
         <div className="p-4">
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
-            {filtered.map((game) => (
-              <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="grid" onFilter={onFilter} />
+            {filteredGames.map((game) => (
+              <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="grid" onFilter={(type, value) => addFilter(type, value, value)} />
             ))}
           </div>
         </div>
-      ) : (
+      ) : viewMode === "list" ? (
         <div className="p-4 space-y-4">
-          {filtered.map((game) => (
-            <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="list" onFilter={onFilter} />
+          {filteredGames.map((game) => (
+            <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="list" onFilter={(type, value) => addFilter(type, value, value)} />
           ))}
+        </div>
+      ) : (
+        <div className="p-4">
+          <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))" }}>
+            {filteredGames.map((game) => (
+              <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="compact" onFilter={(type, value) => addFilter(type, value, value)} />
+            ))}
+          </div>
         </div>
       )}
 

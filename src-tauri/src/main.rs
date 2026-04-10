@@ -84,6 +84,8 @@ pub fn run() {
             commands::database::find_duplicate_games,
             commands::launcher::launch_game,
             commands::launcher::open_store_link,
+            commands::launcher::discover_executable_path,
+            commands::launcher::auto_discover_and_save_executable,
             commands::quick_add::quick_add_game,
             commands::quick_add::export_collection_csv,
         ])

@@ -104,6 +104,11 @@ pub struct GameFilters {
     pub collection_id: Option<i64>,
     pub min_play_time: Option<f64>,
     pub max_play_time: Option<f64>,
+    pub genre: Option<String>,
+    pub mode: Option<String>,
+    pub perspective: Option<String>,
+    pub theme: Option<String>,
+    pub tag: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

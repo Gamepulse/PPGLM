@@ -30,6 +30,8 @@ export function Header({ onSearch, onNavigate }: HeaderProps) {
       <Logo onClick={handleLogoClick} />
       <div className="relative">
         <input
+          id="game-search"
+          name="game-search"
           type="text"
           value={query}
           onChange={(e) => handleChange(e.target.value)}

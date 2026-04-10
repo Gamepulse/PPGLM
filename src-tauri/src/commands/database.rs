@@ -458,6 +458,31 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
             query.push_str(" AND play_time <= ?");
             params.push(Box::new(max_time));
         }
+        // New filter: genre
+        if let Some(genre) = &f.genre {
+            query.push_str(" AND id IN (SELECT game_id FROM game_genres WHERE genre_id IN (SELECT id FROM genres WHERE name = ?))");
+            params.push(Box::new(genre.clone()));
+        }
+        // New filter: game mode
+        if let Some(mode) = &f.mode {
+            query.push_str(" AND id IN (SELECT game_id FROM game_game_modes WHERE game_mode_id IN (SELECT id FROM game_modes WHERE name = ?))");
+            params.push(Box::new(mode.clone()));
+        }
+        // New filter: player perspective
+        if let Some(perspective) = &f.perspective {
+            query.push_str(" AND id IN (SELECT game_id FROM game_player_perspectives WHERE player_perspective_id IN (SELECT id FROM player_perspectives WHERE name = ?))");
+            params.push(Box::new(perspective.clone()));
+        }
+        // New filter: theme
+        if let Some(theme) = &f.theme {
+            query.push_str(" AND id IN (SELECT game_id FROM game_themes WHERE theme_id IN (SELECT id FROM themes WHERE name = ?))");
+            params.push(Box::new(theme.clone()));
+        }
+        // New filter: tag (by name)
+        if let Some(tag) = &f.tag {
+            query.push_str(" AND id IN (SELECT game_id FROM game_tags WHERE tag_id IN (SELECT id FROM tags WHERE name = ?))");
+            params.push(Box::new(tag.clone()));
+        }
         if let Some(sort) = &f.sort_by {
             const ALLOWED_SORT_COLUMNS: &[&str] = &[
                 "id", "folder_name", "folder_path", "display_name",
@@ -488,7 +513,7 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
     
     let mut stmt = conn.prepare(&query).map_err(|e: rusqlite::Error| e.to_string())?;
     
-    let games: Vec<Game> = stmt
+    let mut games: Vec<Game> = stmt
         .query_map(params_refs.as_slice(), |row| {
             Ok(Game {
                 id: row.get(0)?,
@@ -521,6 +546,102 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
         .map_err(|e: rusqlite::Error| e.to_string())?
         .filter_map(|r| r.ok())
         .collect();
+    
+    // Load metadata (tags, genres, game_modes, player_perspectives, themes) for each game
+    for game in &mut games {
+        let game_id = game.id;
+        
+        // Fetch genres
+        let mut genre_stmt = conn.prepare(
+            "SELECT g.id, g.name FROM genres g \
+             JOIN game_genres gg ON g.id = gg.genre_id \
+             WHERE gg.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        game.genres = genre_stmt
+            .query_map(rusqlite::params![game_id], |row| {
+                Ok(Genre {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
+        
+        // Fetch game modes
+        let mut mode_stmt = conn.prepare(
+            "SELECT gm.id, gm.name FROM game_modes gm \
+             JOIN game_game_modes ggm ON gm.id = ggm.game_mode_id \
+             WHERE ggm.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        game.game_modes = mode_stmt
+            .query_map(rusqlite::params![game_id], |row| {
+                Ok(GameMode {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
+        
+        // Fetch player perspectives
+        let mut pp_stmt = conn.prepare(
+            "SELECT pp.id, pp.name FROM player_perspectives pp \
+             JOIN game_player_perspectives gpp ON pp.id = gpp.player_perspective_id \
+             WHERE gpp.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        game.player_perspectives = pp_stmt
+            .query_map(rusqlite::params![game_id], |row| {
+                Ok(PlayerPerspective {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
+        
+        // Fetch themes
+        let mut theme_stmt = conn.prepare(
+            "SELECT t.id, t.name FROM themes t \
+             JOIN game_themes gt ON t.id = gt.theme_id \
+             WHERE gt.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        game.themes = theme_stmt
+            .query_map(rusqlite::params![game_id], |row| {
+                Ok(Theme {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
+        
+        // Fetch tags
+        let mut tag_stmt = conn.prepare(
+            "SELECT t.id, t.name, t.category FROM tags t \
+             JOIN game_tags gt ON t.id = gt.tag_id \
+             WHERE gt.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        game.tags = tag_stmt
+            .query_map(rusqlite::params![game_id], |row| {
+                Ok(Tag {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                    category: row.get(2)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
+    }
 
     Ok(games)
 }
@@ -556,7 +677,7 @@ pub fn delete_games_by_scan_path(scan_path: String, db: State<'_, Database>) -> 
         "DELETE FROM games WHERE folder_path = ?1 \
          OR folder_path LIKE ?1 || '/%' \
          OR folder_path LIKE ?1 || '\\%'",
-        rusqlite::params![scan_path, scan_path, scan_path],
+        rusqlite::params![scan_path],
     )
     .map_err(|e: rusqlite::Error| e.to_string())?;
     Ok(conn.changes() as u64)

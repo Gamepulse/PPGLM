@@ -93,6 +93,8 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
               {t('name')} *
             </label>
             <input
+              id="game-name"
+              name="game-name"
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
@@ -108,6 +110,8 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
             </label>
             <div className="flex gap-2">
               <input
+                id="folder-path"
+                name="folder-path"
                 type="text"
                 value={folderPath}
                 onChange={(e) => setFolderPath(e.target.value)}
@@ -131,6 +135,8 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
             </label>
             <div className="flex gap-2">
               <input
+                id="executable-path"
+                name="executable-path"
                 type="text"
                 value={executablePath}
                 onChange={(e) => setExecutablePath(e.target.value)}
@@ -153,6 +159,8 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
               IGDB ID
             </label>
             <input
+              id="igdb-id"
+              name="igdb-id"
               type="number"
               value={igdbId}
               onChange={(e) => setIgdbId(e.target.value)}

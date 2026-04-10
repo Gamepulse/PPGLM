@@ -180,6 +180,11 @@ export interface GameFilters {
   collection_id?: number;
   min_play_time?: number;
   max_play_time?: number;
+  genre?: string;
+  mode?: string;
+  perspective?: string;
+  theme?: string;
+  tag?: string;
 }
 
 /** Consolidated from FolderPicker.tsx and useScanner.ts */

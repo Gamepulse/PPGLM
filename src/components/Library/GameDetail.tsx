@@ -13,9 +13,10 @@ import { open } from "@tauri-apps/plugin-dialog";
 interface GameDetailProps {
   gameId: number;
   onBack: () => void;
+  onFilter?: (type: string, value: string) => void;
 }
 
-export function GameDetail({ gameId, onBack }: GameDetailProps) {
+export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
   const { t } = useI18n();
   const { 
     getGame, 
@@ -119,7 +120,7 @@ export function GameDetail({ gameId, onBack }: GameDetailProps) {
       </button>
 
       <GameDetailHeader game={game} refreshing={refreshing} onRefresh={handleRefresh} />
-      <GameDetailTags game={game} />
+      <GameDetailTags game={game} onFilter={onFilter} />
       <GameDetailInfo game={game} />
 
       <div className="pt-4 theme-border border-t mt-4 space-y-4">

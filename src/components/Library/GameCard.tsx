@@ -1,5 +1,6 @@
 import React from "react";
 import type { Game } from "../../types";
+import { COMPLETION_STATUS_LABELS } from "../../types";
 import { formatRating, formatDate } from "../../utils/formatters";
 import { getCategoryColor } from "../../utils/colors";
 import { useI18n } from "../../i18n";
@@ -7,12 +8,13 @@ import { useI18n } from "../../i18n";
 interface GameCardProps {
   game: Game;
   onClick: (id: number) => void;
-  viewMode: "grid" | "list";
+  viewMode: "grid" | "list" | "compact";
+  onFilter?: (type: string, value: string) => void;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
+const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter }) => {
   const { t } = useI18n();
-  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite } = game;
+  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes } = game;
   
   const renderTags = () => {
     if (tags.length === 0) return null;
@@ -20,12 +22,26 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
     const displayedTags = tags.slice(0, 3);
     const remainingCount = tags.length - 3;
     
+    console.log('[GameCard] Rendering tags:', displayedTags.map(t => t.name), 'onFilter exists:', !!onFilter);
+    
     return (
-      <div className="flex flex-wrap gap-1 mt-2">
+      <div className="flex flex-wrap gap-1 mt-2 pointer-events-auto">
         {displayedTags.map((tag) => (
           <span
             key={tag.id}
-            className={`px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)}`}
+            onClick={(e) => {
+              console.log('[GameCard] Click handler fired for tag:', tag.name);
+              e.stopPropagation();
+              e.preventDefault();
+              console.log('[GameCard] Calling onFilter with:', 'tag', tag.name);
+              if (onFilter) {
+                onFilter('tag', tag.name);
+              } else {
+                console.warn('[GameCard] onFilter is undefined!');
+              }
+            }}
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
+            role="button"
           >
             {tag.name}
           </span>
@@ -39,12 +55,44 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
       </div>
     );
   };
+  
+  const renderMetadataTags = () => {
+    const allMetadata = [
+      ...(genres || []).map(g => ({ ...g, type: 'genre' })),
+      ...(game_modes || []).map(m => ({ ...m, type: 'mode' })),
+      ...(player_perspectives || []).map(p => ({ ...p, type: 'perspective' })),
+      ...(themes || []).map(t => ({ ...t, type: 'theme' })),
+    ].slice(0, 4);
+    
+    if (allMetadata.length === 0) return null;
+    
+    return (
+      <div className="flex flex-wrap gap-1 mt-1">
+        {allMetadata.map((item) => (
+          <span
+            key={`${item.type}-${item.id}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
+              onFilter?.(item.type, item.name);
+            }}
+            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
+            role="button"
+          >
+            {item.name}
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   const renderCover = () => {
     if (cover_url) {
       return (
-        <div className="relative w-full h-48 theme-bg-tertiary rounded-lg overflow-hidden group flex items-center justify-center">
+        <div className="relative w-full h-48 bg-gray-800 rounded-lg overflow-hidden group flex items-center justify-center">
           <img
+            key={cover_url}
             src={cover_url}
             alt={display_name}
             className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
@@ -77,10 +125,21 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
       wishlist: 'bg-purple-600',
       not_started: 'bg-gray-600',
     };
+    const label = COMPLETION_STATUS_LABELS[completion_status as keyof typeof COMPLETION_STATUS_LABELS] || completion_status;
+    
     return (
-      <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'}`}>
-        {t(completion_status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}
-      </div>
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          console.log('[GameCard] Status badge clicked:', completion_status);
+          onFilter?.('status', completion_status);
+        }}
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
+        role="button"
+      >
+        {label}
+      </span>
     );
   };
 
@@ -121,7 +180,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
     return (
       <div
         className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
-        onClick={() => onClick(game.id)}
+        onClick={(e) => {
+          // Don't navigate if clicking on an interactive element
+          const target = e.target as HTMLElement;
+          if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
+            console.log('[GameCard] Grid click blocked - interactive element');
+            return;
+          }
+          console.log('[GameCard] Grid click - navigating to game:', game.id);
+          onClick(game.id);
+        }}
       >
         <div className="relative">
           {renderCover()}
@@ -155,6 +223,84 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
           </div>
           
           {renderTags()}
+          {renderMetadataTags()}
+        </div>
+      </div>
+    );
+  }
+
+  // Compact view mode
+  if (viewMode === "compact") {
+    return (
+      <div
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative"
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
+            return;
+          }
+          onClick(game.id);
+        }}
+      >
+        <div className="relative h-24 bg-gray-800">
+          {cover_url ? (
+            <img
+              key={cover_url}
+              src={cover_url}
+              alt={display_name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement?.querySelector('.compact-placeholder')?.classList.remove('hidden');
+              }}
+            />
+          ) : null}
+          <div key={`placeholder-${game.id}`} className={`compact-placeholder ${cover_url ? 'hidden' : ''} absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center`}>
+            <span className="text-2xl">🎮</span>
+          </div>
+          
+          {/* Status badge - small */}
+          {completion_status && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onFilter?.('status', completion_status);
+              }}
+              className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] text-white ${
+                completion_status === 'completed' ? 'bg-green-600' :
+                completion_status === 'playing' ? 'bg-blue-600' :
+                completion_status === 'dropped' ? 'bg-red-600' :
+                completion_status === 'wishlist' ? 'bg-purple-600' : 'bg-gray-600'
+              } hover:opacity-80 transition-opacity cursor-pointer`}
+            >
+              {completion_status === 'not_started' ? 'Not Started' :
+               completion_status === 'playing' ? 'Playing' :
+               completion_status === 'completed' ? 'Completed' :
+               completion_status === 'dropped' ? 'Dropped' :
+               completion_status === 'wishlist' ? 'Wishlist' : completion_status}
+            </button>
+          )}
+          
+          {/* Favorite star */}
+          {is_favorite && (
+            <span className="absolute top-1 right-1 text-yellow-400 text-sm">★</span>
+          )}
+        </div>
+        
+        <div className="p-2">
+          <h3 className="theme-text-primary font-medium text-xs truncate" title={display_name}>
+            {display_name}
+          </h3>
+          <div className="flex items-center justify-between mt-1">
+            <span className="text-yellow-400 text-xs">
+              {personal_rating ? `★${personal_rating}` : ''}
+            </span>
+            {play_time && play_time > 0 && (
+              <span className="text-[10px] theme-text-muted">
+                {play_time.toFixed(0)}h
+              </span>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -164,9 +310,15 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
   return (
     <div
       className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
-      onClick={() => onClick(game.id)}
+      onClick={(e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
+          return;
+        }
+        onClick(game.id);
+      }}
     >
-      <div className="w-24 h-24 flex-shrink-0 relative">
+      <div className="w-24 h-24 flex-shrink-0 relative bg-gray-800 rounded-lg overflow-hidden">
         {renderCover()}
         {renderStatusBadge()}
       </div>
@@ -198,6 +350,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode }) => {
         </div>
         
         {renderTags()}
+        {renderMetadataTags()}
       </div>
     </div>
   );

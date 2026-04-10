@@ -15,7 +15,7 @@ export type ColorTheme =
   | 'forest'      // Green/Nature
   | 'sunset';     // Orange/Purple
 
-interface ColorThemeConfig {
+export interface ColorThemeConfig {
   name: string;
   description: string;
   icon: string;
