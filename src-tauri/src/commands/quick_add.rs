@@ -3,8 +3,19 @@ use crate::db::Database;
 use crate::commands::database::save_game_metadata;
 use crate::commands::igdb::{get_igdb_credentials_from_db, get_igdb_token};
 use crate::models::game::{Game, Genre, GameMode, PlayerPerspective, Theme};
-use crate::models::scan_result::{IgdbGenreSimple, ScanResult};
+use crate::models::scan_result::IgdbGenreSimple;
 use crate::utils::format_cover_url;
+
+/// Check if a game already exists at the given path
+fn check_game_exists(db: &Database, path: &str) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    let exists: bool = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE folder_path = ?1",
+        rusqlite::params![path],
+        |row| Ok(row.get::<_, i64>(0)? > 0),
+    ).unwrap_or(false);
+    Ok(exists)
+}
 
 /// Quick add a game manually without scanning
 #[tauri::command]
@@ -15,21 +26,12 @@ pub async fn quick_add_game(
     igdb_id: Option<i64>,
     db: State<'_, Database>,
 ) -> Result<Game, String> {
-    // Check if game already exists at this path (in a separate scope)
-    {
-        let conn = db.lock_conn()?;
-        if let Some(ref path) = folder_path {
-            let exists: bool = conn.query_row(
-                "SELECT COUNT(*) FROM games WHERE folder_path = ?1",
-                rusqlite::params![path],
-                |row| Ok(row.get::<_, i64>(0)? > 0),
-            ).unwrap_or(false);
-            
-            if exists {
-                return Err("A game already exists at this path".to_string());
-            }
+    // Check if game already exists at this path
+    if let Some(ref path) = &folder_path {
+        if check_game_exists(&db, path)? {
+            return Err("A game already exists at this path".to_string());
         }
-    } // conn is dropped here
+    }
     
     let folder_name = folder_path.as_ref()
         .and_then(|p| std::path::Path::new(p).file_name())
@@ -169,37 +171,89 @@ async fn fetch_igdb_game_data(
 
 /// Export collection to CSV format
 #[tauri::command]
-pub fn export_collection_csv(export_path: String, db: State<'_, Database>) -> Result<String, String> {
+pub fn export_collection_csv(
+    export_path: String,
+    game_ids: Option<Vec<i64>>,
+    db: State<'_, Database>
+) -> Result<String, String> {
     let conn = db.lock_conn()?;
     
-    // Get all games
-    let mut stmt = conn.prepare(
-        "SELECT id, folder_name, display_name, personal_rating, igdb_rating, notes, \
-         release_date, play_time, completion_status, is_favorite, last_played \
-         FROM games ORDER BY display_name"
-    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    // Build query based on whether game_ids is provided
+    let (query, params): (String, Vec<i64>) = match game_ids {
+        Some(ids) if !ids.is_empty() => {
+            let placeholders: Vec<String> = ids.iter().map(|_| "?".to_string()).collect();
+            let query = format!(
+                "SELECT id, folder_name, display_name, personal_rating, igdb_rating, notes, \
+                 release_date, play_time, completion_status, is_favorite, last_played \
+                 FROM games \
+                 WHERE id IN ({}) \
+                 ORDER BY display_name",
+                placeholders.join(", ")
+            );
+            (query, ids)
+        }
+        _ => {
+            // Get all games if no specific IDs provided
+            let query = "SELECT id, folder_name, display_name, personal_rating, igdb_rating, notes, \
+                 release_date, play_time, completion_status, is_favorite, last_played \
+                 FROM games ORDER BY display_name".to_string();
+            (query, vec![])
+        }
+    };
+    
+    let mut stmt = conn.prepare(&query).map_err(|e: rusqlite::Error| e.to_string())?;
     
     let mut csv_content = String::from("ID,Name,Personal Rating,IGDB Rating,Notes,Release Date,Play Time (hours),Status,Favorite,Last Played\n");
     
-    let games = stmt
-        .query_map([], |row| {
-            Ok((
-                row.get::<_, i64>(0)?,
-                row.get::<_, String>(1)?,
-                row.get::<_, Option<i64>>(2)?,
-                row.get::<_, Option<f64>>(3)?,
-                row.get::<_, Option<String>>(4)?,
-                row.get::<_, Option<String>>(5)?,
-                row.get::<_, Option<f64>>(6)?,
-                row.get::<_, Option<String>>(7)?,
-                row.get::<_, Option<i64>>(8)?,
-                row.get::<_, Option<String>>(9)?,
-            ))
-        })
-        .map_err(|e: rusqlite::Error| e.to_string())?;
+    // Execute query with or without params
+    let games: Vec<_> = if params.is_empty() {
+        stmt
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, Option<i64>>(3)?,
+                    row.get::<_, Option<f64>>(4)?,
+                    row.get::<_, Option<String>>(5)?,
+                    row.get::<_, Option<String>>(6)?,
+                    row.get::<_, Option<f64>>(7)?,
+                    row.get::<_, Option<String>>(8)?,
+                    row.get::<_, Option<i64>>(9)?,
+                    row.get::<_, Option<String>>(10)?,
+                ))
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect()
+    } else {
+        // Convert params to Vec of references to i64
+        let param_refs: Vec<&i64> = params.iter().collect();
+        // Create dynamic params
+        let dyn_params: Vec<&dyn rusqlite::ToSql> = param_refs.iter().map(|&id| id as &dyn rusqlite::ToSql).collect();
+        stmt
+            .query_map(rusqlite::params_from_iter(dyn_params), |row| {
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, Option<i64>>(3)?,
+                    row.get::<_, Option<f64>>(4)?,
+                    row.get::<_, Option<String>>(5)?,
+                    row.get::<_, Option<String>>(6)?,
+                    row.get::<_, Option<f64>>(7)?,
+                    row.get::<_, Option<String>>(8)?,
+                    row.get::<_, Option<i64>>(9)?,
+                    row.get::<_, Option<String>>(10)?,
+                ))
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect()
+    };
     
-    for game in games.filter_map(|r| r.ok()) {
-        let (id, name, rating, igdb_rating, notes, release_date, play_time, status, is_fav, last_played) = game;
+    for game in games {
+        let (id, _folder_name, display_name, rating, igdb_rating, notes, release_date, play_time, status, is_fav, last_played) = game;
         let rating_str = rating.map(|r| r.to_string()).unwrap_or_default();
         let igdb_str = igdb_rating.map(|r| format!("{:.1}", r)).unwrap_or_default();
         let notes_str = notes.map(|n| format!("\"{}\"", n.replace('"', "\"\""))).unwrap_or_default();
@@ -211,7 +265,7 @@ pub fn export_collection_csv(export_path: String, db: State<'_, Database>) -> Re
         
         csv_content.push_str(&format!(
             "{},\"{}\",{},{},{},{},{},{},{},{}\n",
-            id, name, rating_str, igdb_str, notes_str, release_str, play_time_str, status_str, fav_str, last_played_str
+            id, display_name, rating_str, igdb_str, notes_str, release_str, play_time_str, status_str, fav_str, last_played_str
         ));
     }
     
