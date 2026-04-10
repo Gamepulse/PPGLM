@@ -11,9 +11,10 @@ import { DEFAULT_SORT, DEFAULT_ORDER } from "../../utils/constants";
 interface GameListProps {
   onSelectGame: (id: number) => void;
   searchQuery?: string;
+  onFilter?: (type: string, value: string) => void;
 }
 
-export function GameList({ onSelectGame, searchQuery }: GameListProps) {
+export function GameList({ onSelectGame, searchQuery, onFilter }: GameListProps) {
   const { games, loading, fetchGames } = useGames();
   const { t } = useI18n();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -27,14 +28,33 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
 
   useEffect(() => {
     const query = searchQuery?.trim() || undefined;
-    fetchGames({
-      sort_by: sortBy,
-      sort_order: sortOrder,
-      ...(query ? { search_query: query } : {}),
-    });
+    
+    // Parse filter prefix (genre:, mode:, perspective:, theme:, tag:)
+    const filterPrefixes = ['genre:', 'mode:', 'perspective:', 'theme:', 'tag:'];
+    const activePrefix = filterPrefixes.find(prefix => query?.startsWith(prefix));
+    
+    if (activePrefix) {
+      const filterType = activePrefix.slice(0, -1); // Remove colon
+      const filterValue = query?.slice(activePrefix.length).trim();
+      
+      fetchGames({
+        sort_by: sortBy,
+        sort_order: sortOrder,
+        [filterType]: filterValue,
+      });
+    } else {
+      fetchGames({
+        sort_by: sortBy,
+        sort_order: sortOrder,
+        ...(query ? { search_query: query } : {}),
+      });
+    }
   }, [fetchGames, sortBy, sortOrder, searchQuery]);
 
-  const filtered = searchQuery?.trim()
+  // Don't apply additional text filter if using a filter prefix
+  const filterPrefixes = ['genre:', 'mode:', 'perspective:', 'theme:', 'tag:'];
+  const isFilterSearch = filterPrefixes.some(prefix => searchQuery?.startsWith(prefix));
+  const filtered = (searchQuery?.trim() && !isFilterSearch)
     ? games.filter((g) => g.display_name.toLowerCase().includes(searchQuery.toLowerCase()))
     : games;
 
@@ -47,8 +67,13 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
         defaultPath: "pascal-collection.json",
       });
       if (!filePath) return;
-      const savedTo = await invoke<string>("export_collection", { exportPath: filePath });
-      setExportStatus(`${t('export')} → ${savedTo}`);
+      // Export only the filtered/visible games
+      const visibleGameIds = filtered.map(game => game.id);
+      const savedTo = await invoke<string>("export_collection", {
+        exportPath: filePath,
+        gameIds: visibleGameIds
+      });
+      setExportStatus(`${t('export')}: ${visibleGameIds.length} ${t('games')} → ${savedTo}`);
     } catch (e) {
       setExportStatus(`${t('error')}: ${e}`);
     }
@@ -83,8 +108,13 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
         defaultPath: "pascal-collection.csv",
       });
       if (!filePath) return;
-      const savedTo = await invoke<string>("export_collection_csv", { exportPath: filePath });
-      setCsvExportStatus(`${t('exportCSV')} → ${savedTo}`);
+      // Export only the filtered/visible games
+      const visibleGameIds = filtered.map(game => game.id);
+      const savedTo = await invoke<string>("export_collection_csv", {
+        exportPath: filePath,
+        gameIds: visibleGameIds
+      });
+      setCsvExportStatus(`${t('exportCSV')}: ${visibleGameIds.length} ${t('games')} → ${savedTo}`);
     } catch (e) {
       setCsvExportStatus(`${t('error')}: ${e}`);
     }
@@ -200,14 +230,14 @@ export function GameList({ onSelectGame, searchQuery }: GameListProps) {
         <div className="p-4">
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
             {filtered.map((game) => (
-              <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="grid" />
+              <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="grid" onFilter={onFilter} />
             ))}
           </div>
         </div>
       ) : (
         <div className="p-4 space-y-4">
           {filtered.map((game) => (
-            <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="list" />
+            <GameCard key={game.id} game={game} onClick={onSelectGame} viewMode="list" onFilter={onFilter} />
           ))}
         </div>
       )}
