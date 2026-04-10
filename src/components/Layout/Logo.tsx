@@ -11,7 +11,7 @@ export const Logo: FC<LogoProps> = ({ onClick }) => {
       className="flex items-center gap-2 cursor-pointer group"
       title="Pascal Personal Game Manager"
     >
-      {/* Logo SVG - Style gaming moderne */}
+      {/* Logo SVG - Manette de jeu moderne */}
       <div className="relative w-10 h-10 flex items-center justify-center">
         <svg
           viewBox="0 0 40 40"
@@ -19,22 +19,33 @@ export const Logo: FC<LogoProps> = ({ onClick }) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Hexagone de fond avec dégradé */}
-          <path
-            d="M20 2L36.5 11.5V30.5L20 40L3.5 30.5V11.5L20 2Z"
-            className="fill-indigo-600 stroke-indigo-400"
-            strokeWidth="2"
+          {/* Fond circulaire avec dégradé */}
+          <circle
+            cx="20"
+            cy="20"
+            r="18"
+            className="fill-indigo-600"
           />
-          {/* P lettre centrale */}
-          <text
-            x="20"
-            y="27"
-            textAnchor="middle"
-            className="fill-white font-bold text-lg"
-            style={{ fontSize: "18px", fontWeight: "bold" }}
-          >
-            P
-          </text>
+          
+          {/* Corps de la manette */}
+          <path
+            d="M8 20 C8 14, 32 14, 32 20 C32 28, 28 30, 24 30 L24 26 C24 24, 16 24, 16 26 L16 30 C12 30, 8 28, 8 20Z"
+            className="fill-indigo-400"
+          />
+          
+          {/* Croix directionnelle gauche */}
+          <rect x="11" y="19" width="6" height="2" rx="0.5" className="fill-indigo-700" />
+          <rect x="13" y="17" width="2" height="6" rx="0.5" className="fill-indigo-700" />
+          
+          {/* Boutons ABXY droite */}
+          <circle cx="26" cy="19" r="1.5" className="fill-indigo-800" />
+          <circle cx="29" cy="22" r="1.5" className="fill-indigo-800" />
+          <circle cx="23" cy="22" r="1.5" className="fill-indigo-800" />
+          <circle cx="26" cy="25" r="1.5" className="fill-indigo-800" />
+          
+          {/* Stick analogique gauche */}
+          <circle cx="14" cy="22" r="2.5" className="fill-indigo-500" />
+          <circle cx="14" cy="22" r="1.5" className="fill-indigo-300" />
         </svg>
       </div>
 
