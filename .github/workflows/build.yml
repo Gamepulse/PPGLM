@@ -55,10 +55,17 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS signing configuration - ad-hoc signing for distribution
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           tagName: app-v__VERSION__
           releaseName: 'PPGLM v__VERSION__'
-          releaseBody: 'See the assets to download and install this version.'
+          releaseBody: 'See the assets to download and install this version.\n\n**Note for macOS users:** If the app does not open, right-click on the app and select "Open" instead of double-clicking. You may need to go to System Preferences > Security & Privacy and click "Open Anyway".'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
