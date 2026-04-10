@@ -41,27 +41,66 @@ struct ExportTag {
 }
 
 #[tauri::command]
-pub fn export_collection(export_path: String, db: State<'_, Database>) -> Result<String, String> {
+pub fn export_collection(
+    export_path: String,
+    game_ids: Option<Vec<i64>>,
+    db: State<'_, Database>
+) -> Result<String, String> {
     let conn = db.lock_conn()?;
     
-    // Get all games with their metadata
-    let mut games_stmt = conn.prepare(
-        "SELECT id, folder_name, folder_path, display_name, igdb_id, \
-         personal_rating, igdb_rating, notes, cover_url, synopsis, release_date \
-         FROM games ORDER BY id"
-    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    // Build query based on whether game_ids is provided
+    let (query, params): (String, Vec<i64>) = match game_ids {
+        Some(ids) if !ids.is_empty() => {
+            let placeholders: Vec<String> = ids.iter().map(|_| "?".to_string()).collect();
+            let query = format!(
+                "SELECT id, folder_name, folder_path, display_name, igdb_id, \
+                 personal_rating, igdb_rating, notes, cover_url, synopsis, release_date \
+                 FROM games \
+                 WHERE id IN ({}) \
+                 ORDER BY id",
+                placeholders.join(", ")
+            );
+            (query, ids)
+        }
+        _ => {
+            // Get all games if no specific IDs provided
+            let query = "SELECT id, folder_name, folder_path, display_name, igdb_id, \
+                 personal_rating, igdb_rating, notes, cover_url, synopsis, release_date \
+                 FROM games ORDER BY id".to_string();
+            (query, vec![])
+        }
+    };
     
-    let games: Vec<(i64, String, String, String, Option<i64>, Option<i64>, Option<f64>, Option<String>, Option<String>, Option<String>, Option<String>)> = games_stmt
-        .query_map([], |row| {
-            Ok((
-                row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?,
-                row.get(5)?, row.get(6)?, row.get(7)?, row.get(8)?, row.get(9)?,
-                row.get(10)?,
-            ))
-        })
-        .map_err(|e: rusqlite::Error| e.to_string())?
-        .filter_map(|r| r.ok())
-        .collect();
+    let mut games_stmt = conn.prepare(&query).map_err(|e: rusqlite::Error| e.to_string())?;
+    
+    // Execute query with or without params
+    let games: Vec<(i64, String, String, String, Option<i64>, Option<i64>, Option<f64>, Option<String>, Option<String>, Option<String>, Option<String>)> = if params.is_empty() {
+        games_stmt
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?,
+                    row.get(5)?, row.get(6)?, row.get(7)?, row.get(8)?, row.get(9)?,
+                    row.get(10)?,
+                ))
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect()
+    } else {
+        let param_refs: Vec<&i64> = params.iter().collect();
+        let dyn_params: Vec<&dyn rusqlite::ToSql> = param_refs.iter().map(|&id| id as &dyn rusqlite::ToSql).collect();
+        games_stmt
+            .query_map(rusqlite::params_from_iter(dyn_params), |row| {
+                Ok((
+                    row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?,
+                    row.get(5)?, row.get(6)?, row.get(7)?, row.get(8)?, row.get(9)?,
+                    row.get(10)?,
+                ))
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect()
+    };
     
     // Get all tags
     let mut tags_stmt = conn.prepare(
