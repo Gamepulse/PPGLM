@@ -179,7 +179,7 @@ pub async fn search_igdb_games_full(
         .header("Client-ID", &creds.client_id)
         .header("Authorization", format!("Bearer {}", token))
         .body(format!(
-            "search \"{}\"; fields id,name,cover.url; limit 10;",
+            "search \"{}\"; fields id,name,slug,cover.url,summary,rating,genres.name,themes.name,game_modes.name,player_perspectives.name,platforms.name; limit 10;",
             query
         ))
         .send()
@@ -320,7 +320,161 @@ pub async fn refresh_game_from_igdb(
         .header("Client-ID", &creds.client_id)
         .header("Authorization", format!("Bearer {}", token))
         .body(format!(
-            "fields id,name,cover.url,rating,summary,genres,game_modes,player_perspectives,themes,first_release_date; where id = {};",
+            "fields id,name,slug,cover.url,rating,summary,genres,game_modes,player_perspectives,themes,first_release_date,screenshots.url,artworks.url; where id = {};",
+            igdb_id
+        ))
+        .send()
+        .await
+        .map_err(|e| format!("IGDB request failed: {}", e))?;
+    
+    // Log response body for debugging
+    let response_text = response
+        .text()
+        .await
+        .map_err(|e| format!("Failed to read IGDB response: {}", e))?;
+    
+    if response_text.is_empty() {
+        return Err("Empty response from IGDB".to_string());
+    }
+    
+    println!("[refresh_game_from_igdb] Response preview: {}", &response_text[..response_text.len().min(200)]);
+    
+    let mut igdb_games: Vec<IgdbGame> = serde_json::from_str(&response_text)
+        .map_err(|e| {
+            println!("[refresh_game_from_igdb] Parse error. Response: {}", &response_text[..response_text.len().min(500)]);
+            format!("Failed to parse IGDB response: {}", e)
+        })?;
+    
+    if igdb_games.is_empty() {
+        return Err("Game not found on IGDB".to_string());
+    }
+    
+    let igdb_game = igdb_games.remove(0);
+    
+    // Extract all data from igdb_game first to avoid borrow issues
+    let release_date = igdb_game.first_release_date
+        .map(|ts| {
+            chrono::DateTime::from_timestamp(ts, 0)
+                .map(|dt| dt.format("%Y-%m-%d").to_string())
+                .unwrap_or_default()
+        });
+    let cover_url = igdb_game.cover.as_ref().map(|c| format_cover_url(&c.url));
+    let summary = igdb_game.summary.clone();
+    let rating = igdb_game.rating;
+    let slug = igdb_game.slug.clone();
+    
+    // Extract metadata
+    let genres: Vec<IgdbGenreSimple> = igdb_game.genres.unwrap_or_default()
+        .into_iter()
+        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
+        .collect();
+    let game_modes: Vec<IgdbGenreSimple> = igdb_game.game_modes.unwrap_or_default()
+        .into_iter()
+        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
+        .collect();
+    let player_perspectives: Vec<IgdbGenreSimple> = igdb_game.player_perspectives.unwrap_or_default()
+        .into_iter()
+        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
+        .collect();
+    let themes: Vec<IgdbGenreSimple> = igdb_game.themes.unwrap_or_default()
+        .into_iter()
+        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
+        .collect();
+    let platforms: Vec<IgdbGenreSimple> = igdb_game.platforms.unwrap_or_default()
+        .into_iter()
+        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
+        .collect();
+    
+    println!("[refresh_game_from_igdb] Fetched from IGDB: {} genres, {} modes, {} perspectives, {} themes, {} platforms",
+        genres.len(), game_modes.len(), player_perspectives.len(), themes.len(), platforms.len());
+    
+    // Now start database operations
+    let conn = db.lock_conn()?;
+    
+    conn.execute(
+        "UPDATE games SET cover_url = ?1, synopsis = ?2, release_date = ?3, igdb_rating = ?4, updated_at = datetime('now') WHERE id = ?5",
+        rusqlite::params![
+            cover_url,
+            summary,
+            release_date,
+            rating,
+            game_id,
+        ],
+    ).map_err(|e| format!("Failed to update game: {}", e))?;
+    
+    // Update slug if available
+    if let Some(s) = slug {
+        conn.execute(
+            "UPDATE games SET igdb_slug = ?1 WHERE id = ?2",
+            rusqlite::params![s, game_id],
+        ).map_err(|e| format!("Failed to update slug: {}", e))?;
+        println!("[refresh_game_from_igdb] Updated slug: {}", s);
+    }
+    
+    // Clear existing metadata
+    conn.execute("DELETE FROM game_genres WHERE game_id = ?1", rusqlite::params![game_id])
+        .map_err(|e| format!("Failed to clear genres: {}", e))?;
+    conn.execute("DELETE FROM game_game_modes WHERE game_id = ?1", rusqlite::params![game_id])
+        .map_err(|e| format!("Failed to clear game modes: {}", e))?;
+    conn.execute("DELETE FROM game_player_perspectives WHERE game_id = ?1", rusqlite::params![game_id])
+        .map_err(|e| format!("Failed to clear player perspectives: {}", e))?;
+    conn.execute("DELETE FROM game_themes WHERE game_id = ?1", rusqlite::params![game_id])
+        .map_err(|e| format!("Failed to clear themes: {}", e))?;
+    
+    // Reset personal game data since this is now a different game
+    conn.execute(
+        "UPDATE games SET personal_rating = NULL, play_time = NULL, completion_status = NULL, is_favorite = 0, notes = NULL, platform = NULL WHERE id = ?1",
+        rusqlite::params![game_id],
+    ).map_err(|e| format!("Failed to reset personal data: {}", e))?;
+    println!("[refresh_game_from_igdb] Reset personal data (rating, playtime, status, etc.)");
+    
+    // Clear custom tags (keep system tags like genres)
+    conn.execute("DELETE FROM game_tags WHERE game_id = ?1", rusqlite::params![game_id])
+        .map_err(|e| format!("Failed to clear custom tags: {}", e))?;
+    println!("[refresh_game_from_igdb] Cleared custom tags");
+    
+    save_game_metadata(&conn, game_id, &genres, &game_modes, &player_perspectives, &themes, &platforms)?;
+    
+    println!("[refresh_game_from_igdb] Metadata saved successfully");
+    
+    println!("[refresh_game_from_igdb] Successfully refreshed game {} from IGDB", game_id);
+    Ok(true)
+}
+
+/// Extract rating from IGDB game (handles null values)
+fn igdb_rating_from_igdb(game: &IgdbGame) -> Option<f64> {
+    game.rating
+}
+
+/// Get IGDB screenshot URLs for a game
+#[tauri::command]
+pub async fn get_igdb_screenshots(
+    game_id: i64,
+    db: State<'_, Database>,
+) -> Result<Vec<String>, String> {
+    let igdb_id: i64 = {
+        let conn = db.lock_conn()?;
+        conn.query_row(
+            "SELECT igdb_id FROM games WHERE id = ?1",
+            rusqlite::params![game_id],
+            |row| row.get(0),
+        )
+        .map_err(|_| format!("Game {} not found or has no IGDB ID", game_id))?
+    };
+    
+    let token = get_igdb_token(&db).await?;
+    let creds = get_igdb_credentials(db.clone())?.ok_or_else(|| "IGDB credentials not configured".to_string())?;
+    
+    // Rate limiting
+    tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+    
+    let client = reqwest::Client::new();
+    let response = client
+        .post("https://api.igdb.com/v4/games")
+        .header("Client-ID", &creds.client_id)
+        .header("Authorization", format!("Bearer {}", token))
+        .body(format!(
+            "fields screenshots.url,artworks.url; where id = {};",
             igdb_id
         ))
         .send()
@@ -333,75 +487,29 @@ pub async fn refresh_game_from_igdb(
         .map_err(|e| format!("Failed to parse IGDB response: {}", e))?;
     
     if igdb_games.is_empty() {
-        return Err("Game not found on IGDB".to_string());
+        return Ok(Vec::new());
     }
     
     let igdb_game = igdb_games.remove(0);
     
-    // Format release date
-    let release_date = igdb_game.first_release_date
-        .map(|ts| {
-            chrono::DateTime::from_timestamp(ts, 0)
-                .map(|dt| dt.format("%Y-%m-%d").to_string())
-                .unwrap_or_default()
-        });
+    // Collect screenshot and artwork URLs
+    let mut urls = Vec::new();
     
-    // Format cover URL
-    let cover_url = igdb_game.cover.as_ref().map(|c| format_cover_url(&c.url));
+    // Add screenshots
+    if let Some(screenshots) = igdb_game.screenshots {
+        for screenshot in screenshots {
+            let url = format_cover_url(&screenshot.url);
+            urls.push(url);
+        }
+    }
     
-    // Update game in database
-    let conn = db.lock_conn()?;
+    // Add artworks
+    if let Some(artworks) = igdb_game.artworks {
+        for artwork in artworks {
+            let url = format_cover_url(&artwork.url);
+            urls.push(url);
+        }
+    }
     
-    conn.execute(
-        "UPDATE games SET cover_url = ?1, synopsis = ?2, release_date = ?3, igdb_rating = ?4, updated_at = datetime('now') WHERE id = ?5",
-        rusqlite::params![
-            cover_url,
-            igdb_game.summary,
-            release_date,
-            igdb_rating_from_igdb(&igdb_game),
-            game_id,
-        ],
-    ).map_err(|e| format!("Failed to update game: {}", e))?;
-    
-    // Clear existing metadata
-    conn.execute("DELETE FROM game_genres WHERE game_id = ?1", rusqlite::params![game_id])
-        .map_err(|e| format!("Failed to clear genres: {}", e))?;
-    conn.execute("DELETE FROM game_game_modes WHERE game_id = ?1", rusqlite::params![game_id])
-        .map_err(|e| format!("Failed to clear game modes: {}", e))?;
-    conn.execute("DELETE FROM game_player_perspectives WHERE game_id = ?1", rusqlite::params![game_id])
-        .map_err(|e| format!("Failed to clear player perspectives: {}", e))?;
-    conn.execute("DELETE FROM game_themes WHERE game_id = ?1", rusqlite::params![game_id])
-        .map_err(|e| format!("Failed to clear themes: {}", e))?;
-    
-    // Save new metadata
-    let genres = igdb_game.genres.unwrap_or_default()
-        .into_iter()
-        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
-        .collect::<Vec<_>>();
-    let game_modes = igdb_game.game_modes.unwrap_or_default()
-        .into_iter()
-        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
-        .collect::<Vec<_>>();
-    let player_perspectives = igdb_game.player_perspectives.unwrap_or_default()
-        .into_iter()
-        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
-        .collect::<Vec<_>>();
-    let themes = igdb_game.themes.unwrap_or_default()
-        .into_iter()
-        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
-        .collect::<Vec<_>>();
-    let platforms = igdb_game.platforms.unwrap_or_default()
-        .into_iter()
-        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
-        .collect::<Vec<_>>();
-    
-    save_game_metadata(&conn, game_id, &genres, &game_modes, &player_perspectives, &themes, &platforms)?;
-    
-    println!("[refresh_game_from_igdb] Successfully refreshed game {} from IGDB", game_id);
-    Ok(true)
-}
-
-/// Extract rating from IGDB game (handles null values)
-fn igdb_rating_from_igdb(game: &IgdbGame) -> Option<f64> {
-    game.rating
+    Ok(urls)
 }

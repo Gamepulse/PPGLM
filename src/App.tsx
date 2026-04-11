@@ -47,10 +47,10 @@ function App() {
     }, []);
 
     const handleGamesSaved = useCallback(() => {
-      // Force library refresh
+      // Force library refresh in background
       setLibraryRefreshKey(prev => prev + 1);
-      // Navigate to library to show new games
-      setCurrentView("library");
+      // Stay on scanner page to continue working on excluded folders
+      // User can manually navigate to library when ready
     }, []);
 
     const handleFiltersChange = useCallback((filters: ActiveFilter[]) => {
@@ -70,6 +70,10 @@ function App() {
 
     const handleRemoveFilter = useCallback((type: string, value: string) => {
         setActiveFilters(prev => prev.filter(f => !(f.type === type && f.value === value)));
+    }, []);
+
+    const handleClearAllFilters = useCallback(() => {
+        setActiveFilters([]);
     }, []);
 
     const renderCurrentView = () => {
@@ -142,6 +146,7 @@ function App() {
             onFilterByTag={handleFilterByTag}
             activeFilters={activeFilters}
             onRemoveFilter={handleRemoveFilter}
+            onClearAllFilters={handleClearAllFilters}
         >
             {renderCurrentView()}
         </MainLayout>

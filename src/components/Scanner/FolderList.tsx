@@ -11,9 +11,11 @@ interface FolderListProps {
   onAddFolder: () => void;
   onRemoveFolder: (path: string) => void;
   onGamesDeleted?: () => void;
+  scanDepth?: number;
+  onScanDepthChange?: (depth: number) => void;
 }
 
-export function FolderList({ folders, onAddFolder, onRemoveFolder, onGamesDeleted }: FolderListProps) {
+export function FolderList({ folders, onAddFolder, onRemoveFolder, onGamesDeleted, scanDepth = 3, onScanDepthChange }: FolderListProps) {
   const { t } = useI18n();
 
   // Confirmation modal state
@@ -58,12 +60,35 @@ export function FolderList({ folders, onAddFolder, onRemoveFolder, onGamesDelete
     <div>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold theme-text-primary">{t('scanFolders')}</h2>
-        <button
-          onClick={onAddFolder}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
-        >
-          + {t('addFolder')}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Scan Depth Dropdown */}
+          <label className="text-sm theme-text-secondary cursor-help" title={t('scanDepthTooltip') || 'Nombre de niveaux de sous-dossiers à explorer (1 = superficiel, 10 = très profond)'}>
+            {t('scanDepth')}:
+          </label>
+          <select
+            value={scanDepth}
+            onChange={(e) => onScanDepthChange?.(parseInt(e.target.value))}
+            className="px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+            title={t('scanDepthTooltip') || 'Nombre de niveaux de sous-dossiers à explorer (1 = superficiel, 10 = très profond)'}
+          >
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5</option>
+            <option value={6}>6</option>
+            <option value={7}>7</option>
+            <option value={8}>8</option>
+            <option value={9}>9</option>
+            <option value={10}>10</option>
+          </select>
+          <button
+            onClick={onAddFolder}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+          >
+            + {t('addFolder')}
+          </button>
+        </div>
       </div>
 
       <div className="space-y-2">

@@ -79,9 +79,15 @@ export function TagEditor({ gameId, tags, onTagsChanged }: TagEditorProps) {
 
   const handleCreateTag = async () => {
     try {
+      // Add # prefix if not already present
+      let tagName = inputValue.trim();
+      if (!tagName.startsWith('#')) {
+        tagName = '#' + tagName;
+      }
+      
       // Create new tag
       const newTag = await invoke<Tag>("create_tag", { 
-        name: inputValue.trim(), 
+        name: tagName, 
         category: "custom" 
       });
       
@@ -162,7 +168,7 @@ export function TagEditor({ gameId, tags, onTagsChanged }: TagEditorProps) {
                   onClick={handleCreateTag}
                   className="w-full text-left px-3 py-2 text-sm text-indigo-400 hover:theme-bg-secondary hover:text-indigo-300 rounded-md transition-colors"
                 >
-                  + Create new tag "{inputValue.trim()}"
+                  + Create new tag "{inputValue.trim().startsWith('#') ? inputValue.trim() : '#' + inputValue.trim()}"
                 </button>
               </div>
             )}

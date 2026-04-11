@@ -29,7 +29,7 @@ export function ResultCard({
   result, isNonMatch, isEditing, isRetrying, isExcluded, isRejected, isParent,
   onUpdateDisplayName, onSelectCandidate, onConfirmNonMatch,
   onDelete, onCreateExclusion, onSetEditing, onOpenIgdb,
-  onUpdatePlatform, onRetrySearch, onToggleExclusion, onPromote,
+  onUpdatePlatform, onRetrySearch, onPromote,
 }: ResultCardProps) {
   const { t } = useI18n();
   const [isCandidatesExpanded, setIsCandidatesExpanded] = useState(false);

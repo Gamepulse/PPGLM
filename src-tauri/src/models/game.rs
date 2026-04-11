@@ -30,6 +30,7 @@ pub struct Game {
     pub store_links: Option<String>,      // JSON string of store links
     pub platform: Option<String>,          // pc, playstation, xbox, nintendo, etc.
     pub igdb_platforms: Vec<Platform>,     // Platforms available from IGDB
+    pub igdb_screenshots: Vec<String>,     // Screenshot URLs from IGDB
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -138,6 +139,7 @@ pub struct GameStatistics {
     pub total_games: i64,
     pub total_play_time: f64,
     pub average_rating: f64,
+    pub average_igdb_rating: f64,
     pub games_by_status: Vec<StatusCount>,
     pub games_by_genre: Vec<GenreCount>,
     pub recently_added: Vec<Game>,

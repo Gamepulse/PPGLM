@@ -1,7 +1,7 @@
 import React from "react";
 import type { Game } from "../../types";
 import { COMPLETION_STATUS_LABELS } from "../../types";
-import { formatRating, formatDate } from "../../utils/formatters";
+import { formatDate } from "../../utils/formatters";
 import { getCategoryColor } from "../../utils/colors";
 import { useI18n } from "../../i18n";
 
@@ -16,7 +16,7 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, showQuickAssign, onQuickAssign }) => {
   const { t } = useI18n();
-  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes, platform } = game;
+  const { display_name, cover_url, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes, platform } = game;
   
   const platformIcon = platform ? (platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟') : null;
   
@@ -121,7 +121,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   };
 
   const renderStatusBadge = () => {
-    if (!completion_status) return null;
+    if (!completion_status || completion_status === 'not_started') return null;
     const statusColors: Record<string, string> = {
       completed: 'bg-green-600',
       playing: 'bg-blue-600',
@@ -163,23 +163,6 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     );
   };
 
-  const renderIGDBBadge = () => {
-    if (igdb_id) {
-      return (
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full text-xs">
-          <div className="w-2 h-2 bg-white rounded-full"></div>
-          <span>IGDB</span>
-        </div>
-      );
-    }
-    return (
-      <div className="absolute top-2 right-2 flex items-center gap-1 bg-gray-600 theme-text-secondary px-2 py-1 rounded-full text-xs">
-        <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-        <span>{t('manual')}</span>
-      </div>
-    );
-  };
-
   if (viewMode === "grid") {
     return (
       <div
@@ -197,7 +180,6 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
       >
         <div className="relative">
           {renderCover()}
-          {renderIGDBBadge()}
           {renderStatusBadge()}
         </div>
         
@@ -223,9 +205,11 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <span className="text-yellow-400 font-medium">
-                {formatRating(personal_rating)}
-              </span>
+              {personal_rating != null && (
+                <span className="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full">
+                  ★ {personal_rating}
+                </span>
+              )}
               {igdb_rating != null && (
                 <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">
                   ★ {igdb_rating.toFixed(0)}
@@ -278,7 +262,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           </div>
           
           {/* Status badge - small */}
-          {completion_status && (
+          {completion_status && completion_status !== 'not_started' && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -329,9 +313,18 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {display_name}
           </h3>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-yellow-400 text-xs">
-              {personal_rating ? `★${personal_rating}` : ''}
-            </span>
+            <div className="flex items-center gap-1">
+              {personal_rating != null && (
+                <span className="text-[10px] text-yellow-400 bg-yellow-900/40 px-1.5 py-0.5 rounded-full">
+                  ★{personal_rating}
+                </span>
+              )}
+              {igdb_rating != null && (
+                <span className="text-[10px] text-gray-400 bg-gray-700/60 px-1.5 py-0.5 rounded-full">
+                  ★{igdb_rating.toFixed(0)}
+                </span>
+              )}
+            </div>
             {play_time && play_time > 0 && (
               <span className="text-[10px] theme-text-muted">
                 {play_time.toFixed(0)}h
@@ -346,7 +339,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   // List view mode
   return (
     <div
-      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
+      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600"
       onClick={(e) => {
         const target = e.target as HTMLElement;
         if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
@@ -355,12 +348,25 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         onClick(game.id);
       }}
     >
-      <div className="w-24 h-24 flex-shrink-0 relative bg-gray-800 rounded-lg overflow-hidden">
-        {renderCover()}
-        {renderStatusBadge()}
+      <div className="w-32 h-32 flex-shrink-0 relative bg-gray-800 rounded-lg overflow-hidden">
+        {cover_url ? (
+          <img
+            key={cover_url}
+            src={cover_url}
+            alt={display_name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.parentElement?.querySelector('.list-placeholder')?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        <div className={`list-placeholder ${cover_url ? 'hidden' : ''} absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center`}>
+          <span className="text-4xl">🎮</span>
+        </div>
       </div>
       
-      <div className="flex-1">
+        <div className="flex-1">
         <div className="flex items-start justify-between">
           <h3 className="theme-text-primary font-semibold text-lg mb-2 flex items-center gap-2">
             {display_name}
@@ -379,13 +385,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
               </button>
             )}
           </h3>
-          {renderIGDBBadge()}
         </div>
         
         <div className="flex items-center gap-4 mb-3">
-          <span className="text-yellow-400 font-medium">
-            {formatRating(personal_rating)}
-          </span>
+          {personal_rating != null && (
+            <span className="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full">
+              ★ {personal_rating}
+            </span>
+          )}
           {igdb_rating != null && (
             <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">
               ★ {igdb_rating.toFixed(0)}

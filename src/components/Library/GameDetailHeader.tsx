@@ -2,15 +2,57 @@ import type { Game } from "../../types";
 import { open } from "@tauri-apps/plugin-shell";
 import { invoke } from "@tauri-apps/api/core";
 import { useI18n } from "../../i18n";
+import { GameNameEditor } from "./GameNameEditor";
+import { TagEditor } from "./TagEditor";
+import { useSettings, AVAILABLE_CONSOLES } from "../../context/SettingsContext";
+import { getMappedPlatformsFromIgdb } from "../../utils/platformMapping";
+import { formatDate } from "../../utils/formatters";
 
 interface GameDetailHeaderProps {
   game: Game;
-  refreshing: boolean;
-  onRefresh: () => void;
+  onGameUpdated?: (updatedGame: Game) => void;
+  onPlatformChange?: (platform: string) => void;
+  onFilter?: (type: string, value: string) => void;
+  onFavoriteToggle?: () => void;
+  onRatingChange?: (rating: number | null) => void;
+  onTagsChanged?: () => void;
 }
 
-export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHeaderProps) {
+// Regroupement des plateformes par catégorie pour l'affichage
+const PLATFORM_GROUPS = [
+  { id: 'pc', category: '💻 PC' },
+  { id: 'ps5', category: '🎮 PlayStation' },
+  { id: 'ps4', category: '🎮 PlayStation' },
+  { id: 'ps3', category: '🎮 PlayStation' },
+  { id: 'ps2', category: '🎮 PlayStation' },
+  { id: 'ps1', category: '🎮 PlayStation' },
+  { id: 'xbox_series', category: '🎯 Xbox' },
+  { id: 'xbox_one', category: '🎯 Xbox' },
+  { id: 'xbox_360', category: '🎯 Xbox' },
+  { id: 'nintendo_switch', category: '🕹️ Nintendo' },
+  { id: 'nintendo_wiiu', category: '🕹️ Nintendo' },
+  { id: 'nintendo_wii', category: '🕹️ Nintendo' },
+  { id: 'nintendo_3ds', category: '🕹️ Nintendo' },
+  { id: 'nintendo_ds', category: '🕹️ Nintendo' },
+  { id: 'mobile', category: '📱 Mobile' },
+  { id: 'other', category: '📟 Other' },
+];
+
+export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilter, onFavoriteToggle, onRatingChange, onTagsChanged }: GameDetailHeaderProps) {
   const { t } = useI18n();
+  const { activeConsoles } = useSettings();
+
+  const handleGameUpdated = (updatedGame: Game) => {
+    if (onGameUpdated) {
+      onGameUpdated(updatedGame);
+    }
+  };
+
+  const handlePlatformSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (onPlatformChange) {
+      onPlatformChange(e.target.value);
+    }
+  };
 
   const handleOpenIgdb = async () => {
     const slug = game.igdb_slug || String(game.igdb_id);
@@ -20,14 +62,11 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
 
   const handleOpenFolder = async () => {
     try {
-      // Use Tauri command to open the folder in file explorer
       await invoke("open_folder", { path: game.folder_path });
     } catch (e) {
       console.error("Failed to open folder:", e);
-      // Fallback: try to extract parent directory and open it
       try {
         const path = game.folder_path;
-        // On Windows, use explorer. On macOS/Linux, use open command
         const isWindows = navigator.platform.indexOf('Win') > -1;
         if (isWindows) {
           await open(`file://${path}`);
@@ -40,20 +79,157 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
     }
   };
 
+  // Obtenir les plateformes disponibles pour ce jeu depuis IGDB
+  const getGamePlatforms = (): Array<{ id: string; name: string; disabled: boolean }> => {
+    // Si le jeu a des plateformes IGDB, utiliser celles-ci
+    if (game.igdb_platforms && game.igdb_platforms.length > 0) {
+      const mappedPlatformIds = getMappedPlatformsFromIgdb(game.igdb_platforms);
+      
+      return mappedPlatformIds.map(platformId => {
+        const consoleInfo = AVAILABLE_CONSOLES.find(c => c.id === platformId);
+        const isOwned = activeConsoles.includes(platformId);
+        return {
+          id: platformId,
+          name: consoleInfo?.name || platformId,
+          disabled: !isOwned
+        };
+      });
+    }
+    
+    // Sinon, afficher toutes les plateformes de l'utilisateur
+    return activeConsoles.map(platformId => {
+      const consoleInfo = AVAILABLE_CONSOLES.find(c => c.id === platformId);
+      return {
+        id: platformId,
+        name: consoleInfo?.name || platformId,
+        disabled: false
+      };
+    });
+  };
+
+  const gamePlatforms = getGamePlatforms();
+  
+  // Grouper les plateformes par catégorie
+  const groupedPlatforms = PLATFORM_GROUPS.reduce((acc, platformDef) => {
+    const platform = gamePlatforms.find(p => p.id === platformDef.id);
+    if (platform) {
+      if (!acc[platformDef.category]) {
+        acc[platformDef.category] = [];
+      }
+      acc[platformDef.category].push(platform);
+    }
+    return acc;
+  }, {} as Record<string, Array<{ id: string; name: string; disabled: boolean }>>);
+
   return (
     <div className="flex gap-6">
-      <div className="w-64 flex-shrink-0">
-        {game.cover_url ? (
-          <img src={game.cover_url} alt={game.display_name} className="w-full rounded-lg" />
-        ) : (
-          <div className="w-full h-80 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
-            <span className="text-5xl">🎮</span>
+      <div className="w-64 flex-shrink-0 space-y-3">
+        <div className="relative">
+          {game.cover_url ? (
+            <img src={game.cover_url} alt={game.display_name} className="w-full rounded-lg" />
+          ) : (
+            <div className="w-full h-80 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
+              <span className="text-5xl">🎮</span>
+            </div>
+          )}
+          {/* Favorite Star - top right corner */}
+          {onFavoriteToggle && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
+              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
+              title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+            >
+              {game.is_favorite ? (
+                <span className="text-yellow-400 drop-shadow-lg">★</span>
+              ) : (
+                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+              )}
+            </button>
+          )}
+        </div>
+        
+        {/* Platform Selector */}
+        {onPlatformChange && (
+          <div>
+            <label className="block text-xs font-medium theme-text-secondary mb-1">
+              {t('platforms') || 'Plateformes'}
+            </label>
+            <select
+              value={game.platform || ''}
+              onChange={handlePlatformSelect}
+              className="w-full px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">{t('selectPlatform') || 'Select platform...'}</option>
+              {Object.entries(groupedPlatforms).map(([category, platforms]) => (
+                <optgroup key={category} label={category}>
+                  {platforms.map(platform => (
+                    <option 
+                      key={platform.id} 
+                      value={platform.id}
+                      disabled={platform.disabled}
+                      className={platform.disabled ? "text-gray-500" : ""}
+                    >
+                      {platform.name}{platform.disabled ? " (non possédé)" : ""}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+              {/* Option "Other" si pas de plateformes mappées */}
+              {gamePlatforms.length === 0 && (
+                <>
+                  <optgroup label="💻 PC">
+                    <option value="pc">PC</option>
+                  </optgroup>
+                  <optgroup label="🎮 PlayStation">
+                    <option value="ps5">PlayStation 5</option>
+                    <option value="ps4">PlayStation 4</option>
+                    <option value="ps3">PlayStation 3</option>
+                    <option value="ps2">PlayStation 2</option>
+                    <option value="ps1">PlayStation</option>
+                  </optgroup>
+                  <optgroup label="🎯 Xbox">
+                    <option value="xbox_series">Xbox Series X|S</option>
+                    <option value="xbox_one">Xbox One</option>
+                    <option value="xbox_360">Xbox 360</option>
+                  </optgroup>
+                  <optgroup label="🕹️ Nintendo">
+                    <option value="nintendo_switch">Nintendo Switch</option>
+                    <option value="nintendo_wiiu">Nintendo Wii U</option>
+                    <option value="nintendo_wii">Nintendo Wii</option>
+                    <option value="nintendo_3ds">Nintendo 3DS</option>
+                    <option value="nintendo_ds">Nintendo DS</option>
+                  </optgroup>
+                  <optgroup label="📱 Mobile">
+                    <option value="mobile">Mobile</option>
+                  </optgroup>
+                  <optgroup label="📟 Other">
+                    <option value="other">Other</option>
+                  </optgroup>
+                </>
+              )}
+            </select>
+            {game.igdb_platforms && game.igdb_platforms.length > 0 && (
+              <p className="mt-1 text-xs text-gray-500">
+                {t('igdbPlatformsHint') || 'Available on IGDB'}: {game.igdb_platforms.map(p => p.name).join(', ')}
+              </p>
+            )}
           </div>
         )}
       </div>
 
-      <div className="flex-1 space-y-4">
-        <h1 className="text-3xl font-bold theme-text-primary">{game.display_name}</h1>
+      <div className="flex-1 space-y-3">
+        <GameNameEditor game={game} onGameUpdated={handleGameUpdated} />
+        
+        {/* IGDB Page button prominently displayed */}
+        {game.igdb_id && (
+          <button type="button" onClick={handleOpenIgdb}
+            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
+            🌐 {t('igdbPage')} ↗
+          </button>
+        )}
+
+        {/* Folder path */}
         <p 
           className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
           onClick={handleOpenFolder}
@@ -64,24 +240,9 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
           <span className="text-xs opacity-50">↗</span>
         </p>
 
+        {/* Status badges */}
         <div className="flex items-center gap-2 flex-wrap">
-          {game.igdb_id && (
-            <>
-              <span className="px-2 py-1 text-xs rounded-full bg-green-600 text-white">{t('igdbMatched')}</span>
-              <button type="button" onClick={handleOpenIgdb}
-                className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1 bg-blue-900/30 rounded hover:bg-blue-900/50 transition-colors">
-                {t('igdbPage')} ↗
-              </button>
-              <button type="button" onClick={onRefresh} disabled={refreshing}
-                className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors">
-                {refreshing ? t('refreshingFromIgdb') : t('refreshFromIgdb')}
-              </button>
-            </>
-          )}
-          {game.is_favorite && (
-            <span className="px-2 py-1 text-xs rounded-full bg-yellow-500 text-white">★ {t('isFavorite')}</span>
-          )}
-          {game.completion_status && (
+          {game.completion_status && game.completion_status !== 'not_started' && (
             <span className={`px-2 py-1 text-xs rounded-full text-white ${
               game.completion_status === 'completed' ? 'bg-green-600' :
               game.completion_status === 'playing' ? 'bg-blue-600' :
@@ -92,12 +253,145 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
               {t(game.completion_status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}
             </span>
           )}
-          {game.play_time && game.play_time > 0 && (
+          {game.completion_status !== 'not_started' && game.play_time && game.play_time > 0 && (
             <span className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white">
               {game.play_time.toFixed(1)} {t('hours')}
             </span>
           )}
         </div>
+
+        {/* Genres */}
+        {game.genres && game.genres.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="theme-text-muted text-sm">{t('genres')}:</span>
+            {game.genres.map((genre) => (
+              <button
+                key={genre.id}
+                onClick={() => onFilter?.('genre', genre.name)}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-blue-600 hover:bg-blue-500 transition-opacity cursor-pointer"
+              >
+                {genre.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Game Modes */}
+        {game.game_modes && game.game_modes.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="theme-text-muted text-sm">{t('gameModes')}:</span>
+            {game.game_modes.map((mode) => (
+              <button
+                key={mode.id}
+                onClick={() => onFilter?.('mode', mode.name)}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-purple-600 hover:bg-purple-500 transition-opacity cursor-pointer"
+              >
+                {mode.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Perspectives */}
+        {game.player_perspectives && game.player_perspectives.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="theme-text-muted text-sm">{t('perspective')}:</span>
+            {game.player_perspectives.map((persp) => (
+              <button
+                key={persp.id}
+                onClick={() => onFilter?.('perspective', persp.name)}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-green-600 hover:bg-green-500 transition-opacity cursor-pointer"
+              >
+                {persp.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Themes */}
+        {game.themes && game.themes.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="theme-text-muted text-sm">{t('themes')}:</span>
+            {game.themes.map((theme) => (
+              <button
+                key={theme.id}
+                onClick={() => onFilter?.('theme', theme.name)}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-orange-600 hover:bg-orange-500 transition-opacity cursor-pointer"
+              >
+                {theme.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Tags */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="theme-text-muted text-sm">{t('tags')}:</span>
+          <TagEditor 
+            gameId={game.id} 
+            tags={game.tags || []} 
+            onTagsChanged={onTagsChanged || (() => {})}
+          />
+        </div>
+
+        {/* Release Date */}
+        {game.release_date && (
+          <div className="flex items-center gap-2">
+            <span className="theme-text-muted text-sm">{t('releaseDate')}:</span>
+            <span className="theme-text-primary text-sm">{formatDate(game.release_date)}</span>
+          </div>
+        )}
+
+        {/* Community Rating */}
+        {game.igdb_rating && (
+          <div className="flex items-center gap-2">
+            <span className="theme-text-muted text-sm">{t('communityRating')}:</span>
+            <span className="text-yellow-400 text-sm font-semibold">{game.igdb_rating.toFixed(1)}/100</span>
+          </div>
+        )}
+
+        {/* Personal Rating */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs theme-text-muted">0</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={game.personal_rating || 0}
+              onChange={(e) => onRatingChange?.(parseInt(e.target.value) || 0)}
+              className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer
+                [&::-webkit-slider-thumb]:appearance-none 
+                [&::-webkit-slider-thumb]:w-4 
+                [&::-webkit-slider-thumb]:h-4 
+                [&::-webkit-slider-thumb]:bg-indigo-500 
+                [&::-webkit-slider-thumb]:rounded-full 
+                [&::-webkit-slider-thumb]:cursor-pointer
+                [&::-webkit-slider-thumb]:hover:bg-indigo-400
+                [&::-moz-range-thumb]:w-4 
+                [&::-moz-range-thumb]:h-4 
+                [&::-moz-range-thumb]:bg-indigo-500 
+                [&::-moz-range-thumb]:rounded-full 
+                [&::-moz-range-thumb]:cursor-pointer
+                [&::-moz-range-thumb]:border-0"
+            />
+            <span className="text-xs theme-text-muted">100</span>
+          </div>
+        </div>
+
+        {/* Synopsis */}
+        {game.synopsis && (
+          <div className="mt-2">
+            <label className="block text-sm font-medium theme-text-secondary mb-1">{t('synopsis')}</label>
+            <p className="theme-text-secondary text-sm leading-relaxed theme-bg-tertiary/50 p-3 rounded-lg max-h-48 overflow-y-auto">
+              {game.synopsis}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

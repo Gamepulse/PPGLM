@@ -14,6 +14,7 @@ import { ScannedParentFoldersSection } from "./ScannedParentFoldersSection";
 import { useI18n } from "../../i18n";
 import { useConsole } from "../Layout/ConsolePanel";
 import { useScanResults } from "../../hooks/useScanResults";
+import { useSettings } from "../../hooks/useSettings";
 
 interface FolderPickerProps {
   onNavigate?: (view: string) => void;
@@ -24,6 +25,7 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
   const { t } = useI18n();
   const { log: consoleLog, clear: clearConsole } = useConsole();
   const { results, setResults, excludedFolders, addExcludedFolder, noMatchFolders, addNoMatchFolder, rejectedMatches, addRejectedMatch, parentFolders, addParentFolder, scanning, setScanning, progress, setProgress, clearResults } = useScanResults();
+  const { scanDepth, setScanDepth } = useSettings();
   const [folders, setFolders] = useState<{ path: string }[]>([]);
   const [isStopping, setIsStopping] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -162,10 +164,22 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
     try {
       await invoke<Game[]>("save_scan_results", { results: matchedResults });
       setSaved(true); 
-      setShowExcludedSections(true); // Show excluded sections after saving
-      clearResults(); 
-      setShowResults(false); 
+      
+      // Remove only the saved matched results from the list, keep excluded/rejected/parent for further processing
+      const savedPaths = new Set(matchedResults.map(r => r.folder_path));
+      setResults(prev => prev.filter(r => !savedPaths.has(r.folder_path)));
+      
+      // Refresh the library in background but stay on scanner page
       onGamesSaved?.();
+      
+      // Show excluded sections to continue working on non-matched folders
+      setShowExcludedSections(true);
+      
+      // If no more results at all, hide the results section but stay on scanner
+      const hasOtherResults = excludedFolders.length > 0 || rejectedMatches.length > 0 || parentFolders.length > 0 || noMatchFolders.length > 0;
+      if (!hasOtherResults) {
+        setShowResults(false);
+      }
     } catch (e) { alert("Failed to save games: " + e); } finally { setSaving(false); }
   };
 
@@ -204,7 +218,9 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
               folders={folders} 
               onAddFolder={handleAddFolder} 
               onRemoveFolder={handleRemoveFolder} 
-              onGamesDeleted={onGamesSaved} 
+              onGamesDeleted={onGamesSaved}
+              scanDepth={scanDepth}
+              onScanDepthChange={setScanDepth}
             />
           </div>
         )}
@@ -212,10 +228,16 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
       <ScanControls scanning={scanning} isStopping={isStopping} hasFolders={folders.length > 0}
         resultCount={results.length} progress={progress} onScan={handleScanAll} onStop={handleStopScan} 
         compact={compactMode} />
-      {(showResults || results.length > 0) && !scanning && (
+      {/* Calculate valid games count (only Exact/Fuzzy matches that are not excluded) */}
+      {(() => {
+        const validGamesCount = results.filter(r => 
+          (r.match_confidence === "Exact" || r.match_confidence === "Fuzzy") && !r.is_excluded
+        ).length;
+        
+        return (showResults || results.length > 0) && !scanning && (
         <div className={`theme-border border-t ${compactMode ? 'space-y-2 pt-2' : 'space-y-4 pt-4'}`}>
           <div className="flex items-center justify-between">
-            <h3 className={`font-semibold theme-text-primary ${compactMode ? 'text-base' : 'text-lg'}`}>{t('scanResults')} ({results.length} {t('games')})</h3>
+            <h3 className={`font-semibold theme-text-primary ${compactMode ? 'text-base' : 'text-lg'}`}>{t('scanResults')} ({validGamesCount} {t('games')})</h3>
             <div className="flex items-center gap-3">
               {saving && <span className="text-blue-400 text-sm">{t('saving')}</span>}
               {saved && <span className="text-green-400 text-sm">✓ {t('saved')}</span>}
@@ -241,7 +263,7 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
             />
           )}
         </div>
-      )}
+      );})()}
       
       {/* Show excluded sections button (when games found but not yet saved) */}
       {!scanning && results.length > 0 && !saved && !showExcludedSections && (
@@ -263,8 +285,23 @@ export function FolderPicker({ onNavigate, onGamesSaved }: FolderPickerProps) {
           onAddToResults={(newResult) => {
             // Add the found result to the main results list
             setResults(prev => [...prev, newResult]);
-            // Optionally remove from excluded list
-            // setExcludedFolders(prev => prev.filter(f => f.folder_path !== newResult.folder_path));
+          }}
+          onForceAdd={(folder) => {
+            // Force add excluded folder as a manual game
+            const manualResult: ScanResult = {
+              folder_name: folder.folder_name,
+              folder_path: folder.folder_path,
+              display_name: folder.folder_name,
+              igdb_id: null,
+              igdb_slug: null,
+              match_source: 'manual',
+              match_confidence: 'None',
+              candidates: [],
+              cover_url: null,
+              synopsis: null,
+              release_date: null,
+            };
+            setResults(prev => [...prev, manualResult]);
           }}
         />
       )}

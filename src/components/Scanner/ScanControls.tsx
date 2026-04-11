@@ -1,6 +1,5 @@
 import type { ScanProgress } from "../../types";
 import { useI18n } from "../../i18n";
-import { useSettings } from "../../hooks/useSettings";
 
 interface ScanControlsProps {
   scanning: boolean;
@@ -10,50 +9,16 @@ interface ScanControlsProps {
   progress: ScanProgress | null;
   onScan: () => void;
   onStop: () => void;
-  compact?: boolean; // Hide depth slider and use smaller button
+  compact?: boolean; // Use smaller button
 }
 
 export function ScanControls({
   scanning, isStopping, hasFolders, resultCount, progress, onScan, onStop, compact = false,
 }: ScanControlsProps) {
   const { t } = useI18n();
-  const { scanDepth, setScanDepth } = useSettings();
 
   return (
     <div>
-      {/* Scan Depth Slider - Hidden in compact mode */}
-      {!scanning && !compact && (
-        <div className="mb-4 p-3 theme-bg-secondary rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium theme-text-secondary">
-              {t('scanDepth') || 'Scan Depth'}
-            </label>
-            <span className="text-sm font-mono theme-text-primary font-semibold">{scanDepth}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted w-8">1</span>
-            <input
-              type="range"
-              min="1"
-              max="10"
-              step="1"
-              value={scanDepth}
-              onChange={(e) => setScanDepth(parseInt(e.target.value))}
-              className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-            />
-            <span className="text-xs theme-text-muted w-6">10</span>
-          </div>
-          <p className="text-xs theme-text-muted mt-1">
-            {scanDepth === 1
-              ? (t('scanDepthShallow') || 'Scan only root-level folders')
-              : scanDepth <= 3
-                ? (t('scanDepthDefault') || 'Default depth — recommended for most libraries')
-                : (t('scanDepthDeep') || 'Deep scan — useful for nested folder structures')
-            }
-          </p>
-        </div>
-      )}
-
       {/* Scan / Stop Button */}
       <div className="flex gap-2">
         <button

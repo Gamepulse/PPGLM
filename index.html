@@ -4,27 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pascal's Personal Game Manager</title>
-    <style>
-      /* Apply default font size immediately to prevent flash */
-      html {
-        font-size: 100% !important;
-      }
-    </style>
     <script>
-      // Apply font size immediately before React loads to prevent visual flash
+      // Apply zoom immediately before React loads to prevent visual flash
       (function() {
         try {
-          // Try to get cached font size from localStorage
           var cached = localStorage.getItem('font_size_cache');
           if (cached) {
-            document.documentElement.style.fontSize = cached + '%';
+            var val = parseInt(cached, 10);
+            if (!isNaN(val) && val >= 80 && val <= 150) {
+              document.documentElement.style.zoom = (val / 100);
+            } else {
+              document.documentElement.style.zoom = 1;
+            }
           } else {
-            // Default 100%
-            document.documentElement.style.fontSize = '100%';
+            document.documentElement.style.zoom = 1;
           }
         } catch (e) {
-          // Fallback if localStorage is not available
-          document.documentElement.style.fontSize = '100%';
+          document.documentElement.style.zoom = 1;
         }
       })();
     </script>

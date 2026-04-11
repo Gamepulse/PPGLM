@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { ConsolePanel } from "./ConsolePanel";
 
 interface MainLayoutProps {
   currentView: string;
@@ -10,12 +8,11 @@ interface MainLayoutProps {
   onFilterByTag?: (tagName: string) => void;
   activeFilters?: Array<{ type: string; value: string; label?: string }>;
   onRemoveFilter?: (type: string, value: string) => void;
+  onClearAllFilters?: () => void;
   children: React.ReactNode;
 }
 
-export function MainLayout({ currentView, onNavigate, onSearch, onFilterByTag, activeFilters, onRemoveFilter, children }: MainLayoutProps) {
-  const [consoleOpen, setConsoleOpen] = useState(false);
-
+export function MainLayout({ currentView, onNavigate, onSearch, onFilterByTag, activeFilters, onRemoveFilter, onClearAllFilters, children }: MainLayoutProps) {
   return (
     <div className="flex h-screen theme-bg-primary theme-text-primary">
       <Sidebar currentView={currentView} onNavigate={onNavigate} />
@@ -26,11 +23,11 @@ export function MainLayout({ currentView, onNavigate, onSearch, onFilterByTag, a
           onFilterByTag={onFilterByTag}
           activeFilters={activeFilters}
           onRemoveFilter={onRemoveFilter}
+          onClearAllFilters={onClearAllFilters}
         />
         <main className="flex-1 overflow-y-auto theme-bg-secondary">
           {children}
         </main>
-        <ConsolePanel isOpen={consoleOpen} onToggle={() => setConsoleOpen(!consoleOpen)} />
       </div>
     </div>
   );

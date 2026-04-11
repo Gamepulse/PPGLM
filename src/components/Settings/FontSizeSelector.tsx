@@ -1,22 +1,17 @@
 import { useSettings } from "../../hooks/useSettings";
 import { useI18n } from "../../i18n";
 
-const FONT_SIZE_OPTIONS = [
-  { value: 80, label: "Small", desc: "80%" },
-  { value: 90, label: "Compact", desc: "90%" },
-  { value: 100, label: "Default", desc: "100%" },
-  { value: 110, label: "Large", desc: "110%" },
-  { value: 125, label: "Extra Large", desc: "125%" },
-  { value: 150, label: "Huge", desc: "150%" },
-];
+const MIN_FONT_SIZE = 80;
+const MAX_FONT_SIZE = 150;
+const STEP = 5;
 
 export function FontSizeSelector() {
   const { t } = useI18n();
   const { fontSize, setFontSize, loading } = useSettings();
 
-  const getCurrentLabel = () => {
-    const option = FONT_SIZE_OPTIONS.find(opt => opt.value === fontSize);
-    return option ? option.label : "Custom";
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setFontSize(value);
   };
 
   return (
@@ -25,39 +20,51 @@ export function FontSizeSelector() {
         {t('fontSize') || "Font Size"}
       </h2>
       
-      <p className="text-gray-400 text-sm mb-4">
+      <p className="text-gray-400 text-sm mb-6">
         {t('fontSizeDesc') || "Adjust the text size throughout the application. Changes apply immediately."}
       </p>
 
-      <div className="space-y-3">
-        {FONT_SIZE_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => setFontSize(option.value)}
+      <div className="space-y-6">
+        {/* Slider */}
+        <div className="relative">
+          <input
+            type="range"
+            min={MIN_FONT_SIZE}
+            max={MAX_FONT_SIZE}
+            step={STEP}
+            value={fontSize}
+            onChange={handleSliderChange}
             disabled={loading}
-            className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all ${
-              fontSize === option.value
-                ? "bg-indigo-600/30 border-indigo-500 text-white"
-                : "bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-700/50"
-            } disabled:opacity-50`}
-          >
-            <div className="flex items-center gap-3">
-              <span 
-                className="text-lg"
-                style={{ fontSize: `${option.value}%` }}
-              >
-                Aa
-              </span>
-              <span className="font-medium">{option.label}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">{option.desc}</span>
-              {fontSize === option.value && (
-                <span className="text-indigo-400 text-sm">✓</span>
-              )}
-            </div>
-          </button>
-        ))}
+            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50
+              [&::-webkit-slider-thumb]:appearance-none 
+              [&::-webkit-slider-thumb]:w-5 
+              [&::-webkit-slider-thumb]:h-5 
+              [&::-webkit-slider-thumb]:bg-indigo-500 
+              [&::-webkit-slider-thumb]:rounded-full 
+              [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:hover:bg-indigo-400
+              [&::-moz-range-thumb]:w-5 
+              [&::-moz-range-thumb]:h-5 
+              [&::-moz-range-thumb]:bg-indigo-500 
+              [&::-moz-range-thumb]:rounded-full 
+              [&::-moz-range-thumb]:cursor-pointer
+              [&::-moz-range-thumb]:border-0"
+          />
+          
+          {/* Scale markers */}
+          <div className="flex justify-between mt-2 text-xs text-gray-500">
+            <span>{MIN_FONT_SIZE}%</span>
+            <span>100%</span>
+            <span>{MAX_FONT_SIZE}%</span>
+          </div>
+        </div>
+
+        {/* Current size indicator */}
+        <div className="flex items-center justify-center">
+          <div className="bg-indigo-600/30 border border-indigo-500 rounded-lg px-4 py-2">
+            <span className="text-indigo-400 font-semibold">{fontSize}%</span>
+          </div>
+        </div>
       </div>
 
       {/* Preview text */}
@@ -65,22 +72,9 @@ export function FontSizeSelector() {
         <p className="text-xs text-gray-500 uppercase font-semibold mb-2">
           {t('preview') || "Preview"}
         </p>
-        <p 
-          className="text-gray-300"
-          style={{ fontSize: `${fontSize}%` }}
-        >
+        <p className="text-gray-300">
           {t('fontSizePreview') || "The quick brown fox jumps over the lazy dog. This is how text will appear throughout the application."}
         </p>
-      </div>
-
-      {/* Current size indicator */}
-      <div className="mt-4 flex items-center justify-between text-sm">
-        <span className="text-gray-500">
-          {t('currentSize') || "Current size"}: <span className="text-indigo-400 font-medium">{getCurrentLabel()}</span>
-        </span>
-        <span className="text-gray-500">
-          {fontSize}%
-        </span>
       </div>
     </div>
   );

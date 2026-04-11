@@ -88,6 +88,13 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
             return game.completion_status === filter.value;
           case 'platform':
             return game.platform === filter.value;
+          case 'igdb_match':
+            if (filter.value === 'igdb') {
+              return game.igdb_id !== null && game.igdb_id !== undefined;
+            } else if (filter.value === 'manual') {
+              return game.igdb_id === null || game.igdb_id === undefined;
+            }
+            return true;
           default:
             return true;
         }
@@ -160,29 +167,10 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
     updateFilters(newFilters);
   }, [activeFilters, updateFilters]);
 
-  // Remove a filter
-  const removeFilter = useCallback((type: string, value: string) => {
-    const newFilters = activeFilters.filter(f => !(f.type === type && f.value === value));
-    updateFilters(newFilters);
-  }, [activeFilters, updateFilters]);
-
   // Clear all filters
   const clearAllFilters = useCallback(() => {
     updateFilters([]);
   }, [updateFilters]);
-
-  // Filter label mapper for display
-  const getFilterLabel = (type: string, value: string): string => {
-    const labels: Record<string, string> = {
-      tag: 'Tag',
-      genre: 'Genre',
-      mode: 'Mode',
-      perspective: 'Perspective',
-      theme: 'Theme',
-      status: 'Status',
-    };
-    return `${labels[type] || type}: ${value}`;
-  };
 
   const handleExport = async () => {
     setExportStatus(null);

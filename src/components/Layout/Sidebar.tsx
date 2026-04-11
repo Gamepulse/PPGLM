@@ -54,10 +54,10 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
           <button
             key={item.id}
             onClick={() => onNavigate(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 transition-colors overflow-hidden whitespace-nowrap ${
+            className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 overflow-hidden whitespace-nowrap ${
               currentView === item.id
-                ? "theme-bg-tertiary border-l-2 border-indigo-500 text-indigo-500"
-                : "theme-text-secondary hover:theme-text-primary hover:theme-bg-tertiary"
+                ? "theme-bg-tertiary border-l-2 border-indigo-500 text-indigo-500 -translate-y-0.5 shadow-md"
+                : "theme-text-secondary hover:theme-text-primary hover:theme-bg-tertiary hover:-translate-y-0.5 hover:shadow-md"
             }`}
           >
             <span className="text-xl flex-shrink-0">{item.icon}</span>

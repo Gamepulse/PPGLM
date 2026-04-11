@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { useSettings } from "../../hooks/useSettings";
 
 interface GameDetailBackgroundProps {
@@ -18,6 +18,7 @@ interface Screenshot {
 export function GameDetailBackground({ gameId }: GameDetailBackgroundProps) {
   const { screenshotBgCount } = useSettings();
   const [screenshots, setScreenshots] = useState<Screenshot[]>([]);
+  const [igdbScreenshots, setIgdbScreenshots] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -28,71 +29,108 @@ export function GameDetailBackground({ gameId }: GameDetailBackgroundProps) {
       return;
     }
 
-    const loadScreenshots = async () => {
+    const loadAll = async () => {
       try {
-        // Note: This command needs to be implemented in the backend
-        // For now, this will fail gracefully
-        const result = await invoke<Screenshot[]>("get_screenshots", { gameId });
-        setScreenshots(result || []);
+        // Load local screenshots
+        const localResult = await invoke<Screenshot[]>("get_screenshots", { gameId });
+        const localScreenshots = localResult || [];
+        setScreenshots(localScreenshots);
+
+        // If no local screenshots, load IGDB screenshots
+        if (localScreenshots.length === 0) {
+          try {
+            const urls = await invoke<string[]>("get_igdb_screenshots", { gameId });
+            setIgdbScreenshots(urls || []);
+          } catch (e) {
+            console.warn("Failed to load IGDB screenshots:", e);
+            setIgdbScreenshots([]);
+          }
+        }
       } catch (e) {
-        // Silently fail if screenshots aren't implemented yet
-        console.log("Screenshots not yet implemented:", e);
+        console.error("Failed to load screenshots:", e);
         setScreenshots([]);
+        setIgdbScreenshots([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadScreenshots();
+    loadAll();
   }, [gameId, screenshotBgCount]);
 
   // Rotate through screenshots
   useEffect(() => {
-    if (screenshots.length <= 1 || screenshotBgCount <= 1) return;
+    const totalScreenshots = screenshots.length + igdbScreenshots.length;
+    if (totalScreenshots <= 1 || screenshotBgCount <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % Math.min(screenshots.length, screenshotBgCount));
-    }, 5000); // Change every 5 seconds
+      setCurrentIndex((prev) => (prev + 1) % Math.min(totalScreenshots, screenshotBgCount));
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, [screenshots, screenshotBgCount]);
+  }, [screenshots, igdbScreenshots, screenshotBgCount]);
 
-  if (screenshotBgCount === 0 || loading || screenshots.length === 0) {
+  if (screenshotBgCount === 0 || loading) {
     return null;
   }
 
-  const displayScreenshots = screenshots.slice(0, screenshotBgCount);
-  const currentScreenshot = displayScreenshots[currentIndex];
+  const localDisplay = screenshots.slice(0, screenshotBgCount);
+  const totalScreenshots = screenshots.length + igdbScreenshots.length;
+  
+  if (totalScreenshots === 0) {
+    return null;
+  }
 
   return (
     <div className="absolute inset-0 overflow-hidden -z-10">
-      {/* Background Image */}
-      {displayScreenshots.map((screenshot, index) => (
+      {/* Local screenshots */}
+      {localDisplay.map((screenshot, index) => (
         <div
-          key={screenshot.id}
+          key={`local-${screenshot.id}`}
           className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentIndex ? "opacity-100" : "opacity-0"
           }`}
         >
           <img
-            src={`file://${screenshot.file_path}`}
+            src={convertFileSrc(screenshot.file_path)}
             alt={screenshot.caption || `Screenshot ${index + 1}`}
             className="w-full h-full object-cover"
             style={{ 
               filter: "blur(8px) brightness(0.3)",
-              transform: "scale(1.1)", // Slight zoom to prevent blur edges
+              transform: "scale(1.1)",
             }}
           />
         </div>
       ))}
       
-      {/* Gradient overlay for better text readability */}
+      {/* IGDB screenshots */}
+      {igdbScreenshots.slice(0, Math.max(0, screenshotBgCount - screenshots.length)).map((url, index) => {
+        const actualIndex = screenshots.length + index;
+        return (
+          <div
+            key={`igdb-${index}`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              actualIndex === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <img
+              src={url}
+              alt={`Screenshot ${actualIndex + 1}`}
+              className="w-full h-full object-cover"
+              style={{ 
+                filter: "blur(8px) brightness(0.3)",
+                transform: "scale(1.1)",
+              }}
+            />
+          </div>
+        );
+      })}
+      
       <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90" />
       
-      {/* Screenshot indicators */}
-      {displayScreenshots.length > 1 && (
+      {totalScreenshots > 1 && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
-          {displayScreenshots.map((_, index) => (
+          {Array.from({ length: Math.min(totalScreenshots, screenshotBgCount) }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}

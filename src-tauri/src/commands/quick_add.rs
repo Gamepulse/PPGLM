@@ -103,6 +103,7 @@ pub async fn quick_add_game(
         store_links: None,
         platform: None,
         igdb_platforms: platforms.into_iter().map(|p| Platform { id: p.id, name: p.name }).collect(),
+        igdb_screenshots: Vec::new(),
     })
 }
 

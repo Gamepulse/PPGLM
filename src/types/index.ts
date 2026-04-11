@@ -27,6 +27,7 @@ export interface Game {
   store_links?: string | null;
   platform?: string | null;
   igdb_platforms?: PlatformInfo[];
+  igdb_screenshots?: string[];
 }
 
 export interface PlatformInfo {
@@ -100,6 +101,7 @@ export interface GameStatistics {
   total_games: number;
   total_play_time: number;
   average_rating: number;
+  average_igdb_rating: number;
   games_by_status: StatusCount[];
   games_by_genre: GenreCount[];
   recently_added: Game[];

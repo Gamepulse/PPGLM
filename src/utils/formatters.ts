@@ -1,6 +1,6 @@
 export function formatRating(rating: number | null): string {
   if (rating === null) return "—";
-  return `${rating}/10`;
+  return `${rating}/100`;
 }
 
 export function formatDate(dateStr: string): string {

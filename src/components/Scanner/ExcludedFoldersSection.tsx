@@ -7,9 +7,10 @@ interface ExcludedFoldersSectionProps {
   excludedFolders: ExcludedFolderEvent[];
   compact?: boolean;
   onAddToResults?: (result: ScanResult) => void;
+  onForceAdd?: (folder: ExcludedFolderEvent) => void;
 }
 
-export function ExcludedFoldersSection({ excludedFolders, compact = false, onAddToResults }: ExcludedFoldersSectionProps) {
+export function ExcludedFoldersSection({ excludedFolders, compact = false, onAddToResults, onForceAdd }: ExcludedFoldersSectionProps) {
   const { t } = useI18n();
   const [showExcluded, setShowExcluded] = useState(false);
   const [editingFolder, setEditingFolder] = useState<string | null>(null);
@@ -106,8 +107,14 @@ export function ExcludedFoldersSection({ excludedFolders, compact = false, onAdd
                   <>
                     <p className="theme-text-primary text-sm font-medium truncate">{folder.folder_name}</p>
                     <p className="theme-text-muted text-xs truncate">{folder.folder_path}</p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-yellow-600 text-xs flex-1">{folder.reason}</p>
+                      <button
+                        onClick={() => onForceAdd?.(folder)}
+                        className="text-xs px-2 py-0.5 bg-green-700/50 hover:bg-green-600 text-white rounded transition-colors"
+                      >
+                        ✓ {t('forceAdd') || "Ajouter quand même"}
+                      </button>
                       <button
                         onClick={() => {
                           setEditingFolder(folder.folder_path);

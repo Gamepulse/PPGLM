@@ -5,7 +5,7 @@ export const translations = {
     // Navigation
     library: 'Library',
     scanner: 'Scanner',
-    consoles: 'Consoles',
+    consoles: 'Platforms',
     settings: 'Settings',
     back: 'Back',
     expandAll: 'Expand all',
@@ -16,6 +16,14 @@ export const translations = {
     // Tag Filter
     filterByTag: 'Filter by tag',
     noTagsAvailable: 'No tags available',
+    
+    // Favorites Filter
+    filterByFavorite: 'Filter by favorites',
+    favoritesOnly: '⭐ Favorites only',
+    nonFavoritesOnly: 'Non-favorites',
+    
+    // Search
+    searchGames: 'Search games...',
     
     // Font Size
     fontSize: 'Font Size',
@@ -139,6 +147,7 @@ export const translations = {
     openSettings: 'Open Settings',
     igdbNotConfigured: 'IGDB Not Configured',
     igdbNotConfiguredDesc: 'Configure IGDB API credentials to enable game matching.',
+    forceAdd: 'Force Add',
     confirmExclusion: 'Add "{{name}}" to exclusion patterns? This will exclude all folders with this name from future scans.',
     
     // Scanner - ScanResults
@@ -173,6 +182,8 @@ export const translations = {
     editAllNames: '✏️ Edit All Names',
     searchIgdb: '🔍 Search IGDB',
     searchingIgdb: 'Searching IGDB...',
+    reScan: '🔄 Re-Scan',
+    reScanning: 'Re-scanning...',
     matchesFound: '{{count}} matches found',
     noChangesToApply: 'No changes to apply',
     bulkEditInstructions: 'Format: folder_name|new_display_name (one per line). Modify names and click Search to retry IGDB matching.',
@@ -194,6 +205,7 @@ export const translations = {
     
     // Scan Depth
     scanDepth: 'Scan Depth',
+    scanDepthTooltip: 'Number of subfolder levels to explore (1 = shallow, 10 = very deep)',
     scanDepthShallow: 'Scan only root-level folders',
     scanDepthDefault: 'Default depth — recommended for most libraries',
     scanDepthDeep: 'Deep scan — useful for nested folder structures',
@@ -207,7 +219,25 @@ export const translations = {
     updated: 'Updated',
     addNotes: 'Add notes...',
     perspective: 'Perspective',
+    perspectives: 'Perspectives',
     tags: 'Tags',
+    match: 'Match',
+    
+    // Scanner - additional labels
+    excluded: 'Excluded',
+    rejected: 'Rejected',
+    parent: 'Parent',
+    acceptRejected: 'Accept Rejected',
+    acceptParent: 'Accept Parent',
+    accept: 'Accept',
+    parentFolderInfo: 'Parent folder - scan continued deeper',
+    excludedMatches: 'Excluded',
+    excludedHint: 'These folders were excluded',
+    rejectedHint: 'Matches rejected due to threshold',
+    parentHint: 'Parent folders scanned deeper',
+    
+    // Screenshot
+    screenshot: 'Screenshot',
     refreshFromIgdb: 'Refresh from IGDB',
     refreshingFromIgdb: 'Refreshing from IGDB...',
     refreshSuccess: 'Game data refreshed successfully',
@@ -261,6 +291,7 @@ export const translations = {
     playTime: 'Play Time',
     hours: 'hours',
     platform: 'Platform',
+    platforms: 'Plateformes',
     selectPlatform: 'Select platform...',
     noPlatform: 'No platform',
     availableOnIGDB: 'Available on',
@@ -272,6 +303,7 @@ export const translations = {
     dropped: 'Dropped',
     wishlist: 'Wishlist',
     isFavorite: 'Favorite',
+    favorites: 'Favorites',
     addToFavorites: 'Add to Favorites',
     removeFromFavorites: 'Remove from Favorites',
     launchGame: 'Launch Game',
@@ -288,7 +320,8 @@ export const translations = {
     statistics: 'Statistics',
     totalGames: 'Total Games',
     totalPlayTime: 'Total Play Time',
-    averageRating: 'Average Rating',
+    averageRating: 'Note persos',
+    averageCommunityRating: 'Note moyenne commu',
     gamesByStatus: 'Games by Status',
     gamesByGenre: 'Games by Genre',
     recentlyAdded: 'Recently Added',
@@ -307,14 +340,15 @@ export const translations = {
     
     // GameCard
     manual: 'Manual',
+    more: 'more',
+    clearAll: 'Clear All',
+    tryAdjustingFilters: 'Try adjusting your filters',
     
     // Screenshot Background
     screenshotBackground: 'Game Detail Background',
     screenshotBackgroundDesc: 'Display screenshots as a background slideshow on the game detail page. This adds visual appeal to your game library.',
     screenshotBgDisabled: 'Disabled',
     screenshotBgDisabledDesc: 'No screenshots as background',
-    screenshot: 'Screenshot',
-    screenshots: 'Screenshots',
     screenshotBg1Desc: 'Single screenshot as background',
     screenshotBg2Desc: '2 screenshots in rotation',
     screenshotBg3Desc: '3 screenshots in rotation',
@@ -323,30 +357,41 @@ export const translations = {
     screenshotBgPreview: 'Preview:',
     screenshotBgActive: 'The game detail page will show up to {count} screenshot(s) rotating in the background.',
     screenshotBgTip: 'Tip: Add screenshots to your games using the Screenshot feature in game details.',
-    more: 'more',
-    activeFilters: 'Active Filters',
-    clearAll: 'Clear All',
-    tryAdjustingFilters: 'Try adjusting your filters',
     
     // Errors
     error: 'Error',
     failedToSave: 'Failed to save',
     
     // Console Settings
-    myConsoles: 'My Consoles',
-    myConsolesDesc: 'Select the consoles you own. Only these platforms will be shown in the Consoles view and platform selectors.',
+    myConsoles: 'Mes Plateformes',
+    myConsolesDesc: 'Select the platforms you own. Only these platforms will be shown in the Platforms view and platform selectors.',
     selectNone: 'Select None',
-    activeConsolesCount: 'Active consoles',
+    activeConsolesCount: 'Active platforms',
     
     // Bulk Platform Assignment
     setPlatformForAll: 'Set platform for all matched games:',
     applyToAll: 'Apply to all',
+
+    // Custom Tags Settings
+    customTags: 'Custom Tags',
+    createNewTag: 'Create New Tag',
+    tagNamePlaceholder: 'Tag name...',
+    create: 'Create',
+    existingCustomTags: 'Existing Custom Tags',
+    noCustomTags: 'No custom tags created yet',
+    systemTags: 'System Tags (automatic)',
+    deleteTag: 'Delete Tag',
+    confirmDeleteTag: 'Delete this tag? It will be removed from all games.',
+    tagCreated: 'Tag created successfully',
+    tagCreateError: 'Failed to create tag',
+    tagDeleted: 'Tag deleted',
+    tagDeleteError: 'Failed to delete tag',
   },
   fr: {
     // Navigation
     library: 'Bibliothèque',
     scanner: 'Scanner',
-    consoles: 'Consoles',
+    consoles: 'Plateformes',
     settings: 'Paramètres',
     back: 'Retour',
     expandAll: 'Tout déplier',
@@ -357,6 +402,14 @@ export const translations = {
     // Tag Filter
     filterByTag: 'Filtrer par tag',
     noTagsAvailable: 'Aucun tag disponible',
+    
+    // Favorites Filter
+    filterByFavorite: 'Filtrer par favoris',
+    favoritesOnly: '⭐ Favoris uniquement',
+    nonFavoritesOnly: 'Non-favoris',
+    
+    // Search
+    searchGames: 'Rechercher des jeux...',
     
     // Font Size
     fontSize: 'Taille de police',
@@ -480,6 +533,7 @@ export const translations = {
     openSettings: 'Ouvrir les paramètres',
     igdbNotConfigured: 'IGDB non configuré',
     igdbNotConfiguredDesc: 'Configurez les identifiants API IGDB pour activer la correspondance des jeux.',
+    forceAdd: 'Ajouter quand même',
     confirmExclusion: 'Ajouter "{{name}}" aux motifs d\'exclusion ? Cela exclura tous les dossiers avec ce nom des futurs scans.',
     
     // Scanner - ScanResults
@@ -515,6 +569,8 @@ export const translations = {
     editAllNames: '✏️ Modifier tous les noms',
     searchIgdb: '🔍 Rechercher sur IGDB',
     searchingIgdb: 'Recherche sur IGDB en cours...',
+    reScan: '🔄 Re-Scanner',
+    reScanning: 'Re-scan en cours...',
     matchesFound: '{{count}} correspondances trouvées',
     noChangesToApply: 'Aucun changement à appliquer',
     bulkEditInstructions: 'Format : folder_name|new_display_name (un par ligne). Modifiez les noms et cliquez sur Rechercher pour relancer la correspondance IGDB.',
@@ -536,6 +592,7 @@ export const translations = {
     
     // Scan Depth (French)
     scanDepth: 'Profondeur de scan',
+    scanDepthTooltip: 'Nombre de niveaux de sous-dossiers à explorer (1 = superficiel, 10 = très profond)',
     scanDepthShallow: 'Scanne uniquement les dossiers à la racine',
     scanDepthDefault: 'Profondeur par défaut — recommandé pour la plupart des bibliothèques',
     scanDepthDeep: 'Scan profond — utile pour les structures de dossiers imbriqués',
@@ -549,7 +606,25 @@ export const translations = {
     updated: 'Mis à jour',
     addNotes: 'Ajouter des notes...',
     perspective: 'Perspective',
+    perspectives: 'Perspectives',
     tags: 'Tags',
+    match: 'Correspondance',
+    
+    // Scanner - additional labels
+    excluded: 'Exclus',
+    rejected: 'Rejetés',
+    parent: 'Parent',
+    acceptRejected: 'Accepter rejeté',
+    acceptParent: 'Accepter parent',
+    accept: 'Accepter',
+    parentFolderInfo: 'Dossier parent - scan approfondi continué',
+    excludedMatches: 'Exclus',
+    excludedHint: 'Ces dossiers ont été exclus',
+    rejectedHint: 'Correspondances rejetées selon seuil',
+    parentHint: 'Dossiers parents scannés plus profondément',
+    
+    // Screenshot
+    screenshot: 'Capture d\'écran',
     refreshFromIgdb: 'Actualiser depuis IGDB',
     refreshingFromIgdb: 'Actualisation depuis IGDB...',
     refreshSuccess: 'Données du jeu actualisées avec succès',
@@ -602,6 +677,7 @@ export const translations = {
     playTime: 'Temps de jeu',
     hours: 'heures',
     platform: 'Plateforme',
+    platforms: 'Plateformes',
     selectPlatform: 'Sélectionnez la plateforme...',
     noPlatform: 'Aucune plateforme',
     availableOnIGDB: 'Disponible sur',
@@ -613,6 +689,7 @@ export const translations = {
     dropped: 'Abandonné',
     wishlist: 'Liste de souhaits',
     isFavorite: 'Favori',
+    favorites: 'Favoris',
     addToFavorites: 'Ajouter aux favoris',
     removeFromFavorites: 'Retirer des favoris',
     launchGame: 'Lancer le jeu',
@@ -629,7 +706,8 @@ export const translations = {
     statistics: 'Statistiques',
     totalGames: 'Total des jeux',
     totalPlayTime: 'Temps de jeu total',
-    averageRating: 'Note moyenne',
+    averageRating: 'Note persos',
+    averageCommunityRating: 'Note moyenne commu',
     gamesByStatus: 'Jeux par statut',
     gamesByGenre: 'Jeux par genre',
     recentlyAdded: 'Récemment ajoutés',
@@ -649,7 +727,6 @@ export const translations = {
     // GameCard
     manual: 'Manuel',
     more: 'de plus',
-    activeFilters: 'Filtres actifs',
     clearAll: 'Tout effacer',
     tryAdjustingFilters: 'Essayez d\'ajuster vos filtres',
     
@@ -658,8 +735,6 @@ export const translations = {
     screenshotBackgroundDesc: 'Affiche les captures d\'écran en diaporama en arrière-plan sur la page de détail du jeu. Cela ajoute du charme visuel à votre bibliothèque.',
     screenshotBgDisabled: 'Désactivé',
     screenshotBgDisabledDesc: 'Pas de captures d\'écran en arrière-plan',
-    screenshot: 'Capture d\'écran',
-    screenshots: 'Captures d\'écran',
     screenshotBg1Desc: 'Une seule capture d\'écran en arrière-plan',
     screenshotBg2Desc: '2 captures d\'écran en rotation',
     screenshotBg3Desc: '3 captures d\'écran en rotation',
@@ -674,10 +749,10 @@ export const translations = {
     failedToSave: 'Échec de la sauvegarde',
     
     // Console Settings
-    myConsoles: 'Mes Consoles',
-    myConsolesDesc: 'Sélectionnez les consoles que vous possédez. Seules ces plateformes seront affichées dans la vue Consoles et les sélecteurs de plateforme.',
+    myConsoles: 'Mes Plateformes',
+    myConsolesDesc: 'Sélectionnez les plateformes que vous possédez. Seules ces plateformes seront affichées dans la vue Plateformes et les sélecteurs de plateforme.',
     selectNone: 'Aucune',
-    activeConsolesCount: 'Consoles actives',
+    activeConsolesCount: 'Plateformes actives',
     
     // Bulk Platform Assignment
     setPlatformForAll: 'Définir la plateforme pour tous les jeux trouvés :',
@@ -704,6 +779,21 @@ export const translations = {
     totalSearches: 'Recherches total',
     uniqueQueries: 'Requêtes uniques',
     recentlyAddedCount: '{{count}} jeux ajoutés dans les 30 derniers jours',
+
+    // Custom Tags Settings
+    customTags: 'Tags Perso',
+    createNewTag: 'Créer un nouveau tag',
+    tagNamePlaceholder: 'Nom du tag...',
+    create: 'Créer',
+    existingCustomTags: 'Tags existants',
+    noCustomTags: 'Aucun tag personnalisé créé',
+    systemTags: 'Tags système (automatiques)',
+    deleteTag: 'Supprimer',
+    confirmDeleteTag: 'Supprimer ce tag ? Il sera retiré de tous les jeux.',
+    tagCreated: 'Tag créé avec succès',
+    tagCreateError: 'Échec de la création du tag',
+    tagDeleted: 'Tag supprimé',
+    tagDeleteError: 'Échec de la suppression du tag',
   },
 } as const;
 

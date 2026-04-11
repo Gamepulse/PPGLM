@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Game } from "../../types";
 import { useGames } from "../../hooks/useGames";
-import { RatingInput } from "../common/RatingInput";
-import { TagEditor } from "./TagEditor";
 import { GameDetailHeader } from "./GameDetailHeader";
-import { GameDetailInfo } from "./GameDetailInfo";
-import { GameDetailTags } from "./GameDetailTags";
 import { GameDetailBackground } from "./GameDetailBackground";
 // import { GameSoundtrackSection } from "./GameSoundtrackSection"; // Music module - disabled for future build
 import { formatDate } from "../../utils/formatters";
@@ -25,7 +21,6 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     updateRating, 
     updateNotes, 
     deleteGame, 
-    refreshGameFromIgdb,
     updatePlayTime,
     updateCompletionStatus,
     updateFavorite,
@@ -36,7 +31,6 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [notesValue, setNotesValue] = useState("");
-  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => { loadGame(); }, [gameId]);
 
@@ -46,6 +40,10 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     if (g) { setGame(g); setNotesValue(g.notes || ""); }
     setLoading(false);
   }
+
+  const handleGameUpdated = (updatedGame: Game) => {
+    setGame(updatedGame);
+  };
 
   if (loading) return <div className="flex items-center justify-center py-20"><div className="theme-text-muted text-lg">{t('loading')}</div></div>;
   if (!game) return (
@@ -66,12 +64,6 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
   };
 
   const handleDelete = async () => { if (await deleteGame(game.id)) onBack(); };
-
-  const handleRefresh = async () => {
-    if (!game.igdb_id) return;
-    setRefreshing(true);
-    try { if (await refreshGameFromIgdb(game.id)) await loadGame(); } finally { setRefreshing(false); }
-  };
 
   const handlePlayTimeChange = async (hours: number) => {
     if (await updatePlayTime(game.id, hours)) {
@@ -133,9 +125,16 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
       </button>
 
       <div className="relative z-10">
-        <GameDetailHeader game={game} refreshing={refreshing} onRefresh={handleRefresh} />
-        <GameDetailTags game={game} onFilter={onFilter} />
-        <GameDetailInfo game={game} />
+        <GameDetailHeader 
+          game={game} 
+          onGameUpdated={handleGameUpdated} 
+          onPlatformChange={handlePlatformChange}
+          onFilter={onFilter}
+          onFavoriteToggle={handleFavoriteToggle}
+          onRatingChange={handleRatingChange}
+          onTagsChanged={loadGame}
+        />
+        {/* Tags and Info now displayed in Header - removed redundant sections */}
       </div>
       {/* <GameSoundtrackSection game={game} /> // Music module - disabled for future build */}
 
@@ -180,87 +179,19 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
           )}
         </div>
 
-        {/* Favorite Button */}
-        <div>
-          <button
-            type="button"
-            onClick={handleFavoriteToggle}
-            className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-              game.is_favorite 
-                ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
-                : 'theme-bg-tertiary theme-text-primary hover:theme-bg-secondary'
-            }`}
-          >
-            {game.is_favorite ? '★' : '☆'} {game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
-          </button>
-        </div>
-
         {/* Completion Status */}
         <div>
           <label className="block text-sm font-medium theme-text-secondary mb-1">{t('completionStatus')}</label>
           <select
-            value={game.completion_status || 'not_started'}
+            value={game.completion_status || 'playing'}
             onChange={(e) => handleStatusChange(e.target.value)}
             className="w-full px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="not_started">{t('notStarted')}</option>
             <option value="playing">{t('playing')}</option>
             <option value="completed">{t('completed')}</option>
             <option value="dropped">{t('dropped')}</option>
             <option value="wishlist">{t('wishlist')}</option>
           </select>
-        </div>
-
-        {/* Platform */}
-        <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">
-            {t('platform') || 'Platform'}
-            {game.igdb_platforms && game.igdb_platforms.length > 0 && (
-              <span className="ml-2 text-xs text-gray-500">
-                ({t('availableOnIGDB') || 'Available on'}: {game.igdb_platforms.map(p => p.name).join(', ')})
-              </span>
-            )}
-          </label>
-          <select
-            value={game.platform || ''}
-            onChange={(e) => handlePlatformChange(e.target.value)}
-            className="w-full px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="">{t('selectPlatform') || 'Select platform...'}</option>
-            <optgroup label="💻 PC">
-              <option value="pc">PC</option>
-            </optgroup>
-            <optgroup label="🎮 PlayStation">
-              <option value="ps5">PlayStation 5</option>
-              <option value="ps4">PlayStation 4</option>
-              <option value="ps3">PlayStation 3</option>
-              <option value="ps2">PlayStation 2</option>
-              <option value="ps1">PlayStation</option>
-            </optgroup>
-            <optgroup label="🎯 Xbox">
-              <option value="xbox_series">Xbox Series X|S</option>
-              <option value="xbox_one">Xbox One</option>
-              <option value="xbox_360">Xbox 360</option>
-            </optgroup>
-            <optgroup label="🕹️ Nintendo">
-              <option value="nintendo_switch">Nintendo Switch</option>
-              <option value="nintendo_wiiu">Nintendo Wii U</option>
-              <option value="nintendo_wii">Nintendo Wii</option>
-              <option value="nintendo_3ds">Nintendo 3DS</option>
-              <option value="nintendo_ds">Nintendo DS</option>
-            </optgroup>
-            <optgroup label="📱 Mobile">
-              <option value="mobile">Mobile</option>
-            </optgroup>
-            <optgroup label="📟 Other">
-              <option value="other">Other</option>
-            </optgroup>
-          </select>
-          {game.igdb_platforms && game.igdb_platforms.length > 0 && (
-            <p className="mt-1 text-xs text-gray-500">
-              {t('igdbPlatformsHint') || 'Select the platform you actually own from the list above'}
-            </p>
-          )}
         </div>
 
         {/* Play Time */}
@@ -276,19 +207,11 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('personalRating')}</label>
-          <RatingInput value={game.personal_rating} onChange={handleRatingChange} />
-        </div>
-        <div>
           <label className="block text-sm font-medium theme-text-secondary mb-1">{t('notes')}</label>
           <textarea value={notesValue} onChange={(e) => setNotesValue(e.target.value)}
             onBlur={handleSaveNotes} rows={4}
             className="w-full px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             placeholder={t('addNotes')} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('tags')}</label>
-          <TagEditor gameId={game.id} tags={game.tags} onTagsChanged={loadGame} />
         </div>
         <div className="text-xs theme-text-muted pt-4">
           {t('added')}: {formatDate(game.created_at)} · {t('updated')}: {formatDate(game.updated_at)}
