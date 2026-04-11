@@ -255,12 +255,62 @@ pub fn open_store_link(url: String) -> Result<bool, String> {
             .map_err(|e| format!("Failed to open link: {}", e))?;
     }
     
-    #[cfg(target_os = "linux")]
+     #[cfg(target_os = "linux")]
     {
         Command::new("xdg-open")
             .arg(&url)
             .spawn()
             .map_err(|e| format!("Failed to open link: {}", e))?;
+    }
+    
+    Ok(true)
+}
+
+/// Open a folder in the system file explorer
+#[tauri::command]
+pub fn open_folder(path: String) -> Result<bool, String> {
+    let path_obj = Path::new(&path);
+    
+    // Ensure the path exists
+    if !path_obj.exists() {
+        return Err(format!("Path does not exist: {}", path));
+    }
+    
+    #[cfg(target_os = "windows")]
+    {
+        Command::new("explorer")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| format!("Failed to open folder: {}", e))?;
+    }
+    
+    #[cfg(target_os = "macos")]
+    {
+        Command::new("open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| format!("Failed to open folder: {}", e))?;
+    }
+    
+    #[cfg(target_os = "linux")]
+    {
+        // Try different file managers
+        let result = Command::new("xdg-open")
+            .arg(&path)
+            .spawn();
+            
+        if result.is_err() {
+            // Fallback to other file managers
+            let _ = Command::new("nautilus")
+                .arg(&path)
+                .spawn()
+                .or_else(|_| Command::new("dolphin")
+                    .arg(&path)
+                    .spawn()
+                    .or_else(|_| Command::new("thunar")
+                        .arg(&path)
+                        .spawn()));
+        }
     }
     
     Ok(true)

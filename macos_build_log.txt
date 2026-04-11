@@ -1,0 +1,1085 @@
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	﻿2026-04-10T02:54:06.5086860Z Current runner version: '2.333.1'
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5101230Z ##[group]Runner Image Provisioner
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5101710Z Hosted Compute Agent
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5102050Z Version: 20260213.493
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5102420Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5102850Z Build Date: 2026-02-13T00:28:41Z
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5103250Z Worker ID: {bbd97434-9250-4932-887c-3168b9a001bc}
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5103670Z Azure Region: westus
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5104000Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5104800Z ##[group]Operating System
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5105150Z macOS
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5105420Z 15.7.4
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5105680Z 24G517
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5105960Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5106250Z ##[group]Runner Image
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5106570Z Image: macos-15-arm64
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5106880Z Version: 20260406.0256.1
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5107720Z Included Software: https://github.com/actions/runner-images/blob/macos-15-arm64/20260406.0256/images/macos/macos-15-arm64-Readme.md
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5108780Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15-arm64%2F20260406.0256
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5109370Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5110000Z ##[group]GITHUB_TOKEN Permissions
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5111040Z Contents: write
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5111350Z Metadata: read
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5111650Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5113090Z Secret source: Actions
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5113480Z Prepare workflow directory
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5323990Z Prepare all required actions
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:06.5349690Z Getting action download info
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:07.0663230Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:07.3936590Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:07.5472470Z Download action repository 'dtolnay/rust-toolchain@stable' (SHA:29eef336d9b2848a0b548edc03f92a220660cdb8)
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:08.0091670Z Download action repository 'swatinem/rust-cache@v2' (SHA:e18b497796c12c097a38f9edb9d0641fb99eee32)
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:08.6694680Z Download action repository 'tauri-apps/tauri-action@v0' (SHA:84b9d35b5fc46c1e45415bdb6144030364f7ebc5)
+build (macos-latest, --target aarch64-apple-darwin)	Set up job	2026-04-10T02:54:09.4935090Z Complete job name: build (macos-latest, --target aarch64-apple-darwin)
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	﻿2026-04-10T02:54:09.5496410Z ##[group]Run actions/checkout@v4
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5497260Z with:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5497770Z   repository: Gamepulse/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5498630Z   token: ***
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5499100Z   ssh-strict: true
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5499610Z   ssh-user: git
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5500120Z   persist-credentials: true
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5500690Z   clean: true
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5501220Z   sparse-checkout-cone-mode: true
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5501870Z   fetch-depth: 1
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5502350Z   fetch-tags: false
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5502850Z   show-progress: true
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5503370Z   lfs: false
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5503830Z   submodules: false
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5504360Z   set-safe-directory: true
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.5505080Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.8562380Z Syncing repository: Gamepulse/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.8564240Z ##[group]Getting Git version info
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.8565000Z Working directory is '/Users/runner/work/PPGLM/PPGLM'
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.8566110Z [command]/opt/homebrew/bin/git version
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9503170Z git version 2.53.0
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9538850Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9548520Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/416f9578-c949-4bf4-b6d7-95df7ae883bd/.gitconfig'
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9556620Z Temporarily overriding HOME='/Users/runner/work/_temp/416f9578-c949-4bf4-b6d7-95df7ae883bd' before making global git config changes
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9558360Z Adding repository directory to the temporary git global config as a safe directory
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9575510Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/PPGLM/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9677470Z Deleting the contents of '/Users/runner/work/PPGLM/PPGLM'
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9687520Z ##[group]Initializing the repository
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9690620Z [command]/opt/homebrew/bin/git init /Users/runner/work/PPGLM/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9892680Z hint: Using 'master' as the name for the initial branch. This default branch name
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9894030Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9895150Z hint: to use in all of your new repositories, which will suppress this warning,
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9896050Z hint: call:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9896530Z hint:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9897130Z hint: 	git config --global init.defaultBranch <name>
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9897840Z hint:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9898510Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9899570Z hint: 'development'. The just-created branch can be renamed via this command:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9900430Z hint:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9901010Z hint: 	git branch -m <name>
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9901580Z hint:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9902300Z hint: Disable this message with "git config set advice.defaultBranchName false"
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9903490Z Initialized empty Git repository in /Users/runner/work/PPGLM/PPGLM/.git/
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9905580Z [command]/opt/homebrew/bin/git remote add origin https://github.com/Gamepulse/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9972340Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9973350Z ##[group]Disabling automatic garbage collection
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:09.9974380Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.0031360Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.0032290Z ##[group]Setting up auth
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.0036360Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.0095130Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.1007800Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.1062340Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.1798840Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.1846700Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.2876640Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.2946520Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.2947520Z ##[group]Fetching the repository
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:10.2952000Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b9914fa67fa108ab28a8e5f530deb08d260bf70a:refs/remotes/origin/Dev
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3243150Z From https://github.com/Gamepulse/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3243870Z  * [new ref]         b9914fa67fa108ab28a8e5f530deb08d260bf70a -> origin/Dev
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3327720Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3328090Z ##[group]Determining the checkout info
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3328430Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3331610Z [command]/opt/homebrew/bin/git sparse-checkout disable
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3401170Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3456760Z ##[group]Checking out the ref
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.3460020Z [command]/opt/homebrew/bin/git checkout --progress --force -B Dev refs/remotes/origin/Dev
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.4087510Z Switched to a new branch 'Dev'
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.4181350Z branch 'Dev' set up to track 'origin/Dev'.
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.4183380Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.4296010Z [command]/opt/homebrew/bin/git log -1 --format=%H
+build (macos-latest, --target aarch64-apple-darwin)	Run actions/checkout@v4	2026-04-10T02:54:11.4296820Z b9914fa67fa108ab28a8e5f530deb08d260bf70a
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	﻿2026-04-10T02:54:11.4500240Z ##[group]Run actions/setup-node@v4
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.4500480Z with:
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.4500600Z   node-version: lts/*
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.4500740Z   always-auth: false
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.4500880Z   check-latest: false
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.4501200Z   token: ***
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.4501320Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:11.5858390Z Attempt to resolve LTS alias from manifest...
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:12.2395260Z Found in cache @ /Users/runner/hostedtoolcache/node/24.14.1/arm64
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:12.2395830Z ##[group]Environment details
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:12.6828290Z node: v24.14.1
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:12.6833340Z npm: 11.11.0
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:12.6833620Z yarn: 1.22.22
+build (macos-latest, --target aarch64-apple-darwin)	Setup Node.js	2026-04-10T02:54:12.6834350Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	﻿2026-04-10T02:54:12.7027590Z ##[group]Run dtolnay/rust-toolchain@stable
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7027880Z with:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7028080Z   targets: aarch64-apple-darwin,x86_64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7028350Z   toolchain: stable
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7028500Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7119360Z ##[group]Run : parse toolchain version
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7119670Z [36;1m: parse toolchain version[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7119910Z [36;1mif [[ -z $toolchain ]]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7120340Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7120830Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7121090Z [36;1m  exit 1[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7121350Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7121680Z [36;1m  if [[ macOS == macOS ]]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7122100Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7122600Z [36;1m  else[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7122920Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7123290Z [36;1m  fi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7123520Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7123940Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7124300Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7124740Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7125130Z [36;1melse[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7125310Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7125560Z [36;1mfi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7187980Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7188330Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7188600Z   toolchain: stable
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7188770Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7856480Z ##[group]Run : construct rustup command line
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7856900Z [36;1m: construct rustup command line[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7857280Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7857770Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7858150Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7892540Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7892810Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7893000Z   targets: aarch64-apple-darwin,x86_64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7893230Z   components: 
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.7893390Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.8218820Z ##[group]Run : set $CARGO_HOME
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.8219160Z [36;1m: set $CARGO_HOME[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.8219480Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.8252360Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.8252600Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9089020Z ##[group]Run : install rustup if needed
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9089380Z [36;1m: install rustup if needed[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9089620Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9090230Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9090800Z [36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9091000Z [36;1mfi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9124930Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9125190Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9125340Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9126030Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9700450Z ##[group]Run rustup toolchain install stable --target aarch64-apple-darwin --target x86_64-apple-darwin --profile minimal --no-self-update
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9701560Z [36;1mrustup toolchain install stable --target aarch64-apple-darwin --target x86_64-apple-darwin --profile minimal --no-self-update[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9788490Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9788810Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9788970Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9789170Z   RUSTUP_PERMIT_COPY_RENAME: 1
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:12.9789360Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:13.3207190Z info: syncing channel updates for stable-aarch64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:13.4233300Z info: latest update on 2026-03-26 for version 1.94.1 (e408947bf 2026-03-25)
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:13.4325310Z info: component rust-std is up to date
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:13.4352950Z info: downloading component rust-std
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4425870Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4621820Z info: self-update is disabled for this build of rustup
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4622420Z info: any updates to rustup will need to be fetched with your system package manager
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4625540Z   stable-aarch64-apple-darwin updated - rustc 1.94.1 (e408947bf 2026-03-25) (from rustc 1.94.1 (e408947bf 2026-03-25))
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4626040Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4746090Z ##[group]Run rustup default stable
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4746340Z [36;1mrustup default stable[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4783980Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4784250Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4784410Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.4784660Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5324130Z info: using existing install for stable-aarch64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5336760Z info: default toolchain set to stable-aarch64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5337060Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5433210Z   stable-aarch64-apple-darwin unchanged - rustc 1.94.1 (e408947bf 2026-03-25)
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5433670Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5462770Z ##[group]Run : create cachekey
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5463000Z [36;1m: create cachekey[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5463480Z [36;1mDATE=$(rustc +stable --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5463980Z [36;1mHASH=$(rustc +stable --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5464380Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5497740Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5498020Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5498180Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.5498360Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6372540Z ##[group]Run : disable incremental compilation
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6372970Z [36;1m: disable incremental compilation[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6373230Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6373510Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6373710Z [36;1mfi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6407830Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6409960Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6410120Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6410300Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6700440Z ##[group]Run : enable colors in Cargo output
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6700820Z [36;1m: enable colors in Cargo output[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6701040Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6701310Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6701520Z [36;1mfi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6736130Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6736380Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6736530Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6736730Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.6736870Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7033400Z ##[group]Run : enable Cargo sparse registry
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7033940Z [36;1m: enable Cargo sparse registry[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7034210Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7034800Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/Users/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7035370Z [36;1m  if rustc +stable --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7035820Z [36;1m    touch "/Users/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7036230Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7036630Z [36;1m  elif rustc +stable --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7037070Z [36;1m    touch "/Users/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7037480Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7037730Z [36;1m  fi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7037850Z [36;1mfi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7071960Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7072220Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7072350Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7072550Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7072710Z   CARGO_TERM_COLOR: always
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7072870Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7723300Z ##[group]Run : work around spurious network errors in curl 8.0
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7723700Z [36;1m: work around spurious network errors in curl 8.0[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7724130Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7724590Z [36;1mif rustc +stable --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7725000Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7725230Z [36;1mfi[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7758830Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7759140Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7759350Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7759540Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7759700Z   CARGO_TERM_COLOR: always
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.7759870Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8236400Z ##[group]Run rustc +stable --version --verbose
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8236750Z [36;1mrustc +stable --version --verbose[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8272960Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8273250Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8273410Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8273630Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8273800Z   CARGO_TERM_COLOR: always
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8273960Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8746810Z rustc 1.94.1 (e408947bf 2026-03-25)
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8747200Z binary: rustc
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8747480Z commit-hash: e408947bfd200af42db322daf0fadfe7e26d3bd1
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8747830Z commit-date: 2026-03-25
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8748050Z host: aarch64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8748220Z release: 1.94.1
+build (macos-latest, --target aarch64-apple-darwin)	Install Rust stable	2026-04-10T02:54:15.8751340Z LLVM version: 21.1.8
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	﻿2026-04-10T02:54:15.8843090Z ##[group]Run swatinem/rust-cache@v2
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8843370Z with:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8843520Z   workspaces: ./src-tauri -> target
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8843730Z   prefix-key: v0-rust
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8843890Z   add-job-id-key: true
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8844060Z   add-rust-environment-hash-key: true
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8844260Z   cache-targets: true
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8844430Z   cache-all-crates: false
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8844580Z   cache-workspace-crates: false
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8844750Z   save-if: true
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845050Z   cache-provider: github
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845220Z   cache-bin: true
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845340Z   lookup-only: false
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845470Z   cmd-format: {0}
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845600Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845740Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8845910Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8846050Z   CARGO_TERM_COLOR: always
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:15.8846210Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.2950950Z (node:34198) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.2951760Z (Use `node --trace-deprecation ...` to show where the warning was created)
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4804760Z ##[group]Cache Configuration
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4805980Z Cache Provider:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4806240Z     github
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4806430Z Workspaces:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4806740Z     /Users/runner/work/PPGLM/PPGLM/src-tauri
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4807010Z Cache Paths:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4807210Z     /Users/runner/.cargo/bin
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4807480Z     /Users/runner/.cargo/.crates.toml
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4807780Z     /Users/runner/.cargo/.crates2.json
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4808070Z     /Users/runner/.cargo/registry
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4808310Z     /Users/runner/.cargo/git
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4808610Z     /Users/runner/work/PPGLM/PPGLM/src-tauri/target
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4808930Z Restore Key:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4809230Z     v0-rust-build-Darwin-arm64-920d69ea
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4812480Z Cache Key:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4812970Z     v0-rust-build-Darwin-arm64-920d69ea-268b6ab9
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4814670Z .. Prefix:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4814890Z   - v0-rust-build-Darwin-arm64
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4815120Z .. Environment considered:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4815290Z   - Rust Versions:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4815600Z     - 1.94.1 aarch64-apple-darwin e408947bfd200af42db322daf0fadfe7e26d3bd1
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4816020Z     - 1.94.1 aarch64-apple-darwin e408947bfd200af42db322daf0fadfe7e26d3bd1
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4816290Z   - CARGO_HOME
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4816440Z   - CARGO_INCREMENTAL
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4816590Z   - CARGO_TERM_COLOR
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4816760Z .. Lockfiles considered:
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4817020Z   - /Users/runner/work/PPGLM/PPGLM/src-tauri/Cargo.lock
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4817440Z   - /Users/runner/work/PPGLM/PPGLM/src-tauri/Cargo.toml
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4817830Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4817920Z 
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.4818010Z ... Restoring cache ...
+build (macos-latest, --target aarch64-apple-darwin)	Rust cache	2026-04-10T02:54:16.7231200Z No cache found.
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	﻿2026-04-10T02:54:16.7347210Z ##[group]Run npm install
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7347800Z [36;1mnpm install[0m
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7397210Z shell: /bin/bash -e {0}
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7397450Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7397600Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7397800Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7397950Z   CARGO_TERM_COLOR: always
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7398110Z   CACHE_ON_FAILURE: false
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:16.7398270Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8973200Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8974620Z added 169 packages, and audited 170 packages in 15s
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8975200Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8975480Z 32 packages are looking for funding
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8975870Z   run `npm fund` for details
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8980380Z 
+build (macos-latest, --target aarch64-apple-darwin)	Install frontend dependencies	2026-04-10T02:54:31.8980610Z found 0 vulnerabilities
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	﻿2026-04-10T02:54:31.9780430Z ##[group]Run tauri-apps/tauri-action@v0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9780690Z with:
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9785820Z   tagName: app-v__VERSION__
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9786130Z   releaseName: PPGLM v__VERSION__
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9786460Z   releaseBody: See the assets to download and install this version.
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9786790Z   releaseDraft: true
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9786960Z   prerelease: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9787240Z   args: --target aarch64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9787520Z   projectPath: .
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9787730Z   includeDebug: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9787940Z   includeRelease: true
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9788200Z   includeUpdaterJson: true
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9788390Z   updaterJsonKeepUniversal: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9788580Z   isGitea: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9788710Z   uploadPlainBinary: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9788880Z   generateReleaseNotes: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9789030Z env:
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9789190Z   CARGO_HOME: /Users/runner/.cargo
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9789460Z   CARGO_INCREMENTAL: 0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9789690Z   CARGO_TERM_COLOR: always
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9789880Z   CACHE_ON_FAILURE: false
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9791100Z   GITHUB_TOKEN: ***
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:31.9791320Z ##[endgroup]
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.1145810Z running npm [ 'run', 'tauri', 'build', '--', '--target', 'aarch64-apple-darwin' ]
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.2205810Z 
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.2206400Z > pascal@0.4.1 tauri
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.2206890Z > tauri build --target aarch64-apple-darwin
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.2207260Z 
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.3166530Z         Info Looking up installed tauri packages to check mismatched versions...
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.6115560Z      Running beforeBuildCommand `npm run build`
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.7330470Z 
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.7330960Z > pascal@0.4.1 build
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.7331280Z > tsc && vite build
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:32.7331580Z 
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:34.3257520Z [36mvite v6.4.2 [32mbuilding for production...[36m[39m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:34.3717210Z transforming...
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:34.9547030Z [32m✓[39m 78 modules transformed.
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.0373050Z rendering chunks...
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.0473200Z computing gzip size...
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.0497620Z [2mdist/[22m[32mindex.html                 [39m[1m[2m  0.42 kB[22m[1m[22m[2m │ gzip:  0.28 kB[22m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.0498460Z [2mdist/[22m[2massets/[22m[35mindex-CQ_K8h0k.css  [39m[1m[2m 49.22 kB[22m[1m[22m[2m │ gzip:  9.06 kB[22m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.0499900Z [2mdist/[22m[2massets/[22m[36mindex-DYUMT2Qu.js   [39m[1m[2m307.96 kB[22m[1m[22m[2m │ gzip: 88.37 kB[22m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.0500460Z [32m✓ built in 702ms[39m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:35.3313510Z [1m[92m    Updating[0m crates.io index
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.1218570Z [1m[92m Downloading[0m crates ...
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.1856000Z [1m[92m  Downloaded[0m colorchoice v1.0.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.1968790Z [1m[92m  Downloaded[0m ref-cast v1.0.25
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.2109810Z [1m[92m  Downloaded[0m tao v0.34.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.2318880Z [1m[92m  Downloaded[0m phf_generator v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.2337780Z [1m[92m  Downloaded[0m tokio v1.51.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.3171950Z [1m[92m  Downloaded[0m proc-macro2 v1.0.106
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.3341230Z [1m[92m  Downloaded[0m phf_macros v0.10.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.3465730Z [1m[92m  Downloaded[0m uuid v1.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.3665930Z [1m[92m  Downloaded[0m http v1.4.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.3843970Z [1m[92m  Downloaded[0m miniz_oxide v0.8.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.3996840Z [1m[92m  Downloaded[0m matches v0.1.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4107510Z [1m[92m  Downloaded[0m phf v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4151310Z [1m[92m  Downloaded[0m os_pipe v1.2.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4201690Z [1m[92m  Downloaded[0m objc2 v0.6.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4402160Z [1m[92m  Downloaded[0m num-traits v0.2.19
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4451130Z [1m[92m  Downloaded[0m walkdir v2.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4483810Z [1m[92m  Downloaded[0m dirs v6.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4504810Z [1m[92m  Downloaded[0m core-foundation v0.9.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4540740Z [1m[92m  Downloaded[0m utf8_iter v1.0.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4556020Z [1m[92m  Downloaded[0m untrusted v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4595140Z [1m[92m  Downloaded[0m toml_parser v1.1.2+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4651810Z [1m[92m  Downloaded[0m itoa v1.0.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4675220Z [1m[92m  Downloaded[0m objc2-encode v4.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4697680Z [1m[92m  Downloaded[0m zerovec v0.11.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4806960Z [1m[92m  Downloaded[0m http-body v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4828570Z [1m[92m  Downloaded[0m digest v0.10.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4861970Z [1m[92m  Downloaded[0m idna v1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4939910Z [1m[92m  Downloaded[0m percent-encoding v2.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4972800Z [1m[92m  Downloaded[0m option-ext v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.4998090Z [1m[92m  Downloaded[0m indexmap v1.9.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5057010Z [1m[92m  Downloaded[0m phf v0.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5079830Z [1m[92m  Downloaded[0m proc-macro-hack v0.5.20+deprecated
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5117490Z [1m[92m  Downloaded[0m pathdiff v0.2.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5135080Z [1m[92m  Downloaded[0m objc2-io-surface v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5162920Z [1m[92m  Downloaded[0m yoke v0.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5189530Z [1m[92m  Downloaded[0m unicode-ident v1.0.24
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5235560Z [1m[92m  Downloaded[0m icu_provider v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5286520Z [1m[92m  Downloaded[0m memchr v2.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5385180Z [1m[92m  Downloaded[0m num-conv v0.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5406290Z [1m[92m  Downloaded[0m nodrop v0.1.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5425410Z [1m[92m  Downloaded[0m icu_normalizer v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5496690Z [1m[92m  Downloaded[0m mio v1.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5614920Z [1m[92m  Downloaded[0m objc2-core-graphics v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5699590Z [1m[92m  Downloaded[0m phf v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5720220Z [1m[92m  Downloaded[0m iana-time-zone v0.1.65
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5770760Z [1m[92m  Downloaded[0m muda v0.17.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5835790Z [1m[92m  Downloaded[0m hyper-util v0.1.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.5941600Z [1m[92m  Downloaded[0m pin-project-lite v0.2.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6042260Z [1m[92m  Downloaded[0m typenum v1.19.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6084630Z [1m[92m  Downloaded[0m phf_macros v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6100920Z [1m[92m  Downloaded[0m plist v1.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6148560Z [1m[92m  Downloaded[0m unic-ucd-ident v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6178230Z [1m[92m  Downloaded[0m objc2-exception-helper v0.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6193250Z [1m[92m  Downloaded[0m is_terminal_polyfill v1.70.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6208150Z [1m[92m  Downloaded[0m zerotrie v0.2.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.6269590Z [1m[92m  Downloaded[0m vcpkg v0.2.15
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7573400Z [1m[92m  Downloaded[0m precomputed-hash v0.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7583290Z [1m[92m  Downloaded[0m indexmap v2.13.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7648800Z [1m[92m  Downloaded[0m icu_normalizer_data v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7682520Z [1m[92m  Downloaded[0m new_debug_unreachable v1.0.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7702210Z [1m[92m  Downloaded[0m html5ever v0.29.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7778140Z [1m[92m  Downloaded[0m icu_properties_data v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7980710Z [1m[92m  Downloaded[0m zmij v1.0.21
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.7987380Z [1m[92m  Downloaded[0m unicode-segmentation v1.13.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8032360Z [1m[92m  Downloaded[0m tower-service v0.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8046310Z [1m[92m  Downloaded[0m rand_core v0.6.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8124590Z [1m[92m  Downloaded[0m rand_chacha v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8125230Z [1m[92m  Downloaded[0m rand v0.8.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8157040Z [1m[92m  Downloaded[0m open v5.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8180020Z [1m[92m  Downloaded[0m iri-string v0.7.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8315380Z [1m[92m  Downloaded[0m libc v0.2.184
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8900980Z [1m[92m  Downloaded[0m idna_adapter v1.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8914850Z [1m[92m  Downloaded[0m yoke-derive v0.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8931810Z [1m[92m  Downloaded[0m tracing-core v0.1.36
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.8978470Z [1m[92m  Downloaded[0m http-body-util v0.1.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9008840Z [1m[92m  Downloaded[0m rand_pcg v0.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9029940Z [1m[92m  Downloaded[0m url v2.5.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9072620Z [1m[92m  Downloaded[0m zerofrom-derive v0.1.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9089380Z [1m[92m  Downloaded[0m potential_utf v0.1.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9105800Z [1m[92m  Downloaded[0m winnow v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9259520Z [1m[92m  Downloaded[0m want v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9272320Z [1m[92m  Downloaded[0m hyper v1.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9379390Z [1m[92m  Downloaded[0m urlpattern v0.3.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9414660Z [1m[92m  Downloaded[0m tauri-runtime-wry v2.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9455540Z [1m[92m  Downloaded[0m tauri-plugin-fs v2.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9589010Z [1m[92m  Downloaded[0m same-file v1.0.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9613040Z [1m[92m  Downloaded[0m cpufeatures v0.2.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9636230Z [1m[92m  Downloaded[0m base64 v0.22.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9701490Z [1m[92m  Downloaded[0m markup5ever v0.14.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9726890Z [1m[92m  Downloaded[0m kuchikiki v0.8.8-speedreader
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9760450Z [1m[92m  Downloaded[0m reqwest v0.12.28
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:36.9836900Z [1m[92m  Downloaded[0m jiff v0.2.23
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0099360Z [1m[92m  Downloaded[0m hashbrown v0.14.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0168570Z [1m[92m  Downloaded[0m foreign-types-shared v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0179100Z [1m[92m  Downloaded[0m env_filter v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0199200Z [1m[92m  Downloaded[0m mime v0.3.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0221170Z [1m[92m  Downloaded[0m mac v0.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0237330Z [1m[92m  Downloaded[0m json-patch v3.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0276210Z [1m[92m  Downloaded[0m hyper-tls v0.6.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0295650Z [1m[92m  Downloaded[0m strsim v0.11.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0316280Z [1m[92m  Downloaded[0m siphasher v0.3.11
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0334920Z [1m[92m  Downloaded[0m regex-syntax v0.8.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0430460Z [1m[92m  Downloaded[0m embed-resource v3.0.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0453870Z [1m[92m  Downloaded[0m anstyle-query v1.1.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0468740Z [1m[92m  Downloaded[0m objc2-web-kit v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.0727760Z [1m[92m  Downloaded[0m objc2-foundation v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1048660Z [1m[92m  Downloaded[0m lock_api v0.4.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1067270Z [1m[92m  Downloaded[0m icu_locale_core v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1192950Z [1m[92m  Downloaded[0m png v0.17.16
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1252800Z [1m[92m  Downloaded[0m pkg-config v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1276720Z [1m[92m  Downloaded[0m phf_shared v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1284580Z [1m[92m  Downloaded[0m phf_codegen v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1297910Z [1m[92m  Downloaded[0m unic-ucd-version v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1311340Z [1m[92m  Downloaded[0m try-lock v0.2.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1325660Z [1m[92m  Downloaded[0m quick-xml v0.38.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1411100Z [1m[92m  Downloaded[0m syn v2.0.117
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.1577780Z [1m[92m  Downloaded[0m ring v0.17.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2222830Z [1m[92m  Downloaded[0m glob v0.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2246000Z [1m[92m  Downloaded[0m futures-util v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2486920Z [1m[92m  Downloaded[0m dtoa-short v0.3.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2567610Z [1m[92m  Downloaded[0m dtoa v1.0.11
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2632870Z [1m[92m  Downloaded[0m deranged v0.5.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2633500Z [1m[92m  Downloaded[0m cargo-platform v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2634040Z [1m[92m  Downloaded[0m objc2-core-foundation v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.2692910Z [1m[92m  Downloaded[0m objc2-app-kit v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3109420Z [1m[92m  Downloaded[0m native-tls v0.2.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3130530Z [1m[92m  Downloaded[0m match_token v0.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3140370Z [1m[92m  Downloaded[0m log v0.4.29
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3178190Z [1m[92m  Downloaded[0m keyboard-types v0.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3206920Z [1m[92m  Downloaded[0m jsonptr v0.6.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3244190Z [1m[92m  Downloaded[0m ipnet v2.12.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3274940Z [1m[92m  Downloaded[0m ident_case v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3286540Z [1m[92m  Downloaded[0m icu_properties v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3318230Z [1m[92m  Downloaded[0m zerocopy v0.8.48
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3682430Z [1m[92m  Downloaded[0m tray-icon v0.21.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3718990Z [1m[92m  Downloaded[0m tracing v0.1.44
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3942230Z [1m[92m  Downloaded[0m ppv-lite86 v0.2.21
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3962170Z [1m[92m  Downloaded[0m powerfmt v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3976470Z [1m[92m  Downloaded[0m typeid v1.0.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.3994870Z [1m[92m  Downloaded[0m parking_lot_core v0.9.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4026810Z [1m[92m  Downloaded[0m once_cell v1.21.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4067970Z [1m[92m  Downloaded[0m tokio-util v0.7.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4210790Z [1m[92m  Downloaded[0m encoding_rs v0.8.35
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4511110Z [1m[92m  Downloaded[0m cssparser v0.29.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4558490Z [1m[92m  Downloaded[0m bytes v1.11.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4631930Z [1m[92m  Downloaded[0m ahash v0.8.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4667050Z [1m[92m  Downloaded[0m litemap v0.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4703600Z [1m[92m  Downloaded[0m infer v0.19.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4735820Z [1m[92m  Downloaded[0m icu_collections v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4841200Z [1m[92m  Downloaded[0m ico v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4892210Z [1m[92m  Downloaded[0m hyper-rustls v0.27.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4930570Z [1m[92m  Downloaded[0m httparse v1.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4965990Z [1m[92m  Downloaded[0m hex v0.4.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.4987520Z [1m[92m  Downloaded[0m zerovec-derive v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5010860Z [1m[92m  Downloaded[0m zeroize v1.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5028800Z [1m[92m  Downloaded[0m zerofrom v0.1.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5040770Z [1m[92m  Downloaded[0m rand_chacha v0.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5061310Z [1m[92m  Downloaded[0m phf_shared v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5076060Z [1m[92m  Downloaded[0m phf_shared v0.10.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5085260Z [1m[92m  Downloaded[0m phf_codegen v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5093280Z [1m[92m  Downloaded[0m window-vibrancy v0.6.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5241050Z [1m[92m  Downloaded[0m utf8parse v0.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5255940Z [1m[92m  Downloaded[0m utf-8 v0.7.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5277630Z [1m[92m  Downloaded[0m unic-common v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5288780Z [1m[92m  Downloaded[0m unic-char-range v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5311000Z [1m[92m  Downloaded[0m unic-char-property v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5328390Z [1m[92m  Downloaded[0m tauri-plugin v2.5.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5346570Z [1m[92m  Downloaded[0m selectors v0.24.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5372880Z [1m[92m  Downloaded[0m rustc_version v0.4.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5390300Z [1m[92m  Downloaded[0m regex v1.12.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5482450Z [1m[92m  Downloaded[0m h2 v0.4.13
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5585120Z [1m[92m  Downloaded[0m futures-channel v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5615560Z [1m[92m  Downloaded[0m crossbeam-channel v0.5.15
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5683970Z [1m[92m  Downloaded[0m crc32fast v1.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5715110Z [1m[92m  Downloaded[0m chrono v0.4.44
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5816160Z [1m[92m  Downloaded[0m wry v0.54.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5930330Z [1m[92m  Downloaded[0m writeable v0.6.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.5959380Z [1m[92m  Downloaded[0m winnow v0.7.15
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6114620Z [1m[92m  Downloaded[0m version_check v0.9.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6132760Z [1m[92m  Downloaded[0m toml v0.9.12+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6196990Z [1m[92m  Downloaded[0m tauri-macros v2.5.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6221180Z [1m[92m  Downloaded[0m system-configuration v0.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6241910Z [1m[92m  Downloaded[0m synstructure v0.13.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6258620Z [1m[92m  Downloaded[0m servo_arc v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6279100Z [1m[92m  Downloaded[0m serde_json v1.0.149
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6392340Z [1m[92m  Downloaded[0m security-framework v3.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6456020Z [1m[92m  Downloaded[0m regex-automata v0.4.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6665910Z [1m[92m  Downloaded[0m hashlink v0.9.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6691940Z [1m[92m  Downloaded[0m hashbrown v0.12.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.6975200Z [1m[92m  Downloaded[0m futures-io v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7239600Z [1m[92m  Downloaded[0m futf v0.1.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7255190Z [1m[92m  Downloaded[0m form_urlencoded v1.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7266370Z [1m[92m  Downloaded[0m foreign-types-macros v0.2.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7279350Z [1m[92m  Downloaded[0m foreign-types v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7294360Z [1m[92m  Downloaded[0m env_logger v0.11.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7329980Z [1m[92m  Downloaded[0m dunce v1.0.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7353360Z [1m[92m  Downloaded[0m dirs-sys v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7371820Z [1m[92m  Downloaded[0m derive_more v0.99.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7466270Z [1m[92m  Downloaded[0m darling_macro v0.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7475860Z [1m[92m  Downloaded[0m darling v0.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7570530Z [1m[92m  Downloaded[0m core-foundation-sys v0.8.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7625880Z [1m[92m  Downloaded[0m cfb v0.7.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7687220Z [1m[92m  Downloaded[0m cc v1.2.59
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7736380Z [1m[92m  Downloaded[0m cargo_toml v0.22.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7754620Z [1m[92m  Downloaded[0m rand_core v0.5.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7773740Z [1m[92m  Downloaded[0m rand v0.7.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7854550Z [1m[92m  Downloaded[0m phf_generator v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7872510Z [1m[92m  Downloaded[0m phf_generator v0.10.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.7973190Z [1m[92m  Downloaded[0m parking_lot v0.12.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8022380Z [1m[92m  Downloaded[0m tower-http v0.6.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8070060Z [1m[92m  Downloaded[0m tower v0.5.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8238420Z [1m[92m  Downloaded[0m time-core v0.1.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8253570Z [1m[92m  Downloaded[0m thiserror-impl v1.0.69
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8275280Z [1m[92m  Downloaded[0m tauri-plugin-dialog v2.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8361310Z [1m[92m  Downloaded[0m tauri v2.10.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8592820Z [1m[92m  Downloaded[0m socket2 v0.6.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8618600Z [1m[92m  Downloaded[0m signal-hook v0.3.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8669910Z [1m[92m  Downloaded[0m serde_with_macros v3.18.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8700030Z [1m[92m  Downloaded[0m serde_spanned v1.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8714720Z [1m[92m  Downloaded[0m rustls v0.23.37
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8898310Z [1m[92m  Downloaded[0m getrandom v0.4.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.8964510Z [1m[92m  Downloaded[0m getrandom v0.3.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9024840Z [1m[92m  Downloaded[0m getrandom v0.2.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9070850Z [1m[92m  Downloaded[0m getrandom v0.1.16
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9109840Z [1m[92m  Downloaded[0m generic-array v0.14.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9130240Z [1m[92m  Downloaded[0m futures-sink v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9144480Z [1m[92m  Downloaded[0m futures-core v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9164650Z [1m[92m  Downloaded[0m fnv v1.0.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9178630Z [1m[92m  Downloaded[0m flate2 v1.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9270000Z [1m[92m  Downloaded[0m find-msvc-tools v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9295800Z [1m[92m  Downloaded[0m fdeflate v0.3.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9322200Z [1m[92m  Downloaded[0m fastrand v2.4.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9343170Z [1m[92m  Downloaded[0m fallible-streaming-iterator v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9354650Z [1m[92m  Downloaded[0m erased-serde v0.4.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9388650Z [1m[92m  Downloaded[0m equivalent v1.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9404140Z [1m[92m  Downloaded[0m dpi v0.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9420180Z [1m[92m  Downloaded[0m displaydoc v0.2.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9469780Z [1m[92m  Downloaded[0m dispatch2 v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9790010Z [1m[92m  Downloaded[0m darling_core v0.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9915200Z [1m[92m  Downloaded[0m cssparser-macros v0.6.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9925870Z [1m[92m  Downloaded[0m crossbeam-utils v0.8.21
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:37.9969450Z [1m[92m  Downloaded[0m cookie v0.18.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0009130Z [1m[92m  Downloaded[0m convert_case v0.4.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0020860Z [1m[92m  Downloaded[0m brotli-decompressor v5.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0100480Z [1m[92m  Downloaded[0m base64 v0.21.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0162160Z [1m[92m  Downloaded[0m anstyle v1.0.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0184400Z [1m[92m  Downloaded[0m aho-corasick v1.1.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0317580Z [1m[92m  Downloaded[0m quote v1.0.45
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0565310Z [1m[92m  Downloaded[0m tower-layer v0.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0579690Z [1m[92m  Downloaded[0m tokio-macros v2.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0597350Z [1m[92m  Downloaded[0m tauri-winres v0.3.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0633730Z [1m[92m  Downloaded[0m tauri-utils v2.8.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0696860Z [1m[92m  Downloaded[0m tauri-plugin-shell v2.3.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0792360Z [1m[92m  Downloaded[0m tauri-codegen v2.5.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0797420Z [1m[92m  Downloaded[0m syn v1.0.109
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0973040Z [1m[92m  Downloaded[0m sigchld v0.2.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.0991200Z [1m[92m  Downloaded[0m semver v1.0.28
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1038070Z [1m[92m  Downloaded[0m rustls-pki-types v1.14.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1092480Z [1m[92m  Downloaded[0m rfd v0.16.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1218120Z [1m[92m  Downloaded[0m heck v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1262490Z [1m[92m  Downloaded[0m fxhash v0.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1277860Z [1m[92m  Downloaded[0m futures-macro v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1303590Z [1m[92m  Downloaded[0m errno v0.3.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1340780Z [1m[92m  Downloaded[0m crypto-common v0.1.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1355430Z [1m[92m  Downloaded[0m core-graphics v0.25.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1396300Z [1m[92m  Downloaded[0m bitflags v1.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1700460Z [1m[92m  Downloaded[0m autocfg v1.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1736230Z [1m[92m  Downloaded[0m alloc-no-stdlib v2.0.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1842550Z [1m[92m  Downloaded[0m tokio-rustls v0.26.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1903370Z [1m[92m  Downloaded[0m tokio-native-tls v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1904000Z [1m[92m  Downloaded[0m tinystr v0.8.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.1904380Z [1m[92m  Downloaded[0m time v0.3.47
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2093620Z [1m[92m  Downloaded[0m thiserror-impl v2.0.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2127380Z [1m[92m  Downloaded[0m tendril v0.4.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2159070Z [1m[92m  Downloaded[0m tempfile v3.27.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2198810Z [1m[92m  Downloaded[0m subtle v2.6.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2216180Z [1m[92m  Downloaded[0m string_cache_codegen v0.5.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2228510Z [1m[92m  Downloaded[0m string_cache v0.8.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2251650Z [1m[92m  Downloaded[0m smallvec v1.15.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2282590Z [1m[92m  Downloaded[0m slab v0.4.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2301470Z [1m[92m  Downloaded[0m siphasher v1.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2325850Z [1m[92m  Downloaded[0m shlex v1.3.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2343470Z [1m[92m  Downloaded[0m shared_child v1.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2369980Z [1m[92m  Downloaded[0m serialize-to-javascript-impl v0.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2381930Z [1m[92m  Downloaded[0m serialize-to-javascript v0.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2401610Z [1m[92m  Downloaded[0m serde_repr v0.1.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2439610Z [1m[92m  Downloaded[0m serde_derive_internals v0.29.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2462970Z [1m[92m  Downloaded[0m serde_derive v1.0.228
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2508870Z [1m[92m  Downloaded[0m serde-untagged v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2533980Z [1m[92m  Downloaded[0m serde v1.0.228
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2595340Z [1m[92m  Downloaded[0m security-framework-sys v2.17.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.2636340Z [1m[92m  Downloaded[0m schemars v1.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.3028760Z [1m[92m  Downloaded[0m schemars v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.3297010Z [1m[92m  Downloaded[0m schemars v0.8.22
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.3535910Z [1m[92m  Downloaded[0m ryu v1.0.23
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.3586830Z [1m[92m  Downloaded[0m rustls-webpki v0.103.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.3631460Z [1m[92m  Downloaded[0m rustix v1.1.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4069700Z [1m[92m  Downloaded[0m rusqlite v0.31.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4182340Z [1m[92m  Downloaded[0m ref-cast-impl v1.0.25
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4196820Z [1m[92m  Downloaded[0m raw-window-handle v0.6.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4228860Z [1m[92m  Downloaded[0m futures-task v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4258620Z [1m[92m  Downloaded[0m embed_plist v1.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4280970Z [1m[92m  Downloaded[0m ctor v0.2.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4340280Z [1m[92m  Downloaded[0m cfg-if v1.0.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4340910Z [1m[92m  Downloaded[0m cargo_metadata v0.19.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4359510Z [1m[92m  Downloaded[0m block-buffer v0.10.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4383390Z [1m[92m  Downloaded[0m atomic-waker v1.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4401000Z [1m[92m  Downloaded[0m anyhow v1.0.102
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4473420Z [1m[92m  Downloaded[0m anstyle-parse v1.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4499940Z [1m[92m  Downloaded[0m anstream v1.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4547090Z [1m[92m  Downloaded[0m adler2 v2.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4564950Z [1m[92m  Downloaded[0m toml_writer v1.1.1+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4600460Z [1m[92m  Downloaded[0m toml_datetime v0.7.5+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4628540Z [1m[92m  Downloaded[0m time-macros v0.2.27
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4676570Z [1m[92m  Downloaded[0m thiserror v2.0.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4785680Z [1m[92m  Downloaded[0m thiserror v1.0.69
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.4891010Z [1m[92m  Downloaded[0m libsqlite3-sys v0.28.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5608100Z [1m[92m  Downloaded[0m tauri-runtime v2.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5632830Z [1m[92m  Downloaded[0m tauri-build v2.5.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5657280Z [1m[92m  Downloaded[0m system-configuration-sys v0.6.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5674760Z [1m[92m  Downloaded[0m sync_wrapper v1.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5687050Z [1m[92m  Downloaded[0m swift-rs v1.0.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5720010Z [1m[92m  Downloaded[0m stable_deref_trait v1.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5736340Z [1m[92m  Downloaded[0m simd-adler32 v0.3.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5773400Z [1m[92m  Downloaded[0m signal-hook-registry v1.4.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5788780Z [1m[92m  Downloaded[0m sha2 v0.10.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5839850Z [1m[92m  Downloaded[0m serde_urlencoded v0.7.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5867200Z [1m[92m  Downloaded[0m serde_core v1.0.228
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5922300Z [1m[92m  Downloaded[0m schemars_derive v0.8.22
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5944410Z [1m[92m  Downloaded[0m fallible-iterator v0.3.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5961270Z [1m[92m  Downloaded[0m core-graphics-types v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.5972800Z [1m[92m  Downloaded[0m core-foundation v0.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6013790Z [1m[92m  Downloaded[0m camino v1.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6045450Z [1m[92m  Downloaded[0m byteorder v1.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6070130Z [1m[92m  Downloaded[0m block2 v0.6.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6102100Z [1m[92m  Downloaded[0m bitflags v2.11.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6181980Z [1m[92m  Downloaded[0m alloc-stdlib v0.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6198300Z [1m[92m  Downloaded[0m brotli v8.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6410900Z [1m[92m  Downloaded[0m serde_with v3.18.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6633240Z [1m[92m  Downloaded[0m scopeguard v1.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6649490Z [1m[92m  Downloaded[0m hashbrown v0.16.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.6757020Z [1m[92m  Downloaded[0m dyn-clone v1.0.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.7909270Z [1m[92m   Compiling[0m proc-macro2 v1.0.106
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.7911130Z [1m[92m   Compiling[0m quote v1.0.45
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:38.7911490Z [1m[92m   Compiling[0m unicode-ident v1.0.24
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:39.3233280Z [1m[92m   Compiling[0m libc v0.2.184
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:41.9605060Z [1m[92m   Compiling[0m cfg-if v1.0.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:41.9915310Z [1m[92m   Compiling[0m zerocopy v0.8.48
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:42.2656850Z [1m[92m   Compiling[0m serde_core v1.0.228
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:42.7119610Z [1m[92m   Compiling[0m syn v2.0.117
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:44.9931760Z [1m[92m   Compiling[0m synstructure v0.13.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:45.3325530Z [1m[92m   Compiling[0m getrandom v0.2.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:45.3987490Z [1m[92m   Compiling[0m rand_core v0.6.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:45.5094950Z [1m[92m   Compiling[0m icu_properties_data v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:45.6268510Z [1m[92m   Compiling[0m icu_normalizer_data v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:45.7399750Z [1m[92m   Compiling[0m zmij v1.0.21
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:45.8928740Z [1m[92m   Compiling[0m parking_lot_core v0.9.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:46.0155700Z [1m[92m   Compiling[0m zerofrom-derive v0.1.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:46.0306490Z [1m[92m   Compiling[0m yoke-derive v0.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:46.5520850Z [1m[92m   Compiling[0m serde_derive v1.0.228
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:46.6283620Z [1m[92m   Compiling[0m zerovec-derive v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:46.7215690Z [1m[92m   Compiling[0m displaydoc v0.2.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.0696660Z [1m[92m   Compiling[0m ppv-lite86 v0.2.21
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.2781400Z [1m[92m   Compiling[0m rand_chacha v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.3672720Z [1m[92m   Compiling[0m serde v1.0.228
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.5197240Z [1m[92m   Compiling[0m rand v0.8.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.6369750Z [1m[92m   Compiling[0m stable_deref_trait v1.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.6771940Z [1m[92m   Compiling[0m find-msvc-tools v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.8412470Z [1m[92m   Compiling[0m shlex v1.3.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:47.9326330Z [1m[92m   Compiling[0m cc v1.2.59
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.2325550Z [1m[92m   Compiling[0m memchr v2.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.5062330Z [1m[92m   Compiling[0m siphasher v1.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.5873840Z [1m[92m   Compiling[0m phf_shared v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.6586910Z [1m[92m   Compiling[0m zerofrom v0.1.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.7047410Z [1m[92m   Compiling[0m yoke v0.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.7654600Z [1m[92m   Compiling[0m smallvec v1.15.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.7990920Z [1m[92m   Compiling[0m itoa v1.0.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.8704820Z [1m[92m   Compiling[0m phf_generator v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.8834790Z [1m[92m   Compiling[0m getrandom v0.4.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:48.9786290Z [1m[92m   Compiling[0m siphasher v0.3.11
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.0528100Z [1m[92m   Compiling[0m zerovec v0.11.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.0931270Z [1m[92m   Compiling[0m getrandom v0.1.16
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.2255580Z [1m[92m   Compiling[0m bitflags v2.11.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.3512310Z [1m[92m   Compiling[0m typeid v1.0.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.4674370Z [1m[92m   Compiling[0m thiserror v2.0.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.4950050Z [1m[92m   Compiling[0m rand_core v0.5.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.5111660Z [1m[92m   Compiling[0m tinystr v0.8.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.5867650Z [1m[92m   Compiling[0m litemap v0.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.6081140Z [1m[92m   Compiling[0m serde_json v1.0.149
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.6415890Z [1m[92m   Compiling[0m writeable v0.6.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.7004040Z [1m[92m   Compiling[0m thiserror v1.0.69
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.7137340Z [1m[92m   Compiling[0m erased-serde v0.4.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.7376210Z [1m[92m   Compiling[0m ident_case v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.7743610Z [1m[92m   Compiling[0m syn v1.0.109
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.8572260Z [1m[92m   Compiling[0m strsim v0.11.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.8674870Z [1m[92m   Compiling[0m icu_locale_core v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:49.9653020Z [1m[92m   Compiling[0m darling_core v0.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:50.1588360Z [1m[92m   Compiling[0m potential_utf v0.1.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:50.2167330Z [1m[92m   Compiling[0m phf_macros v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:50.5574810Z [1m[92m   Compiling[0m zerotrie v0.2.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:50.5673680Z [1m[92m   Compiling[0m thiserror-impl v2.0.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:50.7116730Z [1m[92m   Compiling[0m utf8_iter v1.0.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:50.8908800Z [1m[92m   Compiling[0m autocfg v1.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.0833390Z [1m[92m   Compiling[0m icu_collections v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.2789640Z [1m[92m   Compiling[0m icu_provider v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.5198040Z [1m[92m   Compiling[0m darling_macro v0.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.7291600Z [1m[92m   Compiling[0m rand_chacha v0.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.8196550Z [1m[92m   Compiling[0m rand_pcg v0.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.8899150Z [1m[92m   Compiling[0m phf_shared v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:51.9702930Z [1m[92m   Compiling[0m thiserror-impl v1.0.69
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.1009030Z [1m[92m   Compiling[0m anyhow v1.0.102
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.2790840Z [1m[92m   Compiling[0m proc-macro-hack v0.5.20+deprecated
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.6025310Z [1m[92m   Compiling[0m rand v0.7.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.6933760Z [1m[92m   Compiling[0m darling v0.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.7328170Z [1m[92m   Compiling[0m phf_shared v0.10.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.8076110Z [1m[92m   Compiling[0m byteorder v1.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.9061870Z [1m[92m   Compiling[0m scopeguard v1.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.9357720Z [1m[92m   Compiling[0m new_debug_unreachable v1.0.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:52.9565980Z [1m[92m   Compiling[0m version_check v0.9.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:53.0896290Z [1m[92m   Compiling[0m phf_generator v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:53.1300120Z [1m[92m   Compiling[0m lock_api v0.4.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:53.2370990Z [1m[92m   Compiling[0m phf_generator v0.10.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:53.2884410Z [1m[92m   Compiling[0m serde_with_macros v3.18.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:53.3195630Z [1m[92m   Compiling[0m icu_normalizer v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:53.6820360Z [1m[92m   Compiling[0m icu_properties v2.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.5219990Z [1m[92m   Compiling[0m string_cache_codegen v0.5.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.6451720Z [1m[92m   Compiling[0m phf_codegen v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.7361010Z [1m[92m   Compiling[0m precomputed-hash v0.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.7361510Z [1m[92m   Compiling[0m winnow v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.7810930Z [1m[92m   Compiling[0m mac v0.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.8042810Z [1m[92m   Compiling[0m futf v0.1.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.8497990Z [1m[92m   Compiling[0m idna_adapter v1.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.9315570Z [1m[92m   Compiling[0m toml_parser v1.1.2+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.9802320Z [1m[92m   Compiling[0m markup5ever v0.14.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:54.9922990Z [1m[92m   Compiling[0m phf_macros v0.10.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.2375400Z [1m[92m   Compiling[0m cssparser v0.29.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.3475710Z [1m[92m   Compiling[0m parking_lot v0.12.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.3987020Z [1m[92m   Compiling[0m phf_codegen v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.4395370Z [1m[92m   Compiling[0m serde_spanned v1.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.4894900Z [1m[92m   Compiling[0m toml_datetime v0.7.5+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.5223640Z [1m[92m   Compiling[0m semver v1.0.28
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.6469790Z [1m[92m   Compiling[0m winnow v0.7.15
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.7055350Z [1m[92m   Compiling[0m log v0.4.29
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.8054180Z [1m[92m   Compiling[0m dtoa v1.0.11
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.8720100Z [1m[92m   Compiling[0m time-core v0.1.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:55.9426530Z [1m[92m   Compiling[0m utf-8 v0.7.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.0307360Z [1m[92m   Compiling[0m bitflags v1.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.0604230Z [1m[92m   Compiling[0m toml_writer v1.1.1+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.0920720Z [1m[92m   Compiling[0m num-conv v0.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.1519200Z [1m[92m   Compiling[0m percent-encoding v2.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.2383800Z [1m[92m   Compiling[0m form_urlencoded v1.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.2701750Z [1m[92m   Compiling[0m tendril v0.4.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.3181060Z [1m[92m   Compiling[0m dtoa-short v0.3.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.3651800Z [1m[92m   Compiling[0m string_cache v0.8.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.3895240Z [1m[92m   Compiling[0m selectors v0.24.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.4525860Z [1m[92m   Compiling[0m phf v0.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.5178450Z [1m[92m   Compiling[0m uuid v1.23.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.6721140Z [1m[92m   Compiling[0m toml v0.9.12+spec-1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.7299720Z [1m[92m   Compiling[0m idna v1.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.8308950Z [1m[92m   Compiling[0m indexmap v1.9.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:56.9426150Z [1m[92m   Compiling[0m phf v0.11.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.0376360Z [1m[92m   Compiling[0m aho-corasick v1.1.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.1162780Z [1m[92m   Compiling[0m ctor v0.2.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.3900530Z [1m[92m   Compiling[0m cssparser-macros v0.6.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.4942630Z [1m[92m   Compiling[0m camino v1.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.6464330Z [1m[92m   Compiling[0m hashbrown v0.16.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.6740220Z [1m[92m   Compiling[0m regex-syntax v0.8.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.9380720Z [1m[92m   Compiling[0m nodrop v0.1.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:57.9714060Z [1m[92m   Compiling[0m unic-common v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.0150940Z [1m[92m   Compiling[0m alloc-no-stdlib v2.0.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.0599450Z [1m[92m   Compiling[0m matches v0.1.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.0895420Z [1m[92m   Compiling[0m equivalent v1.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.1374520Z [1m[92m   Compiling[0m unic-char-range v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.1576810Z [1m[92m   Compiling[0m once_cell v1.21.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.2179760Z [1m[92m   Compiling[0m convert_case v0.4.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.3287250Z [1m[92m   Compiling[0m unic-char-property v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.3988240Z [1m[92m   Compiling[0m indexmap v2.13.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.4091470Z [1m[92m   Compiling[0m derive_more v0.99.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:58.7982050Z [1m[92m   Compiling[0m regex-automata v0.4.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:59.6758440Z [1m[92m   Compiling[0m alloc-stdlib v0.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:59.7246310Z [1m[92m   Compiling[0m unic-ucd-version v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:54:59.7522960Z [1m[92m   Compiling[0m servo_arc v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.0914590Z [1m[92m   Compiling[0m url v2.5.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.5438280Z [1m[92m   Compiling[0m fxhash v0.2.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.5859120Z [1m[92m   Compiling[0m swift-rs v1.0.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.7528900Z [1m[92m   Compiling[0m phf v0.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.8070350Z [1m[92m   Compiling[0m objc2-exception-helper v0.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.8465420Z [1m[92m   Compiling[0m match_token v0.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.8631370Z [1m[92m   Compiling[0m errno v0.3.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.9430610Z [1m[92m   Compiling[0m serde_derive_internals v0.29.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:00.9531390Z [1m[92m   Compiling[0m core-foundation-sys v0.8.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.0422880Z [1m[92m   Compiling[0m bytes v1.11.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.1182570Z [1m[92m   Compiling[0m fnv v1.0.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.1458920Z [1m[92m   Compiling[0m hashbrown v0.12.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.3985970Z [1m[92m   Compiling[0m schemars v0.8.22
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.4477990Z [1m[92m   Compiling[0m schemars_derive v0.8.22
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.6451300Z [1m[92m   Compiling[0m cfb v0.7.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:01.7191200Z [1m[92m   Compiling[0m html5ever v0.29.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:02.5641270Z [1m[92m   Compiling[0m regex v1.12.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:02.8163960Z [1m[92m   Compiling[0m unic-ucd-ident v0.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:02.8444620Z [1m[92m   Compiling[0m brotli-decompressor v5.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:03.4085240Z [1m[92m   Compiling[0m jsonptr v0.6.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:03.4508800Z [1m[92m   Compiling[0m cargo-platform v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:03.7594350Z [1m[92m   Compiling[0m base64 v0.21.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:03.9075370Z [1m[92m   Compiling[0m dyn-clone v1.0.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:03.9551290Z [1m[92m   Compiling[0m same-file v1.0.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:03.9577080Z [1m[92m   Compiling[0m dunce v1.0.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:04.0082300Z [1m[92m   Compiling[0m walkdir v2.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:04.0503700Z [1m[92m   Compiling[0m http v1.4.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:04.3561200Z [1m[92m   Compiling[0m json-patch v3.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:04.5885960Z [1m[92m   Compiling[0m cargo_metadata v0.19.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:04.8070040Z [1m[92m   Compiling[0m brotli v8.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:04.8178130Z [1m[92m   Compiling[0m urlpattern v0.3.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:05.4591450Z [1m[92m   Compiling[0m kuchikiki v0.8.8-speedreader
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:05.7932960Z [1m[92m   Compiling[0m serde-untagged v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:05.8035760Z [1m[92m   Compiling[0m infer v0.19.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:05.9246130Z [1m[92m   Compiling[0m serde_with v3.18.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:06.0461960Z [1m[92m   Compiling[0m objc2 v0.6.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:06.2199660Z [1m[92m   Compiling[0m glob v0.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:06.8727870Z [1m[92m   Compiling[0m objc2-encode v4.1.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:07.0419240Z [1m[92m   Compiling[0m tauri-utils v2.8.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:08.2325260Z [1m[92m   Compiling[0m signal-hook-registry v1.4.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:08.9205650Z [1m[92m   Compiling[0m powerfmt v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:09.0136970Z [1m[92m   Compiling[0m pin-project-lite v0.2.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:09.4842120Z [1m[92m   Compiling[0m deranged v0.5.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:10.1021900Z [1m[92m   Compiling[0m crc32fast v1.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:10.8702700Z [1m[92m   Compiling[0m time v0.3.47
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:11.4585180Z [1m[92m   Compiling[0m quick-xml v0.38.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:11.9568190Z [1m[92m   Compiling[0m base64 v0.22.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:12.1380820Z [1m[92m   Compiling[0m plist v1.8.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:13.6046870Z [1m[92m   Compiling[0m objc2-core-foundation v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:13.8236050Z [1m[92m   Compiling[0m block2 v0.6.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:14.0450150Z [1m[92m   Compiling[0m rustc_version v0.4.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:14.2045690Z [1m[92m   Compiling[0m tokio-macros v2.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:14.3993500Z [1m[92m   Compiling[0m mio v1.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:14.5851410Z [1m[92m   Compiling[0m socket2 v0.6.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:15.0067550Z [1m[92m   Compiling[0m option-ext v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:15.0660500Z [1m[92m   Compiling[0m dirs-sys v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:15.1081960Z [1m[92m   Compiling[0m tokio v1.51.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:15.1397450Z [1m[92m   Compiling[0m objc2-foundation v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:15.8825430Z [1m[92m   Compiling[0m embed-resource v3.0.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:16.2591360Z [1m[92m   Compiling[0m core-foundation v0.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:16.6335820Z [1m[92m   Compiling[0m heck v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:16.9065450Z [1m[92m   Compiling[0m typenum v1.19.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:19.0780850Z [1m[92m   Compiling[0m objc2-app-kit v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:20.3011130Z [1m[92m   Compiling[0m tauri-winres v0.3.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:20.4873620Z [1m[92m   Compiling[0m dirs v6.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:23.7100210Z [1m[92m   Compiling[0m cargo_toml v0.22.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:23.8235290Z [1m[92m   Compiling[0m generic-array v0.14.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:24.0091210Z [1m[92m   Compiling[0m futures-core v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:24.9176720Z [1m[92m   Compiling[0m tauri-build v2.5.6
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:30.1364460Z [1m[92m   Compiling[0m simd-adler32 v0.3.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:31.3849280Z [1m[92m   Compiling[0m tauri-plugin v2.5.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:31.6308110Z [1m[92m   Compiling[0m time-macros v0.2.27
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:32.3247040Z [1m[92m   Compiling[0m adler2 v2.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:32.3764880Z [1m[92m   Compiling[0m raw-window-handle v0.6.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:32.5183710Z [1m[92m   Compiling[0m crossbeam-utils v0.8.21
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:32.8087060Z [1m[92m   Compiling[0m miniz_oxide v0.8.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:33.3142420Z [1m[92m   Compiling[0m tauri v2.10.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:34.0483630Z [1m[92m   Compiling[0m dpi v0.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:34.2549710Z [1m[92m   Compiling[0m cookie v0.18.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:35.6971230Z [1m[92m   Compiling[0m flate2 v1.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:36.2385690Z [1m[92m   Compiling[0m block-buffer v0.10.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:36.3032980Z [1m[92m   Compiling[0m crypto-common v0.1.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:36.3505380Z [1m[92m   Compiling[0m fdeflate v0.3.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:36.6975850Z [1m[92m   Compiling[0m foreign-types-macros v0.2.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:37.6622130Z [1m[92m   Compiling[0m foreign-types-shared v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:38.0206570Z [1m[92m   Compiling[0m slab v0.4.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:38.7933950Z [1m[92m   Compiling[0m foreign-types v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:41.2866070Z [1m[92m   Compiling[0m png v0.17.16
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:41.8559650Z [1m[92m   Compiling[0m crossbeam-channel v0.5.15
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:41.9192770Z [1m[92m   Compiling[0m digest v0.10.7
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:43.9990930Z [1m[92m   Compiling[0m objc2-web-kit v0.3.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:44.3336490Z [1m[92m   Compiling[0m core-graphics-types v0.2.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:44.3946310Z [1m[92m   Compiling[0m dispatch2 v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:44.7692770Z [1m[92m   Compiling[0m cpufeatures v0.2.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:45.5792090Z [1m[92m   Compiling[0m rustix v1.1.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:45.6316240Z [1m[92m   Compiling[0m tauri-runtime v2.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:45.8272620Z [1m[92m   Compiling[0m wry v0.54.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:45.9257940Z [1m[92m   Compiling[0m sha2 v0.10.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:46.0250910Z [1m[92m   Compiling[0m core-graphics v0.25.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:46.0540130Z [1m[92m   Compiling[0m ico v0.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:46.7019030Z [1m[92m   Compiling[0m http-body v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:46.7606170Z [1m[92m   Compiling[0m tracing-core v0.1.36
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.3445800Z [1m[92m   Compiling[0m system-configuration-sys v0.6.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.4590380Z [1m[92m   Compiling[0m getrandom v0.3.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.5245450Z [1m[92m   Compiling[0m futures-sink v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.5867650Z [1m[92m   Compiling[0m unicode-segmentation v1.13.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.6933650Z [1m[92m   Compiling[0m httparse v1.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.9157510Z [1m[92m   Compiling[0m futures-task v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.9879970Z [1m[92m   Compiling[0m tauri-runtime-wry v2.10.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:47.9955430Z [1m[92m   Compiling[0m futures-util v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:49.1616480Z [1m[92m   Compiling[0m keyboard-types v0.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:50.1490140Z [1m[92m   Compiling[0m tokio-util v0.7.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:51.0634010Z [1m[92m   Compiling[0m tracing v0.1.44
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:51.2935280Z [1m[92m   Compiling[0m tao v0.34.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:54.5557990Z [1m[92m   Compiling[0m tauri-codegen v2.5.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:55.6110460Z [1m[92m   Compiling[0m tauri-plugin-fs v2.5.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:56.3593500Z [1m[92m   Compiling[0m security-framework-sys v2.17.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:56.4662320Z [1m[92m   Compiling[0m ahash v0.8.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:56.5992770Z [1m[92m   Compiling[0m serialize-to-javascript-impl v0.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:56.8202290Z [1m[92m   Compiling[0m mime v0.3.17
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.1553100Z [1m[92m   Compiling[0m atomic-waker v1.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.1984170Z [1m[92m   Compiling[0m fastrand v2.4.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.3613880Z [1m[92m   Compiling[0m signal-hook v0.3.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.4684080Z [1m[92m   Compiling[0m try-lock v0.2.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.5217900Z [1m[92m   Compiling[0m tower-service v0.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.5730750Z [1m[92m   Compiling[0m native-tls v0.2.18
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.6775550Z [1m[92m   Compiling[0m want v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.7534130Z [1m[92m   Compiling[0m tempfile v3.27.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:55:57.8791000Z [1m[92m   Compiling[0m h2 v0.4.13
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:01.2386580Z [1m[92m   Compiling[0m serialize-to-javascript v0.1.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:02.8135780Z [1m[92m   Compiling[0m security-framework v3.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:03.2812910Z [1m[92m   Compiling[0m tauri-macros v2.5.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:05.2720290Z [1m[92m   Compiling[0m muda v0.17.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:05.6246110Z [1m[92m   Compiling[0m window-vibrancy v0.6.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:05.7374680Z [1m[92m   Compiling[0m futures-channel v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:05.8478460Z [1m[92m   Compiling[0m core-foundation v0.9.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:06.1320890Z [1m[92m   Compiling[0m serde_repr v0.1.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:06.7988030Z [1m[92m   Compiling[0m vcpkg v0.2.15
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:07.1882790Z [1m[92m   Compiling[0m embed_plist v1.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:07.2385580Z [1m[92m   Compiling[0m pkg-config v0.3.32
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:07.5310990Z [1m[92m   Compiling[0m libsqlite3-sys v0.28.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:08.4088310Z [1m[92m   Compiling[0m system-configuration v0.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:08.6507220Z [1m[92m   Compiling[0m hyper v1.9.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:12.0419020Z [1m[92m   Compiling[0m tauri-plugin-shell v2.3.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:12.5007680Z [1m[92m   Compiling[0m tauri-plugin-dialog v2.7.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:12.8548370Z [1m[92m   Compiling[0m sync_wrapper v1.0.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:12.9157420Z [1m[92m   Compiling[0m num-traits v0.2.19
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:13.0993250Z [1m[92m   Compiling[0m os_pipe v1.2.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:13.1945370Z [1m[92m   Compiling[0m ipnet v2.12.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:14.2735220Z [1m[92m   Compiling[0m rfd v0.16.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:14.4623810Z [1m[92m   Compiling[0m utf8parse v0.2.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:14.5301500Z [1m[92m   Compiling[0m tower-layer v0.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:14.6456210Z [1m[92m   Compiling[0m tower v0.5.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:14.9981970Z [1m[92m   Compiling[0m anstyle-parse v1.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:15.1233110Z [1m[92m   Compiling[0m hyper-util v0.1.20
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:16.5293940Z [1m[92m   Compiling[0m sigchld v0.2.4
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:16.7446970Z [1m[92m   Compiling[0m hashbrown v0.14.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:17.0888250Z [1m[92m   Compiling[0m tokio-native-tls v0.3.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:17.1919700Z [1m[92m   Compiling[0m http-body-util v0.1.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:17.3558540Z [1m[92m   Compiling[0m encoding_rs v0.8.35
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.0187550Z [1m[92m   Compiling[0m zeroize v1.8.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.1140160Z [1m[92m   Compiling[0m anstyle-query v1.1.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.1760510Z [1m[92m   Compiling[0m colorchoice v1.0.5
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.2274880Z [1m[92m   Compiling[0m ryu v1.0.23
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.2878590Z [1m[92m   Compiling[0m iri-string v0.7.12
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.4383770Z [1m[92m   Compiling[0m pathdiff v0.2.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.4986840Z [1m[92m   Compiling[0m anstyle v1.0.14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.6599200Z [1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:21.7133140Z [1m[92m   Compiling[0m anstream v1.0.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:22.0341300Z [1m[92m   Compiling[0m open v5.3.3
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:22.1295730Z [1m[92m   Compiling[0m serde_urlencoded v0.7.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:22.2573470Z [1m[92m   Compiling[0m rustls-pki-types v1.14.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:22.8137750Z [1m[92m   Compiling[0m tower-http v0.6.8
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:23.2425730Z [1m[92m   Compiling[0m hyper-tls v0.6.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:23.3917070Z [1m[92m   Compiling[0m hashlink v0.9.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:23.5974520Z [1m[92m   Compiling[0m shared_child v1.1.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:25.2000400Z [1m[92m   Compiling[0m env_filter v1.0.1
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:25.7147700Z [1m[92m   Compiling[0m pascal v0.4.1 (/Users/runner/work/PPGLM/PPGLM/src-tauri)
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:25.9052480Z [1m[92m   Compiling[0m iana-time-zone v0.1.65
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:25.9964340Z [1m[92m   Compiling[0m fallible-iterator v0.3.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:26.1569280Z [1m[92m   Compiling[0m jiff v0.2.23
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:26.3119470Z [1m[92m   Compiling[0m fallible-streaming-iterator v0.1.9
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:26.4662800Z [1m[92m   Compiling[0m chrono v0.4.44
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:29.9419050Z [1m[92m   Compiling[0m env_logger v0.11.10
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:34.6643260Z [1m[92m   Compiling[0m reqwest v0.12.28
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:38.7570940Z [1m[92m   Compiling[0m rusqlite v0.31.0
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6271210Z [1m[91merror[0m[1m: proc macro panicked[0m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6271980Z   [1m[94m--> [0msrc/main.rs:92:14
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6272390Z    [1m[94m|[0m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6273740Z [1m[94m92[0m [1m[94m|[0m         .run(tauri::generate_context!())
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6274410Z    [1m[94m|[0m              [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6274850Z    [1m[94m|[0m
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6275470Z    [1m[94m= [0m[1mhelp[0m: message: icon /Users/runner/work/PPGLM/PPGLM/src-tauri/icons/32x32.png is not RGBA
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:41.6275950Z 
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:43.0860360Z [1m[91merror[0m: could not compile `pascal` (bin "pascal") due to 1 previous error
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:43.2483250Z failed to build app: failed to build app
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:43.2585590Z        Error failed to build app: failed to build app
+build (macos-latest, --target aarch64-apple-darwin)	Build and release	2026-04-10T02:56:43.3121860Z ##[error]Command "npm ["run","tauri","build","--","--target","aarch64-apple-darwin"]" failed with exit code 1
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	﻿2026-04-10T02:56:43.3450150Z Post job cleanup.
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7339880Z [command]/opt/homebrew/bin/git version
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7547420Z git version 2.53.0
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7602340Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/a1e63f7e-e816-4e8a-a36d-aa9533622698/.gitconfig'
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7605440Z Temporarily overriding HOME='/Users/runner/work/_temp/a1e63f7e-e816-4e8a-a36d-aa9533622698' before making global git config changes
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7606290Z Adding repository directory to the temporary git global config as a safe directory
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7610340Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/PPGLM/PPGLM
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7720950Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.7785610Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.8708990Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.8734300Z http.https://github.com/.extraheader
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.8741110Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.8816600Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.9529110Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build (macos-latest, --target aarch64-apple-darwin)	Post Run actions/checkout@v4	2026-04-10T02:56:43.9589240Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build (macos-latest, --target aarch64-apple-darwin)	Complete job	﻿2026-04-10T02:56:44.0422570Z Cleaning up orphan processes
+build (macos-latest, --target aarch64-apple-darwin)	Complete job	2026-04-10T02:56:44.6953900Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-node@v4. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

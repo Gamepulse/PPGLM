@@ -1,5 +1,6 @@
 import type { Game } from "../../types";
 import { open } from "@tauri-apps/plugin-shell";
+import { invoke } from "@tauri-apps/api/core";
 import { useI18n } from "../../i18n";
 
 interface GameDetailHeaderProps {
@@ -17,6 +18,28 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
     try { await open(url); } catch { window.open(url, "_blank"); }
   };
 
+  const handleOpenFolder = async () => {
+    try {
+      // Use Tauri command to open the folder in file explorer
+      await invoke("open_folder", { path: game.folder_path });
+    } catch (e) {
+      console.error("Failed to open folder:", e);
+      // Fallback: try to extract parent directory and open it
+      try {
+        const path = game.folder_path;
+        // On Windows, use explorer. On macOS/Linux, use open command
+        const isWindows = navigator.platform.indexOf('Win') > -1;
+        if (isWindows) {
+          await open(`file://${path}`);
+        } else {
+          await open(path);
+        }
+      } catch (e2) {
+        console.error("Fallback also failed:", e2);
+      }
+    }
+  };
+
   return (
     <div className="flex gap-6">
       <div className="w-64 flex-shrink-0">
@@ -31,7 +54,15 @@ export function GameDetailHeader({ game, refreshing, onRefresh }: GameDetailHead
 
       <div className="flex-1 space-y-4">
         <h1 className="text-3xl font-bold theme-text-primary">{game.display_name}</h1>
-        <p className="theme-text-muted text-sm font-mono">{game.folder_path}</p>
+        <p 
+          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
+          onClick={handleOpenFolder}
+          title={t('openFolder') || "Click to open folder"}
+        >
+          <span>📁</span>
+          <span className="truncate">{game.folder_path}</span>
+          <span className="text-xs opacity-50">↗</span>
+        </p>
 
         <div className="flex items-center gap-2 flex-wrap">
           {game.igdb_id && (

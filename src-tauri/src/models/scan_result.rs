@@ -19,6 +19,15 @@ pub struct ScanResult {
     pub game_modes: Vec<IgdbGenreSimple>,
     pub player_perspectives: Vec<IgdbGenreSimple>,
     pub themes: Vec<IgdbGenreSimple>,
+    pub platforms: Vec<IgdbGenreSimple>,
+    // User-selected platform (optional, set before saving)
+    pub platform: Option<String>,
+    // Whether this folder matches exclusion patterns
+    pub is_excluded: bool,
+    // Whether this match was rejected (distance too high) but can be accepted by user
+    pub is_rejected: bool,
+    // Whether this is a parent folder scanned but not matched (intermediate folder)
+    pub is_parent: bool,
 }
 
 /// Simplified genre/mode/etc structure for scan results (matches frontend types)

@@ -164,10 +164,21 @@ pub fn format_cover_url(url: &str) -> String {
 /// Clean a folder name by removing scene tags, version numbers, platform info, etc.
 pub fn clean_folder_name(name: &str) -> String {
     let re_scene = regex::Regex::new(
-        r"(?i)\s*[\[(].*?(fitgirl|codex|skidrow|reloaded|plaza|cpy|elmomomo|darck|gog|steam|epic).*?[\])]",
+        r"(?i)\s*[\[\(].*?(fitgirl|codex|skidrow|reloaded|plaza|cpy|elmomomo|darck|gog|steam|epic|dodi|r\s*g\s*mechanics|kaoskrew|empress|hoodlum|elamigos|insaneramzes|razor1911|tenoke|runne|blackbox|corepack|repack|rip).*?[\]\)]",
+    )
+    .unwrap();
+    // Handle trailing repack names without brackets (e.g., "Game - FitGirl Repack", "Game v1.0 - DODI Repack")
+    let re_trailing_repack = regex::Regex::new(
+        r"(?i)\s*[-–—]\s*(fitgirl|dodi|r\s*g\s*mechanics|kaoskrew|empress|hoodlum|elamigos|insaneramzes|razor1911|tenoke|runne|blackbox|corepack|repacks?)\s*(repack|rip)?$",
     )
     .unwrap();
     let re_version = regex::Regex::new(r"(?i)\s*v?\d+\.\d+(\.\d+)*(\s+build\s+\d+)?").unwrap();
+    // Handle build dates and version info in brackets (e.g., "[Build 2024.03.05]", "[v1.2.3]")
+    // Match [Build ...] or [version ...] patterns with any content inside
+    let re_build_info = regex::Regex::new(
+        r"(?i)\s*[\[\(]\s*(build|version|v)\s+[^\]]+[\]\)]",
+    )
+    .unwrap();
     let re_platform =
         regex::Regex::new(r"(?i)\s*[\[(](windows|linux|mac|multi\d*).*?[\])]").unwrap();
     let re_lang = regex::Regex::new(
@@ -175,12 +186,23 @@ pub fn clean_folder_name(name: &str) -> String {
     )
     .unwrap();
     let re_fill = regex::Regex::new(r"[._]{2,}").unwrap();
+    // Normalize separators: replace hyphens, underscores and dots with spaces for better matching
+    let re_separators = regex::Regex::new(r"[-_.]").unwrap();
+    // Handle apostrophes variations (smart quotes, straight quotes)
+    let re_apostrophe = regex::Regex::new(r"[''′']").unwrap();
 
     let cleaned = re_scene.replace_all(name, "");
+    let cleaned = re_trailing_repack.replace_all(&cleaned, "");
+    let cleaned = re_build_info.replace_all(&cleaned, "");
     let cleaned = re_version.replace_all(&cleaned, "");
     let cleaned = re_platform.replace_all(&cleaned, "");
     let cleaned = re_lang.replace_all(&cleaned, "");
+    // Normalize apostrophes to standard single quote
+    let cleaned = re_apostrophe.replace_all(&cleaned, "'");
+    // Replace multiple separators with single space
     let cleaned = re_fill.replace_all(&cleaned, " ");
+    // Replace single hyphens/underscores with spaces
+    let cleaned = re_separators.replace_all(&cleaned, " ");
     let cleaned = cleaned.trim().to_string();
 
     if cleaned.is_empty() {
@@ -232,6 +254,39 @@ mod tests {
         assert_eq!(
             clean_folder_name("Game Name [Windows]"),
             "Game Name"
+        );
+        // New repack patterns
+        assert_eq!(
+            clean_folder_name("Final Fantasy XVI - R G Mechanics"),
+            "Final Fantasy XVI"
+        );
+        assert_eq!(
+            clean_folder_name("Elden Ring v1.10 - DODI Repack"),
+            "Elden Ring"
+        );
+        assert_eq!(
+            clean_folder_name("Cyberpunk 2077 - FitGirl Repack"),
+            "Cyberpunk 2077"
+        );
+        assert_eq!(
+            clean_folder_name("Hogwarts Legacy [Build 2024.03.05] - KaOsKrew"),
+            "Hogwarts Legacy"
+        );
+        assert_eq!(
+            clean_folder_name("Grand Theft Auto V v1.0.3095-EMPRESS"),
+            "Grand Theft Auto V"
+        );
+        assert_eq!(
+            clean_folder_name("Resident Evil 4 Remake - [HOODLUM]"),
+            "Resident Evil 4 Remake"
+        );
+        assert_eq!(
+            clean_folder_name("God.of.War.Ragnarok.PC-InsaneRamZes"),
+            "God of War Ragnarok PC"
+        );
+        assert_eq!(
+            clean_folder_name("The.Witcher.3.Wild.Hunt.Complete.Edition-ElAmigos"),
+            "The Witcher 3 Wild Hunt Complete Edition"
         );
     }
 

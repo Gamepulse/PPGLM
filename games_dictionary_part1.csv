@@ -1,0 +1,244 @@
+title_primary,title_searchable,platform,platform_short,release_year,genre_primary,developer,alternative_names,series,folder_patterns
+Minecraft,minecraft,PC,PC,2011,Sandbox,Mojang,Minecraft Java|Minecraft Bedrock|Minecraft Dungeons,Minecraft,minecraft|mine.craft|mc
+GTA V,gta 5,PC,PC,2013,Action-Adventure,Rockstar North,GTA 5|GTA V|Grand Theft Auto Five,Grand Theft Auto,gta5|gta.v|gta.5
+PUBG,pubg,PC,PC,2017,Battle Royale,KRAFTON,PlayerUnknown's Battlegrounds,PUBG,pubg|playerunknowns.battlegrounds|battlegrounds
+Terraria,terraria,PC,PC,2011,Action-Adventure,Re-Logic,,Terraria,terraria
+Stardew Valley,stardew valley,PC,PC,2016,Farm Sim,ConcernedApe,Stardew,Stardew Valley,stardew.valley|stardew
+Garry's Mod,garrys mod,PC,PC,2004,Sandbox,Facepunch Studios,GMod,Garry's Mod,garrys.mod|gmod|garrysmod
+The Sims 4,the sims 4,PC,PC,2014,Life Sim,Maxis,Sims 4,The Sims,sims.4|the.sims.4
+World of Warcraft,world of warcraft,PC,PC,2004,MMORPG,Blizzard,WoW,Warcraft,world.of.warcraft|wow
+Counter-Strike 2,counter strike 2,PC,PC,2023,FPS,Valve,CS2|CSGO|Counter-Strike Global Offensive,Counter-Strike,cs2|csgo
+Valorant,valorant,PC,PC,2020,FPS,Riot Games,,Valorant,valorant
+Apex Legends,apex legends,PC,PC,2019,Battle Royale,Respawn,,Apex Legends,apex.legends|apex
+Cyberpunk 2077,cyberpunk 2077,PC,PC,2020,Action RPG,CD Projekt Red,Cyberpunk,Cyberpunk,cyberpunk.2077|cp2077
+The Witcher 3,the witcher 3,PC,PC,2015,Action RPG,CD Projekt Red,Witcher 3,The Witcher,witcher.3|tw3
+Elden Ring,elden ring,PC,PC,2022,Action RPG,FromSoftware,,Elden Ring,elden.ring
+Red Dead Redemption 2,red dead redemption 2,PC,PC,2018,Action-Adventure,Rockstar,RDR2,Red Dead,rdr2
+Fortnite,fortnite,PC,PC,2017,Battle Royale,Epic Games,,Fortnite,fortnite
+Call of Duty Modern Warfare,call of duty modern warfare,PC,PC,2019,FPS,Infinity Ward,COD MW|Modern Warfare,Call of Duty,cod.mw|call.of.duty.mw
+Call of Duty Warzone,call of duty warzone,PC,PC,2020,Battle Royale,Infinity Ward,COD Warzone,Call of Duty,cod.warzone|warzone
+League of Legends,league of legends,PC,PC,2009,MOBA,Riot Games,LoL,League of Legends,lol|league.of.legends
+Dota 2,dota 2,PC,PC,2013,MOBA,Valve,Dota,Dota,dota.2|dota2
+Overwatch 2,overwatch 2,PC,PC,2022,FPS,Blizzard,OW2,Overwatch,overwatch.2|ow2
+Rainbow Six Siege,rainbow six siege,PC,PC,2015,FPS,Ubisoft,R6 Siege,Counter-Strike,rainbow.six.siege|r6.siege
+Rocket League,rocket league,PC,PC,2015,Sports,Psyonix,RL,Rocket League,rocket.league|rl
+Rust,rust,PC,PC,2018,Survival,Facepunch Studios,,Rust,rust
+Among Us,among us,PC,PC,2018,Party,InnerSloth,,Among Us,among.us|amongus
+Fall Guys,fall guys,PC,PC,2020,Party,Mediatonic,,Fall Guys,fall.guys|fallguys
+Hades,hades,PC,PC,2020,Roguelike,Supergiant Games,,Hades,hades
+Hollow Knight,hollow knight,PC,PC,2017,Metroidvania,Team Cherry,HK,Hollow Knight,hollow.knight|hk
+Celeste,celeste,PC,PC,2018,Platformer,Extremely OK Games,,Celeste,celeste
+Dead Cells,dead cells,PC,PC,2018,Roguelike,Motion Twin,,Dead Cells,dead.cells|deadcells
+Slay the Spire,slay the spire,PC,PC,2019,Roguelike,MegaCrit,STS,Slay the Spire,slay.the.spire|sts
+Binding of Isaac,binding of isaac,PC,PC,2014,Roguelike,Nicalis,BOI,Binding of Isaac,binding.of.isaac|boi
+Baldur's Gate 3,baldurs gate 3,PC,PC,2023,RPG,Larian Studios,BG3,Baldur's Gate,baldurs.gate.3|bg3
+Divinity Original Sin 2,divinity original sin 2,PC,PC,2017,RPG,Larian Studios,DOS2,Divinity,dos2|divinity.original.sin.2
+Skyrim,skyrim,PC,PC,2011,RPG,Bethesda,Elder Scrolls V,The Elder Scrolls,skyrim|elder.scrolls.v|tes.v
+Fallout 4,fallout 4,PC,PC,2015,RPG,Bethesda,,Fallout,fallout.4|fallout4
+Fallout New Vegas,fallout new vegas,PC,PC,2010,RPG,Obsidian,FONV,Fallout,fallout.new.vegas|fonv
+The Elder Scrolls Online,elder scrolls online,PC,PC,2014,MMORPG,ZeniMax,ESO,The Elder Scrolls,eso
+Starfield,starfield,PC,PC,2023,RPG,Bethesda,,Starfield,starfield
+No Man's Sky,no mans sky,PC,PC,2016,Survival,Hello Games,NMS,No Man's Sky,nms|no.mans.sky
+Subnautica,subnautica,PC,PC,2018,Survival,Unknown Worlds,,Subnautica,subnautica
+Valheim,valheim,PC,PC,2021,Survival,Iron Gate AB,,Valheim,valheim
+Satisfactory,satisfactory,PC,PC,2019,Simulation,Coffee Stain,,Satisfactory,satisfactory
+Factorio,factorio,PC,PC,2020,Simulation,Wube Software,,Factorio,factorio
+Cities Skylines,cities skylines,PC,PC,2015,Simulation,Colossal Order,Cities,Cities Skylines,cities.skylines
+Cities Skylines 2,cities skylines 2,PC,PC,2023,Simulation,Colossal Order,Cities 2,Cities Skylines,cities.skylines.2|cities.2
+SimCity 4,simcity 4,PC,PC,2003,Simulation,Maxis,SC4,SimCity,simcity.4|sc4
+Planet Coaster,planet coaster,PC,PC,2016,Simulation,Frontier,,Planet Coaster,planet.coaster
+Planet Zoo,planet zoo,PC,PC,2019,Simulation,Frontier,,Planet Zoo,planet.zoo
+RimWorld,rimworld,PC,PC,2018,Simulation,Ludeon,,RimWorld,rimworld
+Dwarf Fortress,dwarf fortress,PC,PC,2006,Simulation,Bay 12 Games,DF,Dwarf Fortress,dwarf.fortress|df
+Oxygen Not Included,oxygen not included,PC,PC,2019,Simulation,Klei,ONI,Oxygen Not Included,oxygen.not.included|oni
+Don't Starve,dont starve,PC,PC,2013,Survival,Klei,,Don't Starve,dont.starve|dontstarve
+Don't Starve Together,dont starve together,PC,PC,2016,Survival,Klei,DST,Don't Starve,dst|dont.starve.together
+Stellaris,stellaris,PC,PC,2016,Strategy,Paradox,,Stellaris,stellaris
+Crusader Kings 3,crusader kings 3,PC,PC,2020,Strategy,Paradox,CK3,Crusader Kings,ck3|crusader.kings.3
+Europa Universalis 4,europa universalis 4,PC,PC,2013,Strategy,Paradox,EU4,Europa Universalis,eu4
+Hearts of Iron 4,hearts of iron 4,PC,PC,2016,Strategy,Paradox,HOI4,Hearts of Iron,hoi4
+Civilization 6,civilization 6,PC,PC,2016,Strategy,Firaxis,Civ 6,Civilization,civ.6|civ6
+Civilization 5,civilization 5,PC,PC,2010,Strategy,Firaxis,Civ 5,Civilization,civ.5|civ5
+Age of Empires 4,age of empires 4,PC,PC,2021,Strategy,Relic,AOE4,Age of Empires,aoe4|age.of.empires.4
+Age of Empires 2 Definitive,age of empires 2 definitive,PC,PC,2019,Strategy,Forgotten Empires,AOE2 DE,Age of Empires,aoe2|age.of.empires.2
+StarCraft 2,starcraft 2,PC,PC,2010,RTS,Blizzard,SC2,StarCraft,sc2|starcraft.2
+Total War Warhammer 3,total war warhammer 3,PC,PC,2022,Strategy,Creative Assembly,TWW3,Total War,tww3|total.war.warhammer.3
+Phasmophobia,phasmophobia,PC,PC,2020,Horror,Kinetic Games,,Phasmophobia,phasmophobia
+Lethal Company,lethal company,PC,PC,2023,Horror,Zeekerss,,Lethal Company,lethal.company
+Palworld,palworld,PC,PC,2024,Survival,Pocketpair,,Palworld,palworld
+Hogwarts Legacy,hogwarts legacy,PC,PC,2023,Action-Adventure,Avalanche,,Hogwarts Legacy,hogwarts.legacy
+Spider-Man,marvels spider man,PC,PC,2022,Action-Adventure,Insomniac,Spider-Man,Marvel,spider.man|marvels.spider.man
+God of War,god of war,PC,PC,2022,Action-Adventure,Santa Monica Studio,GOW 2018,God of War,god.of.war|gow
+The Last of Us,the last of us,PC,PC,2023,Action-Adventure,Naughty Dog,TLOU,The Last of Us,the.last.of.us|tlou
+Horizon Zero Dawn,horizon zero dawn,PC,PC,2020,Action-Adventure,Guerrilla,HZD,Horizon,hzd|horizon.zero.dawn
+Ghost of Tsushima,ghost of tsushima,PC,PC,2024,Action-Adventure,Sucker Punch,GOT,Ghost of Tsushima,ghost.of.tsushima|got
+Death Stranding,death stranding,PC,PC,2020,Adventure,Kojima Productions,DS,Death Stranding,death.stranding|ds
+Doom Eternal,doom eternal,PC,PC,2020,FPS,id Software,,DOOM,doom.eternal
+Doom 2016,doom 2016,PC,PC,2016,FPS,id Software,DOOM,DOOM,doom.2016|doom.4
+Quake,quake,PC,PC,1996,FPS,id Software,,Quake,quake
+Duke Nukem 3D,duke nukem 3d,PC,PC,1996,FPS,3D Realms,Duke3D,Duke Nukem,duke.nukem.3d|dukenukem3d|duke3d
+Hotline Miami,hotline miami,PC,PC,2012,Action,Dennaton,,Hotline Miami,hotline.miami
+Katana Zero,katana zero,PC,PC,2019,Action,Askiisoft,,Katana Zero,katana.zero
+Forza Horizon 5,forza horizon 5,PC,PC,2021,Racing,Playground Games,FH5,Forza,forza.horizon.5|fh5
+Assetto Corsa,assetto corsa,PC,PC,2014,Racing,Kunos,AC,Assetto Corsa,assetto.corsa|ac
+Euro Truck Simulator 2,euro truck simulator 2,PC,PC,2012,Simulation,SCS,ETS2,Euro Truck,ets2|euro.truck.simulator.2
+Farming Simulator 22,farming simulator 22,PC,PC,2021,Simulation,Giants,FS22,Farming Simulator,fs22|farming.simulator.22
+House Flipper,house flipper,PC,PC,2018,Simulation,Empyrean,,House Flipper,house.flipper
+PowerWash Simulator,powerwash simulator,PC,PC,2022,Simulation,FuturLab,,PowerWash Simulator,powerwash.simulator|powerwash
+Life is Strange,life is strange,PC,PC,2015,Adventure,Dontnod,LIS,Life is Strange,lis|life.is.strange
+Detroit Become Human,detroit become human,PC,PC,2019,Adventure,Quantic,,Detroit,detroit.become.human
+Outer Wilds,outer wilds,PC,PC,2019,Adventure,Mobius,,Outer Wilds,outer.wilds
+The Forest,the forest,PC,PC,2014,Survival,Endnight,,The Forest,the.forest
+Sons of the Forest,sons of the forest,PC,PC,2023,Survival,Endnight,Sons of Forest,The Forest,sons.of.the.forest
+7 Days to Die,7 days to die,PC,PC,2013,Survival,The Fun Pimps,7DTD,7 Days,7.days.to.die|7dtd
+ARK Survival Evolved,ark survival evolved,PC,PC,2015,Survival,Studio Wildcard,ARK,ARK,ark|ark.survival.evolved
+DayZ,dayz,PC,PC,2018,Survival,Bohemia,,DayZ,dayz
+Project Zomboid,project zomboid,PC,PC,2013,Survival,The Indie Stone,PZ,Project Zomboid,project.zomboid|pz
+BeamNG Drive,beamng drive,PC,PC,2015,Racing,BeamNG,,BeamNG Drive,beamng.drive|beamng
+FIFA 24,fifa 24,PC,PC,2023,Sports,EA,FC 24,FIFA,fifa.24|fc.24|fc24
+Football Manager 2024,football manager 2024,PC,PC,2023,Simulation,Sports Interactive,FM2024,Football Manager,fm2024|football.manager.2024|fm.24
+NBA 2K24,nba 2k24,PC,PC,2023,Sports,2K,NBA2K24,NBA 2K,nba.2k24|nba2k24
+Baba Is You,baba is you,PC,PC,2019,Puzzle,Hempuli,,Baba Is You,baba.is.you
+The Witness,the witness,PC,PC,2016,Puzzle,Thekla,,The Witness,the.witness
+Return of the Obra Dinn,return of the obra dinn,PC,PC,2018,Puzzle,3909 LLC,,Return of the Obra Dinn,obra.dinn|return.of.the.obra.dinn
+Fez,fez,PC,PC,2012,Puzzle,Polytron,,Fez,fez
+Inside,inside,PC,PC,2016,Puzzle,Playdead,,Inside,inside
+Limbo,limbo,PC,PC,2010,Puzzle,Playdead,,Limbo,limbo
+Little Nightmares,little nightmares,PC,PC,2017,Horror,Tarsier,,Little Nightmares,little.nightmares
+Five Nights at Freddy's,five nights at freddys,PC,PC,2014,Horror,Scott Cawthon,FNAF,Five Nights,fnaf|five.nights.at.freddys
+FNAF Security Breach,fnaf security breach,PC,PC,2021,Horror,Steel Wool,FNAF SB,Five Nights,fnaf.security.breach|security.breach
+Resident Evil Village,resident evil village,PC,PC,2021,Survival Horror,Capcom,RE8,Resident Evil,re8|resident.evil.village
+Resident Evil 7,resident evil 7,PC,PC,2017,Survival Horror,Capcom,RE7,Resident Evil,re7|resident.evil.7
+Resident Evil 2 Remake,resident evil 2 remake,PC,PC,2019,Survival Horror,Capcom,RE2 Remake,Resident Evil,re2.remake|resident.evil.2.remake
+Resident Evil 4 Remake,resident evil 4 remake,PC,PC,2023,Survival Horror,Capcom,RE4 Remake,Resident Evil,re4.remake|resident.evil.4.remake
+Devil May Cry 5,devil may cry 5,PC,PC,2019,Hack and Slash,Capcom,DMC5,Devil May Cry,dmc5|devil.may.cry.5
+Monster Hunter World,monster hunter world,PC,PC,2018,Action RPG,Capcom,MHW,Monster Hunter,mhw|monster.hunter.world
+Street Fighter 6,street fighter 6,PC,PC,2023,Fighting,Capcom,SF6,Street Fighter,sf6|street.fighter.6
+Tekken 8,tekken 8,PC,PC,2024,Fighting,Bandai Namco,T8,Tekken,tekken.8|t8
+Mortal Kombat 11,mortal kombat 11,PC,PC,2019,Fighting,NetherRealm,MK11,Mortal Kombat,mk11|mortal.kombat.11
+Mortal Kombat 1,mortal kombat 1,PC,PC,2023,Fighting,NetherRealm,MK1|Mortal Kombat 12,Mortal Kombat,mk1|mortal.kombat.1|mortal.kombat.12
+Injustice 2,injustice 2,PC,PC,2017,Fighting,NetherRealm,,Injustice,injustice.2
+Guilty Gear Strive,guilty gear strive,PC,PC,2021,Fighting,Arc System Works,GGStrive,Guilty Gear,ggstrive|guilty.gear.strive
+Granblue Fantasy Versus,granblue fantasy versus,PC,PC,2020,Fighting,Arc System Works,GBVS,Granblue,gbvs|granblue.fantasy.versus
+The King of Fighters 15,king of fighters 15,PC,PC,2022,Fighting,SNK,KOF XV,KOF,kof.15|kof.xv|king.of.fighters.15
+Soulcalibur 6,soulcalibur 6,PC,PC,2018,Fighting,Bandai Namco,SC6,Soulcalibur,sc6|soulcalibur.6
+Dead or Alive 6,dead or alive 6,PC,PC,2019,Fighting,Team Ninja,DOA6,Dead or Alive,doa6|dead.or.alive.6
+Super Smash Bros Ultimate,super smash bros ultimate,Switch,Switch,2018,Fighting,Bandai Namco,SSBU,Super Smash Bros,ssbu|super.smash.bros.ultimate
+Super Smash Bros Melee,super smash bros melee,GC,GC,2001,Fighting,HAL Laboratory,SSBM,Super Smash Bros,ssbm|super.smash.bros.melee
+Super Smash Bros Brawl,super smash bros brawl,Wii,Wii,2008,Fighting,Sora,SSBB,Super Smash Bros,ssbb|super.smash.bros.brawl
+Mario Kart 8 Deluxe,mario kart 8 deluxe,Switch,Switch,2017,Racing,Nintendo EPD,MK8D,Mario Kart,mario.kart.8.deluxe|mk8d
+Mario Kart Wii,mario kart wii,Wii,Wii,2008,Racing,Nintendo,,Mario Kart,mario.kart.wii|mkwii
+Super Mario Odyssey,super mario odyssey,Switch,Switch,2017,Platformer,Nintendo EPD,Mario Odyssey,Super Mario,super.mario.odyssey
+Super Mario Galaxy,super mario galaxy,Wii,Wii,2007,Platformer,Nintendo EAD,Mario Galaxy,Super Mario,super.mario.galaxy|mario.galaxy
+Super Mario 64,super mario 64,N64,N64,1996,Platformer,Nintendo,Mario 64,Super Mario,super.mario.64|mario.64|sm64
+Super Mario World,super mario world,SNES,SNES,1990,Platformer,Nintendo,SMW,Super Mario,super.mario.world|smw
+Super Mario Bros,super mario bros,NES,NES,1985,Platformer,Nintendo,SMB,Super Mario,super.mario.bros|smb
+Super Mario Bros 3,super mario bros 3,NES,NES,1988,Platformer,Nintendo,SMB3,Super Mario,super.mario.bros.3|smb3
+The Legend of Zelda Breath of the Wild,legend of zelda breath of the wild,Switch,Switch,2017,Action-Adventure,Nintendo EPD,BOTW,The Legend of Zelda,botw|breath.of.the.wild|zelda.botw
+The Legend of Zelda Tears of the Kingdom,legend of zelda tears of the kingdom,Switch,Switch,2023,Action-Adventure,Nintendo EPD,TOTK,The Legend of Zelda,totk|tears.of.the.kingdom|zelda.totk
+The Legend of Zelda Ocarina of Time,legend of zelda ocarina of time,N64,N64,1998,Action-Adventure,Nintendo EAD,OOT,The Legend of Zelda,oot|ocarina.of.time|zelda.oot
+The Legend of Zelda Majora's Mask,legend of zelda majoras mask,N64,N64,2000,Action-Adventure,Nintendo EAD,MM,The Legend of Zelda,mm|majoras.mask|zelda.mm
+The Legend of Zelda A Link to the Past,legend of zelda link to the past,SNES,SNES,1991,Action-Adventure,Nintendo,ALttP,The Legend of Zelda,alttp|link.to.the.past|zelda.alttp
+Zelda The Wind Waker,legend of zelda wind waker,GC,GC,2002,Action-Adventure,Nintendo EAD,WW,The Legend of Zelda,wind.waker|zelda.ww
+Zelda Twilight Princess,legend of zelda twilight princess,Wii,Wii,2006,Action-Adventure,Nintendo EAD,TP,The Legend of Zelda,twilight.princess|zelda.tp
+Pokemon Scarlet,pokemon scarlet,Switch,Switch,2022,RPG,Game Freak,,Pokemon,pokemon.scarlet
+Pokemon Violet,pokemon violet,Switch,Switch,2022,RPG,Game Freak,,Pokemon,pokemon.violet
+Pokemon Legends Arceus,pokemon legends arceus,Switch,Switch,2022,RPG,Game Freak,Legends Arceus,Pokemon,legends.arceus|pokemon.legends.arceus
+Pokemon Sword,pokemon sword,Switch,Switch,2019,RPG,Game Freak,,Pokemon,pokemon.sword
+Pokemon Shield,pokemon shield,Switch,Switch,2019,RPG,Game Freak,,Pokemon,pokemon.shield
+Pokemon Brilliant Diamond,pokemon brilliant diamond,Switch,Switch,2021,RPG,ILCA,Pokemon BD,Pokemon,pokemon.brilliant.diamond
+Pokemon Shining Pearl,pokemon shining pearl,Switch,Switch,2021,RPG,ILCA,Pokemon SP,Pokemon,pokemon.shining.pearl
+Pokemon Let's Go Pikachu,pokemon lets go pikachu,Switch,Switch,2018,RPG,Game Freak,Lets Go Pikachu,Pokemon,pokemon.lets.go.pikachu
+Pokemon Let's Go Eevee,pokemon lets go eevee,Switch,Switch,2018,RPG,Game Freak,Lets Go Eevee,Pokemon,pokemon.lets.go.eevee
+Pokemon Emerald,pokemon emerald,GBA,GBA,2004,RPG,Game Freak,,Pokemon,pokemon.emerald
+Pokemon Ruby,pokemon ruby,GBA,GBA,2002,RPG,Game Freak,,Pokemon,pokemon.ruby
+Pokemon Sapphire,pokemon sapphire,GBA,GBA,2002,RPG,Game Freak,,Pokemon,pokemon.sapphire
+Pokemon FireRed,pokemon firered,GBA,GBA,2004,RPG,Game Freak,Pokemon FR,Pokemon,pokemon.firered
+Pokemon LeafGreen,pokemon leafgreen,GBA,GBA,2004,RPG,Game Freak,Pokemon LG,Pokemon,pokemon.leafgreen
+Pokemon Crystal,pokemon crystal,GBC,GBC,2000,RPG,Game Freak,,Pokemon,pokemon.crystal
+Pokemon Gold,pokemon gold,GBC,GBC,1999,RPG,Game Freak,,Pokemon,pokemon.gold
+Pokemon Silver,pokemon silver,GBC,GBC,1999,RPG,Game Freak,,Pokemon,pokemon.silver
+Pokemon Yellow,pokemon yellow,GBC,GBC,1998,RPG,Game Freak,,Pokemon,pokemon.yellow
+Pokemon Blue,pokemon blue,GB,GB,1996,RPG,Game Freak,,Pokemon,pokemon.blue
+Pokemon Red,pokemon red,GB,GB,1996,RPG,Game Freak,,Pokemon,pokemon.red
+Pokemon Platinum,pokemon platinum,DS,DS,2008,RPG,Game Freak,,Pokemon,pokemon.platinum
+Pokemon Diamond,pokemon diamond,DS,DS,2006,RPG,Game Freak,,Pokemon,pokemon.diamond
+Pokemon Pearl,pokemon pearl,DS,DS,2006,RPG,Game Freak,,Pokemon,pokemon.pearl
+Pokemon Black,pokemon black,DS,DS,2010,RPG,Game Freak,,Pokemon,pokemon.black
+Pokemon White,pokemon white,DS,DS,2010,RPG,Game Freak,,Pokemon,pokemon.white
+Pokemon Black 2,pokemon black 2,DS,DS,2012,RPG,Game Freak,,Pokemon,pokemon.black.2
+Pokemon White 2,pokemon white 2,DS,DS,2012,RPG,Game Freak,,Pokemon,pokemon.white.2
+Pokemon X,pokemon x,3DS,3DS,2013,RPG,Game Freak,,Pokemon,pokemon.x
+Pokemon Y,pokemon y,3DS,3DS,2013,RPG,Game Freak,,Pokemon,pokemon.y
+Pokemon Omega Ruby,pokemon omega ruby,3DS,3DS,2014,RPG,Game Freak,,Pokemon,pokemon.omega.ruby
+Pokemon Alpha Sapphire,pokemon alpha sapphire,3DS,3DS,2014,RPG,Game Freak,,Pokemon,pokemon.alpha.sapphire
+Pokemon Sun,pokemon sun,3DS,3DS,2016,RPG,Game Freak,,Pokemon,pokemon.sun
+Pokemon Moon,pokemon moon,3DS,3DS,2016,RPG,Game Freak,,Pokemon,pokemon.moon
+Pokemon Ultra Sun,pokemon ultra sun,3DS,3DS,2017,RPG,Game Freak,,Pokemon,pokemon.ultra.sun
+Pokemon Ultra Moon,pokemon ultra moon,3DS,3DS,2017,RPG,Game Freak,,Pokemon,pokemon.ultra.moon
+Metroid Dread,metroid dread,Switch,Switch,2021,Metroidvania,MercurySteam,,Metroid,metroid.dread
+Metroid Prime Remastered,metroid prime remastered,Switch,Switch,2023,FPS,Retro Studios,Metroid Prime,Metroid,metroid.prime.remastered
+Super Metroid,super metroid,SNES,SNES,1994,Metroidvania,Nintendo R&D1,Metroid 3,Metroid,super.metroid|metroid.3
+Metroid Fusion,metroid fusion,GBA,GBA,2002,Metroidvania,Nintendo R&D1,,Metroid,metroid.fusion
+Metroid Zero Mission,metroid zero mission,GBA,GBA,2004,Metroidvania,Nintendo R&D1,Metroid 1 Remake,Metroid,metroid.zero.mission
+Metroid Prime,metroid prime,GC,GC,2002,FPS,Retro Studios,,Metroid,metroid.prime
+Metroid Prime 2 Echoes,metroid prime 2 echoes,GC,GC,2004,FPS,Retro Studios,Metroid Prime 2,Metroid,metroid.prime.2|metroid.prime.2.echoes
+Metroid Prime 3 Corruption,metroid prime 3 corruption,Wii,Wii,2007,FPS,Retro Studios,Metroid Prime 3,Metroid,metroid.prime.3|metroid.prime.3.corruption
+Kirby and the Forgotten Land,kirby and the forgotten land,Switch,Switch,2022,Platformer,HAL Laboratory,Kirby,Kirby,kirby.and.the.forgotten.land
+Kirby Star Allies,kirby star allies,Switch,Switch,2018,Platformer,HAL Laboratory,,Kirby,kirby.star.allies
+Kirby's Return to Dream Land,kirbys return to dream land,Wii,Wii,2011,Platformer,HAL Laboratory,Kirby Wii,Kirby,kirbys.return.to.dream.land|kirby.wii
+Kirby Super Star,kirby super star,SNES,SNES,1996,Platformer,HAL Laboratory,,Kirby,kirby.super.star|kirby.superstar
+Kirby's Dream Land,kirbys dream land,GB,GB,1992,Platformer,HAL Laboratory,Kirby 1,Kirby,kirbys.dream.land|kirby.1
+Donkey Kong Country,donkey kong country,SNES,SNES,1994,Platformer,Rare,DKC,Donkey Kong,donkey.kong.country|dkc
+Donkey Kong Country 2,donkey kong country 2,SNES,SNES,1995,Platformer,Rare,DKC2,Donkey Kong,donkey.kong.country.2|dkc2
+Donkey Kong Country 3,donkey kong country 3,SNES,SNES,1996,Platformer,Rare,DKC3,Donkey Kong,donkey.kong.country.3|dkc3
+Donkey Kong Country Returns,donkey kong country returns,Wii,Wii,2010,Platformer,Retro Studios,DKCR,Donkey Kong,donkey.kong.country.returns|dkcr
+Donkey Kong Country Tropical Freeze,donkey kong country tropical freeze,Wii U,WiiU,2014,Platformer,Retro Studios,DKCTF,Donkey Kong,donkey.kong.country.tropical.freeze|dkctf
+Paper Mario,paper mario,N64,N64,2000,RPG,Intelligent Systems,Paper Mario 64,Paper Mario,paper.mario|paper.mario.64
+Paper Mario The Thousand-Year Door,paper mario ttyd,GC,GC,2004,RPG,Intelligent Systems,TTYD,Paper Mario,paper.mario.ttyd|ttyd|paper.mario.the.thousand.year.door
+Super Paper Mario,super paper mario,Wii,Wii,2007,Platformer,Intelligent Systems,,Paper Mario,super.paper.mario
+Paper Mario Sticker Star,paper mario sticker star,3DS,3DS,2012,RPG,Intelligent Systems,,Paper Mario,paper.mario.sticker.star
+Paper Mario Color Splash,paper mario color splash,Wii U,WiiU,2016,RPG,Intelligent Systems,,Paper Mario,paper.mario.color.splash
+Paper Mario The Origami King,paper mario origami king,Switch,Switch,2020,RPG,Intelligent Systems,Origami King,Paper Mario,paper.mario.the.origami.king|origami.king
+Mario Party Superstars,mario party superstars,Switch,Switch,2021,Party,NDcube,Mario Party,Mario Party,mario.party.superstars
+Mario Party,mario party,N64,N64,1998,Party,Hudson,Mario Party 1,Mario Party,mario.party|mario.party.1
+Mario Party 2,mario party 2,N64,N64,2000,Party,Hudson,,Mario Party,mario.party.2
+Mario Party 3,mario party 3,N64,N64,2001,Party,Hudson,,Mario Party,mario.party.3
+Mario Party 4,mario party 4,GC,GC,2002,Party,Hudson,,Mario Party,mario.party.4
+Mario Party 5,mario party 5,GC,GC,2003,Party,Hudson,,Mario Party,mario.party.5
+Mario Party 6,mario party 6,GC,GC,2004,Party,Hudson,,Mario Party,mario.party.6
+Mario Party 7,mario party 7,GC,GC,2005,Party,Hudson,,Mario Party,mario.party.7
+Mario Party 8,mario party 8,Wii,Wii,2007,Party,Hudson,,Mario Party,mario.party.8
+Mario Party 9,mario party 9,Wii,Wii,2012,Party,NDcube,,Mario Party,mario.party.9
+Mario Party 10,mario party 10,Wii U,WiiU,2015,Party,NDcube,,Mario Party,mario.party.10
+Luigi's Mansion,luigis mansion,GC,GC,2001,Adventure,Nintendo,,Luigi's Mansion,luigis.mansion|luigis.mansion.1
+Luigi's Mansion Dark Moon,luigis mansion dark moon,3DS,3DS,2013,Adventure,Next Level Games,Luigi's Mansion 2,Luigi's Mansion,luigis.mansion.dark.moon|luigis.mansion.2
+Luigi's Mansion 3,luigis mansion 3,Switch,Switch,2019,Adventure,Next Level Games,,Luigi's Mansion,luigis.mansion.3
+Fire Emblem Engage,fire emblem engage,Switch,Switch,2023,Strategy,Intelligent Systems,,Fire Emblem,fire.emblem.engage
+Fire Emblem Three Houses,fire emblem three houses,Switch,Switch,2019,Strategy,Intelligent Systems,FE3H,Fire Emblem,fire.emblem.three.houses|fe3h
+Fire Emblem Awakening,fire emblem awakening,3DS,3DS,2012,Strategy,Intelligent Systems,FEA,Fire Emblem,fire.emblem.awakening|fea
+Fire Emblem Fates,fire emblem fates,3DS,3DS,2015,Strategy,Intelligent Systems,FE Fates,Fire Emblem,fire.emblem.fates
+Fire Emblem Path of Radiance,fire emblem path of radiance,GC,GC,2005,Strategy,Intelligent Systems,FE9,Fire Emblem,fire.emblem.path.of.radiance|fe9
+Fire Emblem Radiant Dawn,fire emblem radiant dawn,Wii,Wii,2007,Strategy,Intelligent Systems,FE10,Fire Emblem,fire.emblem.radiant.dawn|fe10
+Fire Emblem The Sacred Stones,fire emblem sacred stones,GBA,GBA,2004,Strategy,Intelligent Systems,FE8,Fire Emblem,fire.emblem.sacred.stones|fe8
+Fire Emblem Blazing Blade,fire emblem blazing blade,GBA,GBA,2003,Strategy,Intelligent Systems,FE7,Fire Emblem,fire.emblem.blazing.blade|fe7
+Xenoblade Chronicles 3,xenoblade chronicles 3,Switch,Switch,2022,RPG,Monolith Soft,XC3,Xenoblade,xenoblade.chronicles.3|xc3
+Xenoblade Chronicles 2,xenoblade chronicles 2,Switch,Switch,2017,RPG,Monolith Soft,XC2,Xenoblade,xenoblade.chronicles.2|xc2
+Xenoblade Chronicles,xenoblade chronicles,Wii,Wii,2010,RPG,Monolith Soft,XC1,Xenoblade,xenoblade.chronicles|xc|xenoblade.1
+Xenoblade Chronicles Definitive,xenoblade chronicles definitive,Switch,Switch,2020,RPG,Monolith Soft,XCDE,Xenoblade,xenoblade.chronicles.definitive.edition|xcde
+Animal Crossing New Horizons,animal crossing new horizons,Switch,Switch,2020,Simulation,Nintendo EPD,ACNH,Animal Crossing,animal.crossing.new.horizons|acnh
+Animal Crossing New Leaf,animal crossing new leaf,3DS,3DS,2012,Simulation,Nintendo EAD,ACNL,Animal Crossing,animal.crossing.new.leaf|acnl
+Animal Crossing Wild World,animal crossing wild world,DS,DS,2005,Simulation,Nintendo EAD,ACWW,Animal Crossing,animal.crossing.wild.world|acww
+Splatoon 3,splatoon 3,Switch,Switch,2022,Shooter,Nintendo,,Splatoon,splatoon.3
+Splatoon 2,splatoon 2,Switch,Switch,2017,Shooter,Nintendo,,Splatoon,splatoon.2
+Splatoon,splatoon,Wii U,WiiU,2015,Shooter,Nintendo,Splatoon 1,Splatoon,splatoon|splatoon.1
+Pikmin 4,pikmin 4,Switch,Switch,2023,Strategy,Nintendo,,Pikmin,pikmin.4
+Pikmin 3,pikmin 3,Wii U,WiiU,2013,Strategy,Nintendo,,Pikmin,pikmin.3
+Pikmin 2,pikmin 2,GC,GC,2004,Strategy,Nintendo,,Pikmin,pikmin.2
+Pikmin,pikmin,GC,GC,2001,Strategy,Nintendo,Pikmin 1,Pikmin,pikmin|pikmin.1
+ARMS,arms,Switch,Switch,2017,Fighting,Nintendo,,ARMS,arms
+Ring Fit Adventure,ring fit adventure,Switch,Switch,2019,Fitness,Nintendo EPD,Ring Fit,Ring Fit,ring.fit.adventure|ring.fit
+Wii Sports,wii sports,Wii,Wii,2006,Sports,Nintendo EAD,WiiSports,Wii Sports,wii.sports|wiisports
+Wii Sports Resort,wii sports resort,Wii,Wii,2009,Sports,Nintendo,WiiSports Resort,Wii Sports,wii.sports.resort
+Super Mario 3D All-Stars,super mario 3d all stars,Switch,Switch,2020,Compilation,Nintendo,Mario 3D All-Stars,Super Mario,super.mario.3d.all.stars|mario.3d.all.stars
+Super Mario All-Stars,super mario all stars,SNES,SNES,1993,Compilation,Nintendo EAD,,Super Mario,super.mario.all.stars|mario.all.stars

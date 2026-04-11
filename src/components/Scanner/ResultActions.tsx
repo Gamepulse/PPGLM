@@ -3,16 +3,22 @@ import { useI18n } from "../../i18n";
 
 interface ResultActionsProps {
   matches: ScanResult[];
+  excludedCount?: number;
   onSave: () => void;
 }
 
-export function ResultActions({ matches, onSave }: ResultActionsProps) {
+export function ResultActions({ matches, excludedCount = 0, onSave }: ResultActionsProps) {
   const { t } = useI18n();
 
   return (
     <div className="pt-2 theme-border border-t">
       <p className="text-xs theme-text-muted mb-2">
         {t('onlyMatchedSaved').replace('{{count}}', String(matches.length))}
+        {excludedCount > 0 && (
+          <span className="text-yellow-500 ml-1">
+            ({excludedCount} {t('excluded').toLowerCase()})
+          </span>
+        )}
       </p>
       <button
         onClick={onSave}

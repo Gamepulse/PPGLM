@@ -10,11 +10,15 @@ interface GameCardProps {
   onClick: (id: number) => void;
   viewMode: "grid" | "list" | "compact";
   onFilter?: (type: string, value: string) => void;
+  showQuickAssign?: boolean;
+  onQuickAssign?: () => void;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter }) => {
+const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, showQuickAssign, onQuickAssign }) => {
   const { t } = useI18n();
-  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes } = game;
+  const { display_name, cover_url, igdb_id, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes, platform } = game;
+  
+  const platformIcon = platform ? (platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟') : null;
   
   const renderTags = () => {
     if (tags.length === 0) return null;
@@ -201,6 +205,20 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter }
           <h3 className="theme-text-primary font-semibold text-lg mb-2 truncate flex items-center gap-2">
             {display_name}
             {renderFavorite()}
+            {platformIcon && <span className="text-sm">{platformIcon}</span>}
+            {showQuickAssign && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  onQuickAssign?.();
+                }}
+                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
+                title="Quick assign platform"
+              >
+                🎮
+              </button>
+            )}
           </h3>
           
           <div className="flex items-center justify-between mb-3">
@@ -266,7 +284,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter }
                 e.stopPropagation();
                 onFilter?.('status', completion_status);
               }}
-              className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] text-white ${
+              className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] text-white z-10 ${
                 completion_status === 'completed' ? 'bg-green-600' :
                 completion_status === 'playing' ? 'bg-blue-600' :
                 completion_status === 'dropped' ? 'bg-red-600' :
@@ -283,7 +301,26 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter }
           
           {/* Favorite star */}
           {is_favorite && (
-            <span className="absolute top-1 right-1 text-yellow-400 text-sm">★</span>
+            <span className="absolute top-1 right-1 text-yellow-400 text-sm z-10">★</span>
+          )}
+          
+          {/* Quick assign button - bottom left, above platform icon */}
+          {showQuickAssign && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onQuickAssign?.();
+              }}
+              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
+              title="Quick assign platform"
+            >
+              🎮
+            </button>
+          )}
+          
+          {/* Platform icon - bottom right, separate from quick assign */}
+          {platformIcon && (
+            <span className="absolute bottom-1 right-1 text-sm z-10">{platformIcon}</span>
           )}
         </div>
         
@@ -328,6 +365,19 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter }
           <h3 className="theme-text-primary font-semibold text-lg mb-2 flex items-center gap-2">
             {display_name}
             {renderFavorite()}
+            {platformIcon && <span className="text-lg">{platformIcon}</span>}
+            {showQuickAssign && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onQuickAssign?.();
+                }}
+                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
+                title="Quick assign platform"
+              >
+                🎮
+              </button>
+            )}
           </h3>
           {renderIGDBBadge()}
         </div>

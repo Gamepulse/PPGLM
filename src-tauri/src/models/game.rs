@@ -28,6 +28,14 @@ pub struct Game {
     pub last_played: Option<String>,
     pub executable_path: Option<String>,
     pub store_links: Option<String>,      // JSON string of store links
+    pub platform: Option<String>,          // pc, playstation, xbox, nintendo, etc.
+    pub igdb_platforms: Vec<Platform>,     // Platforms available from IGDB
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Platform {
+    pub id: i64,
+    pub name: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -147,3 +155,32 @@ pub struct GenreCount {
     pub count: i64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComprehensiveGameStats {
+    pub total_games: i64,
+    pub games_with_igdb: i64,
+    pub games_without_igdb: i64,
+    pub avg_personal_rating: f64,
+    pub avg_igdb_rating: f64,
+    pub rated_games: i64,
+    pub completion_stats: Vec<(String, i64)>,
+    pub total_play_time: f64,
+    pub avg_play_time: f64,
+    pub games_with_play_time: i64,
+    pub favorite_games: i64,
+    pub platform_stats: Vec<(String, i64)>,
+    pub release_years: Vec<(String, i64)>,
+    pub recently_added: i64,
+    pub games_with_covers: i64,
+    pub games_with_executable: i64,
+    pub total_tags: i64,
+    pub top_tags: Vec<(String, i64)>,
+    pub genre_stats: Vec<(String, i64)>,
+    pub total_collections: i64,
+    pub collection_stats: Vec<(String, i64)>,
+    pub total_scanned_folders: i64,
+    pub total_exclusions: i64,
+    pub total_searches: i64,
+    pub unique_searches: i64,
+    pub total_screenshots: i64,
+}

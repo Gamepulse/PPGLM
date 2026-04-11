@@ -25,7 +25,34 @@ export interface Game {
   last_played?: string | null;
   executable_path?: string | null;
   store_links?: string | null;
+  platform?: string | null;
+  igdb_platforms?: PlatformInfo[];
 }
+
+export interface PlatformInfo {
+  id: number;
+  name: string;
+}
+
+export type Platform = 'pc' | 'playstation' | 'xbox' | 'nintendo' | 'mobile' | 'other';
+
+export const PLATFORM_LABELS: Record<Platform, string> = {
+  pc: 'PC',
+  playstation: 'PlayStation',
+  xbox: 'Xbox',
+  nintendo: 'Nintendo',
+  mobile: 'Mobile',
+  other: 'Other',
+};
+
+export const PLATFORM_OPTIONS: { value: Platform; label: string; emoji: string }[] = [
+  { value: 'pc', label: 'PC', emoji: '💻' },
+  { value: 'playstation', label: 'PlayStation', emoji: '🎮' },
+  { value: 'xbox', label: 'Xbox', emoji: '🎯' },
+  { value: 'nintendo', label: 'Nintendo', emoji: '🕹️' },
+  { value: 'mobile', label: 'Mobile', emoji: '📱' },
+  { value: 'other', label: 'Other', emoji: '📟' },
+];
 
 export type CompletionStatus = 'not_started' | 'playing' | 'completed' | 'dropped' | 'wishlist';
 
@@ -138,6 +165,14 @@ export interface ScanResult {
   game_modes?: GameMode[];
   player_perspectives?: PlayerPerspective[];
   themes?: Theme[];
+  // Platform selection (optional, user can set before saving)
+  platform?: string | null;
+  // Whether this folder matches exclusion patterns
+  is_excluded?: boolean;
+  // Whether this match was rejected (distance too high) but can be accepted by user
+  is_rejected?: boolean;
+  // Whether this is a parent folder scanned but not matched (intermediate folder)
+  is_parent?: boolean;
 }
 
 export interface MatchCandidate {
@@ -208,6 +243,39 @@ export interface ScanResultEvent {
   total_found: number;
 }
 
+/** Event emitted when a folder is excluded during scanning */
+export interface ExcludedFolderEvent {
+  folder_name: string;
+  folder_path: string;
+  reason: string;
+}
+
+/** Event emitted when a folder has no IGDB match */
+export interface NoMatchFolderEvent {
+  folder_name: string;
+  folder_path: string;
+  display_name: string;
+}
+
+/** Event emitted when a match is rejected (distance too high) */
+export interface RejectedMatchEvent {
+  folder_name: string;
+  folder_path: string;
+  display_name: string;
+  best_candidate_name: string;
+  best_distance: number;
+  threshold: number;
+  candidates: MatchCandidate[];
+}
+
+/** Event emitted when a parent folder is scanned but has no match (not at max depth) */
+export interface ScannedParentFolderEvent {
+  folder_name: string;
+  folder_path: string;
+  display_name: string;
+  depth: number;
+}
+
 export type ViewType = "library" | "scanner" | "settings" | "game-detail";
 
 export type TagCategory = "genre" | "developer" | "publisher" | "custom";
@@ -218,3 +286,91 @@ export const TAG_CATEGORY_LABELS: Record<TagCategory, string> = {
   publisher: "Éditeur",
   custom: "Personnalisé",
 };
+
+// Soundtrack types
+export interface GameSoundtrack {
+  id: number;
+  game_id: number;
+  vgmdb_album_id?: number | null;
+  vgmdb_url?: string | null;
+  album_title?: string | null;
+  album_artist?: string | null;
+  release_date?: string | null;
+  cover_url?: string | null;
+  spotify_uri?: string | null;
+  spotify_url?: string | null;
+  youtube_url?: string | null;
+  track_count?: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VgmdbAlbum {
+  id: number;
+  title: string;
+  url: string;
+  cover_url?: string | null;
+  artists: string[];
+  release_date?: string | null;
+  track_count?: number | null;
+  catalog_number?: string | null;
+}
+
+// Soundtrack types (for music module - currently disabled)
+export interface GameSoundtrack {
+  id: number;
+  game_id: number;
+  title: string;
+  artist?: string | null;
+  cover_url?: string | null;
+  release_date?: string | null;
+  track_count?: number | null;
+  source: 'vgmdb' | 'musicbrainz' | 'manual';
+  source_id?: string | null;
+  spotify_uri?: string | null;
+  spotify_url?: string | null;
+  youtube_url?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// MusicBrainz types
+export interface MusicBrainzArtist {
+  id: string;
+  name: string;
+}
+
+export interface MusicBrainzRelease {
+  id: string;
+  title: string;
+  artist_credit: MusicBrainzArtist[];
+  date?: string | null;
+  country?: string | null;
+  track_count?: number | null;
+  cover_url?: string | null;
+  disambiguation?: string | null;
+}
+
+// YouTube types
+export interface YouTubeVideoInfo {
+  video_id: string;
+  title: string;
+  thumbnail_url: string;
+  embed_url: string;
+  watch_url: string;
+}
+
+// ListenBrainz types
+export interface ListenBrainzMetadata {
+  recording_mbid?: string | null;
+  recording_name?: string | null;
+  artist_credit_name?: string | null;
+  artist_mbids?: string[] | null;
+  release_mbid?: string | null;
+  release_name?: string | null;
+  additional_info?: {
+    youtube?: string | null;
+    origin_url?: string | null;
+    spotify_id?: string | null;
+  } | null;
+}

@@ -6,6 +6,8 @@ import { TagEditor } from "./TagEditor";
 import { GameDetailHeader } from "./GameDetailHeader";
 import { GameDetailInfo } from "./GameDetailInfo";
 import { GameDetailTags } from "./GameDetailTags";
+import { GameDetailBackground } from "./GameDetailBackground";
+// import { GameSoundtrackSection } from "./GameSoundtrackSection"; // Music module - disabled for future build
 import { formatDate } from "../../utils/formatters";
 import { useI18n } from "../../i18n";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -29,6 +31,7 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     updateFavorite,
     launchGame,
     updateExecutablePath,
+    updatePlatform,
   } = useGames();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
@@ -113,15 +116,28 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     setGame({ ...game, executable_path: null });
   };
 
+  const handlePlatformChange = async (platform: string) => {
+    const value = platform || null;
+    if (await updatePlatform(game!.id, value)) {
+      setGame({ ...game!, platform: value });
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <button type="button" onClick={onBack} className="text-indigo-400 hover:text-indigo-300 mb-6 flex items-center gap-2">
+    <div className="relative max-w-4xl mx-auto p-6 min-h-screen">
+      {/* Background Screenshots */}
+      <GameDetailBackground gameId={gameId} />
+      
+      <button type="button" onClick={onBack} className="relative z-10 text-indigo-400 hover:text-indigo-300 mb-6 flex items-center gap-2">
         ← {t('backToLibrary')}
       </button>
 
-      <GameDetailHeader game={game} refreshing={refreshing} onRefresh={handleRefresh} />
-      <GameDetailTags game={game} onFilter={onFilter} />
-      <GameDetailInfo game={game} />
+      <div className="relative z-10">
+        <GameDetailHeader game={game} refreshing={refreshing} onRefresh={handleRefresh} />
+        <GameDetailTags game={game} onFilter={onFilter} />
+        <GameDetailInfo game={game} />
+      </div>
+      {/* <GameSoundtrackSection game={game} /> // Music module - disabled for future build */}
 
       <div className="pt-4 theme-border border-t mt-4 space-y-4">
         {/* Launch Path / Executable */}
@@ -193,6 +209,58 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
             <option value="dropped">{t('dropped')}</option>
             <option value="wishlist">{t('wishlist')}</option>
           </select>
+        </div>
+
+        {/* Platform */}
+        <div>
+          <label className="block text-sm font-medium theme-text-secondary mb-1">
+            {t('platform') || 'Platform'}
+            {game.igdb_platforms && game.igdb_platforms.length > 0 && (
+              <span className="ml-2 text-xs text-gray-500">
+                ({t('availableOnIGDB') || 'Available on'}: {game.igdb_platforms.map(p => p.name).join(', ')})
+              </span>
+            )}
+          </label>
+          <select
+            value={game.platform || ''}
+            onChange={(e) => handlePlatformChange(e.target.value)}
+            className="w-full px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">{t('selectPlatform') || 'Select platform...'}</option>
+            <optgroup label="💻 PC">
+              <option value="pc">PC</option>
+            </optgroup>
+            <optgroup label="🎮 PlayStation">
+              <option value="ps5">PlayStation 5</option>
+              <option value="ps4">PlayStation 4</option>
+              <option value="ps3">PlayStation 3</option>
+              <option value="ps2">PlayStation 2</option>
+              <option value="ps1">PlayStation</option>
+            </optgroup>
+            <optgroup label="🎯 Xbox">
+              <option value="xbox_series">Xbox Series X|S</option>
+              <option value="xbox_one">Xbox One</option>
+              <option value="xbox_360">Xbox 360</option>
+            </optgroup>
+            <optgroup label="🕹️ Nintendo">
+              <option value="nintendo_switch">Nintendo Switch</option>
+              <option value="nintendo_wiiu">Nintendo Wii U</option>
+              <option value="nintendo_wii">Nintendo Wii</option>
+              <option value="nintendo_3ds">Nintendo 3DS</option>
+              <option value="nintendo_ds">Nintendo DS</option>
+            </optgroup>
+            <optgroup label="📱 Mobile">
+              <option value="mobile">Mobile</option>
+            </optgroup>
+            <optgroup label="📟 Other">
+              <option value="other">Other</option>
+            </optgroup>
+          </select>
+          {game.igdb_platforms && game.igdb_platforms.length > 0 && (
+            <p className="mt-1 text-xs text-gray-500">
+              {t('igdbPlatformsHint') || 'Select the platform you actually own from the list above'}
+            </p>
+          )}
         </div>
 
         {/* Play Time */}

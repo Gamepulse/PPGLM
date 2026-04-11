@@ -54,6 +54,8 @@ pub fn run() {
             commands::import_export::export_collection,
             commands::import_export::import_collection,
             commands::matcher::match_folder_names,
+            commands::matcher::retry_igdb_search,
+            commands::matcher::bulk_retry_igdb_search,
             commands::igdb::get_igdb_credentials,
             commands::igdb::save_igdb_credentials,
             commands::igdb::test_igdb_connection,
@@ -67,6 +69,7 @@ pub fn run() {
             commands::database::update_game_favorite,
             commands::database::update_game_executable_path,
             commands::database::update_game_store_links,
+            commands::database::update_game_platform,
             commands::database::record_game_played,
             commands::database::get_collections,
             commands::database::create_collection,
@@ -84,10 +87,33 @@ pub fn run() {
             commands::database::find_duplicate_games,
             commands::launcher::launch_game,
             commands::launcher::open_store_link,
+            commands::launcher::open_folder,
             commands::launcher::discover_executable_path,
             commands::launcher::auto_discover_and_save_executable,
             commands::quick_add::quick_add_game,
             commands::quick_add::export_collection_csv,
+            // VGMdb soundtrack commands
+            commands::vgmdb_commands::search_vgmdb_soundtracks,
+            commands::vgmdb_commands::get_vgmdb_album_details,
+            commands::vgmdb_commands::get_game_soundtracks,
+            commands::vgmdb_commands::save_game_soundtrack,
+            commands::vgmdb_commands::delete_game_soundtrack,
+            commands::vgmdb_commands::update_soundtrack_spotify_link,
+            commands::vgmdb_commands::auto_fetch_soundtracks,
+            // MusicBrainz soundtrack commands
+            commands::musicbrainz::search_musicbrainz_soundtracks,
+            commands::musicbrainz::search_musicbrainz_broad,
+            commands::musicbrainz::get_musicbrainz_release_details,
+            commands::musicbrainz::save_musicbrainz_soundtrack,
+            commands::musicbrainz::auto_fetch_musicbrainz_soundtracks,
+            // ListenBrainz commands
+            commands::listenbrainz::lookup_listenbrainz_metadata,
+            commands::listenbrainz::search_youtube_video,
+            commands::listenbrainz::extract_youtube_info,
+            commands::listenbrainz::get_youtube_videos_for_album,
+            // Background tasks
+            commands::background_tasks::background_fetch_soundtracks,
+            commands::background_tasks::auto_fetch_and_save_soundtracks,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

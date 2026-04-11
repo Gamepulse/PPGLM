@@ -5,6 +5,7 @@ import { GameList } from "./components/Library/GameList";
 import { GameDetail } from "./components/Library/GameDetail";
 import { SettingsPage } from "./components/Settings/SettingsPage";
 import { StatisticsDashboard } from "./components/Library/StatisticsDashboard";
+import { ConsolesPage } from "./components/Library/ConsolesPage";
 import type { ActiveFilter } from "./components/Library/GameList";
 
 function App() {
@@ -56,6 +57,21 @@ function App() {
         setActiveFilters(filters);
     }, []);
 
+    const handleFilterByTag = useCallback((tagName: string) => {
+        const newFilter = { type: 'tag', value: tagName, label: tagName };
+        setActiveFilters(prev => {
+            const exists = prev.some(f => f.type === 'tag' && f.value === tagName);
+            if (exists) return prev;
+            return [...prev, newFilter];
+        });
+        setCurrentView("library");
+        setSearchQuery("");
+    }, []);
+
+    const handleRemoveFilter = useCallback((type: string, value: string) => {
+        setActiveFilters(prev => prev.filter(f => !(f.type === type && f.value === value)));
+    }, []);
+
     const renderCurrentView = () => {
         switch (currentView) {
             case "scanner":
@@ -103,6 +119,8 @@ function App() {
                         }}
                     />
                 );
+            case "consoles":
+                return <ConsolesPage onSelectGame={handleSelectGame} />;
             default:
                 return (
                     <GameList 
@@ -121,6 +139,9 @@ function App() {
             currentView={currentView}
             onNavigate={handleNavigate}
             onSearch={handleSearch}
+            onFilterByTag={handleFilterByTag}
+            activeFilters={activeFilters}
+            onRemoveFilter={handleRemoveFilter}
         >
             {renderCurrentView()}
         </MainLayout>

@@ -43,7 +43,7 @@ export function useScanner() {
     unlistenersRef.current = [unlistenProgress, unlistenResult, unlistenConsole, unlistenComplete];
 
     try {
-      await invoke("scan_folders_streaming", { paths });
+      await invoke("scan_folders_smart", { paths });
     } catch (e) {
       setError(String(e));
       setScanning(false);

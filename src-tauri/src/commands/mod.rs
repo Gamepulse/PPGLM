@@ -5,3 +5,7 @@ pub mod scanner;
 pub mod igdb;
 pub mod launcher;
 pub mod quick_add;
+pub mod vgmdb_commands;
+pub mod musicbrainz;
+pub mod listenbrainz;
+pub mod background_tasks;

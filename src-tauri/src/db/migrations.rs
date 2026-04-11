@@ -93,6 +93,40 @@ pub fn run(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
         mark_migration_applied(conn, "013_search_history")?;
     }
 
+    // Migration 014: Add game soundtracks support
+    if !is_migration_applied(conn, "014_game_soundtracks")? {
+        conn.execute_batch(include_str!("014_game_soundtracks.sql"))
+            .map_err(|e| format!("Migration 014_game_soundtracks failed: {}", e))?;
+        mark_migration_applied(conn, "014_game_soundtracks")?;
+    }
+
+    // Migration 015: Add YouTube URL support for soundtracks
+    if !is_migration_applied(conn, "015_youtube_url")? {
+        conn.execute_batch(include_str!("015_youtube_url.sql"))
+            .map_err(|e| format!("Migration 015_youtube_url failed: {}", e))?;
+        mark_migration_applied(conn, "015_youtube_url")?;
+    }
+
+    // Migration 016: Add platform field to games table
+    if !is_migration_applied(conn, "016_platform")? {
+        ensure_column_exists(conn, "games", "platform", "TEXT")?;
+        mark_migration_applied(conn, "016_platform")?;
+    }
+
+    // Migration 017: Create platforms table for IGDB platforms
+    if !is_migration_applied(conn, "017_platforms")? {
+        conn.execute_batch(include_str!("017_platforms.sql"))
+            .map_err(|e| format!("Migration 017_platforms failed: {}", e))?;
+        mark_migration_applied(conn, "017_platforms")?;
+    }
+
+    // Migration 018: Add continue_scan_after_match setting
+    if !is_migration_applied(conn, "018_deep_scan_setting")? {
+        conn.execute_batch(include_str!("018_deep_scan_setting.sql"))
+            .map_err(|e| format!("Migration 018_deep_scan_setting failed: {}", e))?;
+        mark_migration_applied(conn, "018_deep_scan_setting")?;
+    }
+
     Ok(())
 }
 

@@ -390,8 +390,12 @@ pub async fn refresh_game_from_igdb(
         .into_iter()
         .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
         .collect::<Vec<_>>();
+    let platforms = igdb_game.platforms.unwrap_or_default()
+        .into_iter()
+        .map(|g| IgdbGenreSimple { id: g.id, name: g.name })
+        .collect::<Vec<_>>();
     
-    save_game_metadata(&conn, game_id, &genres, &game_modes, &player_perspectives, &themes)?;
+    save_game_metadata(&conn, game_id, &genres, &game_modes, &player_perspectives, &themes, &platforms)?;
     
     println!("[refresh_game_from_igdb] Successfully refreshed game {} from IGDB", game_id);
     Ok(true)

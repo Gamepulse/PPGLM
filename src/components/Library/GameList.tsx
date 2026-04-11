@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { save, open } from "@tauri-apps/plugin-dialog";
 import GameCard from "./GameCard";
-import { AddGameModal } from "./AddGameModal";
 import { QuickAddModal } from "./QuickAddModal";
 import { useGames } from "../../hooks/useGames";
 import { useI18n } from "../../i18n";
@@ -31,7 +30,6 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
   const [exportStatus, setExportStatus] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
   const [csvExportStatus, setCsvExportStatus] = useState<string | null>(null);
   const [internalFilters, setInternalFilters] = useState<ActiveFilter[]>([]);
   
@@ -55,7 +53,7 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
   useEffect(() => {
     if (!searchQuery) return;
     
-    const filterPrefixes = ['tag:', 'genre:', 'mode:', 'perspective:', 'theme:', 'status:'];
+    const filterPrefixes = ['tag:', 'genre:', 'mode:', 'perspective:', 'theme:', 'status:', 'platform:'];
     const prefix = filterPrefixes.find(p => searchQuery.startsWith(p));
     
     if (prefix) {
@@ -88,6 +86,8 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
             return game.themes?.some(t => t.name === filter.value);
           case 'status':
             return game.completion_status === filter.value;
+          case 'platform':
+            return game.platform === filter.value;
           default:
             return true;
         }
@@ -103,7 +103,7 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
     };
 
     // Add search query if present (and not a filter prefix query)
-    if (searchQuery?.trim() && !searchQuery.match(/^(tag|genre|mode|perspective|theme|status):/)) {
+    if (searchQuery?.trim() && !searchQuery.match(/^(tag|genre|mode|perspective|theme|status|platform):/)) {
       filters.search_query = searchQuery.trim();
     }
 
@@ -293,16 +293,10 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
           </button>
           <div className="ml-auto flex items-center gap-2">
             <button
-              onClick={() => setShowQuickAddModal(true)}
-              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-            >
-              + {t('quickAdd')}
-            </button>
-            <button
               onClick={() => setShowAddModal(true)}
-              className="px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+              className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center gap-1"
             >
-              + {t('addToLibrary')}
+              <span>+</span> {t('addGame') || 'Add Game'}
             </button>
             <button
               onClick={handleExport}
@@ -332,32 +326,6 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
           </div>
         )}
         
-        {/* Active Filters Bar */}
-        {activeFilters.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm theme-text-secondary">{t('activeFilters')}:</span>
-            {activeFilters.map((filter, index) => (
-              <span
-                key={`${filter.type}-${filter.value}-${index}`}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-indigo-600 text-white"
-              >
-                {getFilterLabel(filter.type, filter.value)}
-                <button
-                  onClick={() => removeFilter(filter.type, filter.value)}
-                  className="hover:bg-indigo-700 rounded-full w-4 h-4 flex items-center justify-center"
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-            <button
-              onClick={clearAllFilters}
-              className="text-xs theme-text-secondary hover:theme-text-primary underline"
-            >
-              {t('clearAll')}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Content */}
@@ -422,18 +390,9 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
       )}
 
       {showAddModal && (
-        <AddGameModal
-          onClose={() => setShowAddModal(false)}
-          onSaved={() => {
-            fetchGames({ sort_by: sortBy, sort_order: sortOrder });
-          }}
-        />
-      )}
-
-      {showQuickAddModal && (
         <QuickAddModal
-          isOpen={showQuickAddModal}
-          onClose={() => setShowQuickAddModal(false)}
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
           onGameAdded={() => {
             fetchGames({ sort_by: sortBy, sort_order: sortOrder });
           }}

@@ -210,6 +210,16 @@ export function useGames() {
     }
   }, []);
 
+  const updatePlatform = useCallback(async (gameId: number, platform: string | null): Promise<boolean> => {
+    try {
+      await invoke<boolean>("update_game_platform", { id: gameId, platform });
+      return true;
+    } catch (e) {
+      setError(String(e));
+      return false;
+    }
+  }, []);
+
   const recordGamePlayed = useCallback(async (gameId: number): Promise<boolean> => {
     try {
       await invoke<boolean>("record_game_played", { id: gameId });
@@ -273,6 +283,7 @@ export function useGames() {
     updateFavorite,
     updateExecutablePath,
     updateStoreLinks,
+    updatePlatform,
     recordGamePlayed,
     launchGame,
     discoverExecutablePath,

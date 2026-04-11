@@ -2,7 +2,7 @@ use tauri::State;
 use crate::db::Database;
 use crate::commands::database::save_game_metadata;
 use crate::commands::igdb::{get_igdb_credentials_from_db, get_igdb_token};
-use crate::models::game::{Game, Genre, GameMode, PlayerPerspective, Theme};
+use crate::models::game::{Game, Genre, GameMode, PlayerPerspective, Theme, Platform};
 use crate::models::scan_result::IgdbGenreSimple;
 use crate::utils::format_cover_url;
 
@@ -40,14 +40,14 @@ pub async fn quick_add_game(
         .unwrap_or_else(|| display_name.clone());
     
     // If IGDB ID is provided, fetch game data (async - no connection held)
-    let (cover_url, synopsis, release_date, igdb_rating, genres, game_modes, player_perspectives, themes) = 
+    let (cover_url, synopsis, release_date, igdb_rating, genres, game_modes, player_perspectives, themes, platforms) = 
         if let Some(id) = igdb_id {
             match fetch_igdb_game_data(id, &db).await {
                 Ok(data) => data,
-                Err(_) => (None, None, None, None, Vec::new(), Vec::new(), Vec::new(), Vec::new()),
+                Err(_) => (None, None, None, None, Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new()),
             }
         } else {
-            (None, None, None, None, Vec::new(), Vec::new(), Vec::new(), Vec::new())
+            (None, None, None, None, Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new())
         };
     
     // Re-acquire connection for database operations
@@ -73,7 +73,7 @@ pub async fn quick_add_game(
     let id = conn.last_insert_rowid();
     
     // Save metadata
-    save_game_metadata(&conn, id, &genres, &game_modes, &player_perspectives, &themes)?;
+    save_game_metadata(&conn, id, &genres, &game_modes, &player_perspectives, &themes, &platforms)?;
     
     Ok(Game {
         id,
@@ -101,6 +101,8 @@ pub async fn quick_add_game(
         last_played: None,
         executable_path,
         store_links: None,
+        platform: None,
+        igdb_platforms: platforms.into_iter().map(|p| Platform { id: p.id, name: p.name }).collect(),
     })
 }
 
@@ -108,7 +110,7 @@ pub async fn quick_add_game(
 async fn fetch_igdb_game_data(
     igdb_id: i64,
     db: &Database,
-) -> Result<(Option<String>, Option<String>, Option<String>, Option<f64>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>), String> {
+) -> Result<(Option<String>, Option<String>, Option<String>, Option<f64>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>, Vec<IgdbGenreSimple>), String> {
     let token = get_igdb_token(db).await?;
     let creds = get_igdb_credentials_from_db(db)?.ok_or_else(|| "IGDB not configured".to_string())?;
     
@@ -120,7 +122,7 @@ async fn fetch_igdb_game_data(
         .header("Client-ID", &creds.client_id)
         .header("Authorization", format!("Bearer {}", token))
         .body(format!(
-            "fields id,name,cover.url,rating,summary,genres.name,game_modes.name,player_perspectives.name,themes.name,first_release_date; where id = {};",
+            "fields id,name,cover.url,rating,summary,genres.name,game_modes.name,player_perspectives.name,themes.name,platforms.name,first_release_date; where id = {};",
             igdb_id
         ))
         .send()
@@ -139,6 +141,7 @@ async fn fetch_igdb_game_data(
         game_modes: Option<Vec<IgdbGenreSimple>>,
         player_perspectives: Option<Vec<IgdbGenreSimple>>,
         themes: Option<Vec<IgdbGenreSimple>>,
+        platforms: Option<Vec<IgdbGenreSimple>>,
     }
     
     let games: Vec<IgdbGameFull> = response
@@ -163,6 +166,7 @@ async fn fetch_igdb_game_data(
             game.game_modes.unwrap_or_default(),
             game.player_perspectives.unwrap_or_default(),
             game.themes.unwrap_or_default(),
+            game.platforms.unwrap_or_default(),
         ))
     } else {
         Err("Game not found on IGDB".to_string())

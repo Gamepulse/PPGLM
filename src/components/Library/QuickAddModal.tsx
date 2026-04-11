@@ -79,7 +79,7 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="theme-bg-primary rounded-lg shadow-xl max-w-lg w-full mx-4 p-6">
-        <h2 className="text-xl font-bold theme-text-primary mb-4">{t('addGameManually')}</h2>
+        <h2 className="text-xl font-bold theme-text-primary mb-4">{t('addGame')}</h2>
         
         {error && (
           <div className="mb-4 p-3 bg-red-900/30 border border-red-500 rounded-lg text-red-400">

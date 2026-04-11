@@ -1,6 +1,6 @@
 use tauri::State;
 use crate::db::Database;
-use crate::models::game::{Game, Tag, Genre, GameMode, PlayerPerspective, Theme, ScannedFolder, GameFilters, Collection, Screenshot, SearchHistoryEntry, GameStatistics, StatusCount, GenreCount};
+use crate::models::game::{Game, Tag, Genre, GameMode, PlayerPerspective, Theme, Platform, ScannedFolder, GameFilters, Collection, Screenshot, SearchHistoryEntry, GameStatistics, StatusCount, GenreCount, ComprehensiveGameStats};
 use crate::models::scan_result::{IgdbGenreSimple, ScanResult};
 
 // === Game CRUD ===
@@ -14,7 +14,7 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
         .prepare(
             "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
              personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
-             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links, platform \
              FROM games WHERE id = ?1",
         )
         .map_err(|e: rusqlite::Error| e.to_string())?;
@@ -42,11 +42,13 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
                 last_played: row.get(17)?,
                 executable_path: row.get(18)?,
                 store_links: row.get(19)?,
+                platform: row.get(20)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
                 player_perspectives: Vec::new(),
                 themes: Vec::new(),
+                igdb_platforms: Vec::new(),
             })
         })
         .map(Some)
@@ -144,6 +146,24 @@ pub fn get_game_by_id(id: i64, db: State<'_, Database>) -> Result<Option<Game>, 
             .map_err(|e: rusqlite::Error| e.to_string())?
         .filter_map(|r| r.ok())
         .collect();
+        
+        // Fetch platforms from IGDB
+        let mut platform_stmt = conn.prepare(
+            "SELECT p.id, p.name FROM platforms p \
+             JOIN game_platforms gp ON p.id = gp.platform_id \
+             WHERE gp.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        g.igdb_platforms = platform_stmt
+            .query_map(rusqlite::params![id], |row| {
+                Ok(Platform {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
     }
 
     return Ok(game);
@@ -282,6 +302,16 @@ pub fn update_game_cover_url(id: i64, cover_url: Option<String>, db: State<'_, D
 }
 
 #[tauri::command]
+pub fn update_game_platform(id: i64, platform: Option<String>, db: State<'_, Database>) -> Result<bool, String> {
+    let conn = db.lock_conn()?;
+    conn.execute(
+        "UPDATE games SET platform = ?1, updated_at = datetime('now') WHERE id = ?2",
+        rusqlite::params![platform, id],
+    ).map_err(|e: rusqlite::Error| e.to_string())?;
+    Ok(true)
+}
+
+#[tauri::command]
 pub fn delete_all_games(db: State<'_, Database>) -> Result<bool, String> {
     let conn = db.lock_conn()?;
     // First delete all game_tags entries
@@ -403,7 +433,7 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
     let mut query = String::from(
         "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
          personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
-         play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+         play_time, completion_status, is_favorite, last_played, executable_path, store_links, platform \
          FROM games WHERE 1=1"
     );
     let mut params: Vec<Box<dyn rusqlite::ToSql>> = Vec::new();
@@ -536,18 +566,20 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
                 last_played: row.get(17)?,
                 executable_path: row.get(18)?,
                 store_links: row.get(19)?,
+                platform: row.get(20)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
                 player_perspectives: Vec::new(),
                 themes: Vec::new(),
+                igdb_platforms: Vec::new(),
             })
         })
         .map_err(|e: rusqlite::Error| e.to_string())?
         .filter_map(|r| r.ok())
         .collect();
     
-    // Load metadata (tags, genres, game_modes, player_perspectives, themes) for each game
+    // Load metadata (tags, genres, game_modes, player_perspectives, themes, platforms) for each game
     for game in &mut games {
         let game_id = game.id;
         
@@ -636,6 +668,24 @@ pub fn get_games(filters: Option<GameFilters>, db: State<'_, Database>) -> Resul
                     id: row.get(0)?,
                     name: row.get(1)?,
                     category: row.get(2)?,
+                })
+            })
+            .map_err(|e: rusqlite::Error| e.to_string())?
+            .filter_map(|r| r.ok())
+            .collect();
+        
+        // Fetch platforms from IGDB
+        let mut platform_stmt = conn.prepare(
+            "SELECT p.id, p.name FROM platforms p \
+             JOIN game_platforms gp ON p.id = gp.platform_id \
+             WHERE gp.game_id = ?1"
+        ).map_err(|e: rusqlite::Error| e.to_string())?;
+        
+        game.igdb_platforms = platform_stmt
+            .query_map(rusqlite::params![game_id], |row| {
+                Ok(Platform {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
                 })
             })
             .map_err(|e: rusqlite::Error| e.to_string())?
@@ -971,10 +1021,10 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
 
         println!("[save_scan_results] Inserting: {}", result.display_name);
         
-        // Insert game with all IGDB fields
+        // Insert game with all IGDB fields and user-selected platform
         match conn.execute(
-            "INSERT INTO games (folder_name, folder_path, display_name, igdb_id, igdb_slug, cover_url, synopsis, release_date, igdb_rating) \
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+            "INSERT INTO games (folder_name, folder_path, display_name, igdb_id, igdb_slug, cover_url, synopsis, release_date, igdb_rating, platform) \
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
             rusqlite::params![
                 result.folder_name,
                 result.folder_path,
@@ -985,15 +1035,16 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
                 result.synopsis,
                 result.release_date,
                 result.igdb_rating,
+                result.platform,
             ],
         ) {
             Ok(_) => {
                 let id = conn.last_insert_rowid();
                 println!("[save_scan_results] Successfully inserted '{}' with id {}", result.display_name, id);
                 
-                // Save metadata (genres, game_modes, player_perspectives, themes)
+                // Save metadata (genres, game_modes, player_perspectives, themes, platforms)
                 save_game_metadata(&conn, id, &result.genres, &result.game_modes, 
-                                  &result.player_perspectives, &result.themes)?;
+                                  &result.player_perspectives, &result.themes, &result.platforms)?;
                 
                 saved_games.push(Game {
                     id,
@@ -1021,6 +1072,8 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
                     last_played: None,
                     executable_path: None,
                     store_links: None,
+                    platform: result.platform.clone(),
+                    igdb_platforms: Vec::new(),
                 });
             }
             Err(e) => {
@@ -1034,7 +1087,7 @@ pub fn save_scan_results(results: Vec<ScanResult>, db: State<'_, Database>) -> R
     Ok(saved_games)
 }
 
-/// Save game metadata (genres, game modes, player perspectives, themes)
+/// Save game metadata (genres, game modes, player perspectives, themes, platforms)
 pub fn save_game_metadata(
     conn: &rusqlite::Connection,
     game_id: i64,
@@ -1042,6 +1095,7 @@ pub fn save_game_metadata(
     game_modes: &[IgdbGenreSimple],
     player_perspectives: &[IgdbGenreSimple],
     themes: &[IgdbGenreSimple],
+    platforms: &[IgdbGenreSimple],
 ) -> Result<(), String> {
     // Save genres
     for genre in genres {
@@ -1122,6 +1176,25 @@ pub fn save_game_metadata(
         ).map_err(|e| format!("Failed to link theme '{}': {}", theme.name, e))?;
     }
     
+    // Save platforms
+    for platform in platforms {
+        conn.execute(
+            "INSERT OR IGNORE INTO platforms (id, name) VALUES (?1, ?2)",
+            rusqlite::params![platform.id, platform.name],
+        ).map_err(|e| format!("Failed to insert platform '{}': {}", platform.name, e))?;
+        
+        let platform_id: i64 = conn.query_row(
+            "SELECT id FROM platforms WHERE id = ?1 OR name = ?2",
+            rusqlite::params![platform.id, platform.name],
+            |row| row.get(0),
+        ).map_err(|e| format!("Failed to get platform ID for '{}': {}", platform.name, e))?;
+        
+        conn.execute(
+            "INSERT OR IGNORE INTO game_platforms (game_id, platform_id) VALUES (?1, ?2)",
+            rusqlite::params![game_id, platform_id],
+        ).map_err(|e| format!("Failed to link platform '{}': {}", platform.name, e))?;
+    }
+    
     Ok(())
 }
 
@@ -1136,7 +1209,7 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
         .prepare(
             "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
              personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
-             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links, platform \
              FROM games \
              WHERE display_name LIKE ?1 OR folder_name LIKE ?1 \
              ORDER BY display_name \
@@ -1167,11 +1240,13 @@ pub fn search_games(query: String, db: State<'_, Database>) -> Result<Vec<Game>,
                 last_played: row.get(17)?,
                 executable_path: row.get(18)?,
                 store_links: row.get(19)?,
+                platform: row.get(20)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
                 player_perspectives: Vec::new(),
                 themes: Vec::new(),
+                igdb_platforms: Vec::new(),
             })
         })
         .map_err(|e: rusqlite::Error| e.to_string())?
@@ -1520,7 +1595,7 @@ pub fn get_game_statistics(db: State<'_, Database>) -> Result<GameStatistics, St
         .prepare(
             "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
              personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
-             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links, platform \
              FROM games ORDER BY created_at DESC LIMIT 5"
         )
         .map_err(|e: rusqlite::Error| e.to_string())?;
@@ -1547,11 +1622,13 @@ pub fn get_game_statistics(db: State<'_, Database>) -> Result<GameStatistics, St
                 last_played: row.get(17)?,
                 executable_path: row.get(18)?,
                 store_links: row.get(19)?,
+                platform: row.get(20)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
                 player_perspectives: Vec::new(),
                 themes: Vec::new(),
+                igdb_platforms: Vec::new(),
             })
         })
         .map_err(|e: rusqlite::Error| e.to_string())?
@@ -1624,7 +1701,7 @@ pub fn find_duplicate_games(db: State<'_, Database>) -> Result<Vec<Vec<Game>>, S
         .prepare(
             "SELECT id, folder_name, folder_path, display_name, igdb_id, igdb_slug, \
              personal_rating, igdb_rating, notes, cover_url, synopsis, release_date, created_at, updated_at, \
-             play_time, completion_status, is_favorite, last_played, executable_path, store_links \
+             play_time, completion_status, is_favorite, last_played, executable_path, store_links, platform \
              FROM games WHERE display_name IN (
                 SELECT display_name FROM games GROUP BY display_name HAVING COUNT(*) > 1
              ) ORDER BY display_name"
@@ -1654,11 +1731,13 @@ pub fn find_duplicate_games(db: State<'_, Database>) -> Result<Vec<Vec<Game>>, S
                 last_played: row.get(17)?,
                 executable_path: row.get(18)?,
                 store_links: row.get(19)?,
+                platform: row.get(20)?,
                 tags: Vec::new(),
                 genres: Vec::new(),
                 game_modes: Vec::new(),
                 player_perspectives: Vec::new(),
                 themes: Vec::new(),
+                igdb_platforms: Vec::new(),
             })
         })
         .map_err(|e: rusqlite::Error| e.to_string())?
@@ -1686,4 +1765,242 @@ pub fn find_duplicate_games(db: State<'_, Database>) -> Result<Vec<Vec<Game>>, S
     }
     
     Ok(groups)
+}
+#[tauri::command]
+pub fn get_comprehensive_game_statistics(db: State<'_, Database>) -> Result<ComprehensiveGameStats, String> {
+    let conn = db.lock_conn()?;
+    
+    // Basic counts
+    let total_games: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    let games_with_igdb: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE igdb_id IS NOT NULL",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    let games_without_igdb: i64 = total_games - games_with_igdb;
+    
+    // Ratings statistics
+    let avg_personal_rating: f64 = conn.query_row(
+        "SELECT AVG(CAST(personal_rating as REAL)) FROM games WHERE personal_rating IS NOT NULL",
+        [],
+        |row| Ok(row.get::<_, Option<f64>>(0)?.unwrap_or(0.0)),
+    ).map_err(|e| e.to_string())?;
+    
+    let avg_igdb_rating: f64 = conn.query_row(
+        "SELECT AVG(igdb_rating) FROM games WHERE igdb_rating IS NOT NULL",
+        [],
+        |row| Ok(row.get::<_, Option<f64>>(0)?.unwrap_or(0.0)),
+    ).map_err(|e| e.to_string())?;
+    
+    let rated_games: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE personal_rating IS NOT NULL",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Completion status
+    let mut stmt = conn.prepare(
+        "SELECT completion_status, COUNT(*) as count FROM games WHERE completion_status IS NOT NULL GROUP BY completion_status"
+    ).map_err(|e| e.to_string())?;
+    
+    let completion_stats: Vec<(String, i64)> = stmt
+        .query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+        })
+        .map_err(|e| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Play time statistics
+    let total_play_time: f64 = conn.query_row(
+        "SELECT SUM(play_time) FROM games WHERE play_time IS NOT NULL",
+        [],
+        |row| Ok(row.get::<_, Option<f64>>(0)?.unwrap_or(0.0)),
+    ).map_err(|e| e.to_string())?;
+    
+    let avg_play_time: f64 = conn.query_row(
+        "SELECT AVG(play_time) FROM games WHERE play_time IS NOT NULL AND play_time > 0",
+        [],
+        |row| Ok(row.get::<_, Option<f64>>(0)?.unwrap_or(0.0)),
+    ).map_err(|e| e.to_string())?;
+    
+    let games_with_play_time: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE play_time IS NOT NULL AND play_time > 0",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Favorites
+    let favorite_games: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE is_favorite = 1",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Platform distribution
+    let mut stmt = conn.prepare(
+        "SELECT platform, COUNT(*) as count FROM games WHERE platform IS NOT NULL GROUP BY platform ORDER BY count DESC"
+    ).map_err(|e| e.to_string())?;
+    
+    let platform_stats: Vec<(String, i64)> = stmt
+        .query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+        })
+        .map_err(|e| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Release years
+    let mut stmt = conn.prepare(
+        "SELECT SUBSTR(release_date, 1, 4) as year, COUNT(*) as count FROM games WHERE release_date IS NOT NULL AND release_date != '' GROUP BY year ORDER BY year DESC"
+    ).map_err(|e| e.to_string())?;
+    
+    let release_years: Vec<(String, i64)> = stmt
+        .query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+        })
+        .map_err(|e| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Recently added (last 30 days)
+    let recently_added: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE created_at >= datetime('now', '-30 days')",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Games with covers
+    let games_with_covers: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE cover_url IS NOT NULL",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Games with executable
+    let games_with_executable: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM games WHERE executable_path IS NOT NULL",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Tags statistics
+    let total_tags: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM tags",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    let mut stmt = conn.prepare(
+        "SELECT t.name, COUNT(gt.game_id) as count FROM tags t LEFT JOIN game_tags gt ON t.id = gt.tag_id GROUP BY t.id ORDER BY count DESC LIMIT 10"
+    ).map_err(|e| e.to_string())?;
+    
+    let top_tags: Vec<(String, i64)> = stmt
+        .query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+        })
+        .map_err(|e| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Genre statistics from game_genres table
+    let mut stmt = conn.prepare(
+        "SELECT g.name, COUNT(gg.game_id) as count FROM genres g LEFT JOIN game_genres gg ON g.id = gg.genre_id GROUP BY g.id ORDER BY count DESC LIMIT 10"
+    ).map_err(|e| e.to_string())?;
+    
+    let genre_stats: Vec<(String, i64)> = stmt
+        .query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+        })
+        .map_err(|e| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Collections stats
+    let total_collections: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM collections",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    let mut stmt = conn.prepare(
+        "SELECT c.name, COUNT(gc.game_id) as count FROM collections c LEFT JOIN game_collections gc ON c.id = gc.collection_id GROUP BY c.id ORDER BY count DESC"
+    ).map_err(|e| e.to_string())?;
+    
+    let collection_stats: Vec<(String, i64)> = stmt
+        .query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?))
+        })
+        .map_err(|e| e.to_string())?
+        .filter_map(|r| r.ok())
+        .collect();
+    
+    // Scanned folders stats
+    let total_scanned_folders: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM scanned_folders",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Exclusions stats
+    let total_exclusions: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM folder_exclusions",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Search history stats
+    let total_searches: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM search_history",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    let unique_searches: i64 = conn.query_row(
+        "SELECT COUNT(DISTINCT query) FROM search_history",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    // Screenshots count
+    let total_screenshots: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM screenshots",
+        [],
+        |row| row.get(0),
+    ).map_err(|e| e.to_string())?;
+    
+    Ok(ComprehensiveGameStats {
+        total_games,
+        games_with_igdb,
+        games_without_igdb,
+        avg_personal_rating,
+        avg_igdb_rating,
+        rated_games,
+        completion_stats,
+        total_play_time,
+        avg_play_time,
+        games_with_play_time,
+        favorite_games,
+        platform_stats,
+        release_years,
+        recently_added,
+        games_with_covers,
+        games_with_executable,
+        total_tags,
+        top_tags,
+        genre_stats,
+        total_collections,
+        collection_stats,
+        total_scanned_folders,
+        total_exclusions,
+        total_searches,
+        unique_searches,
+        total_screenshots,
+    })
 }
