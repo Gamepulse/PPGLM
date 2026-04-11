@@ -67,31 +67,31 @@ pub struct IgdbVideo {
     pub video_id: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IgdbGenre {
     pub id: i64,
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IgdbTheme {
     pub id: i64,
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IgdbGameMode {
     pub id: i64,
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IgdbPlayerPerspective {
     pub id: i64,
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IgdbPlatform {
     pub id: i64,
     pub name: String,
@@ -114,4 +114,13 @@ pub struct IgdbSearchResult {
     pub id: i64,
     pub name: String,
     pub slug: Option<String>,
+    pub cover: Option<IgdbCover>,
+    pub rating: Option<f64>,
+    pub summary: Option<String>,
+    pub first_release_date: Option<i64>,
+    pub genres: Option<Vec<IgdbGenre>>,
+    pub themes: Option<Vec<IgdbTheme>>,
+    pub game_modes: Option<Vec<IgdbGameMode>>,
+    pub player_perspectives: Option<Vec<IgdbPlayerPerspective>>,
+    pub platforms: Option<Vec<IgdbPlatform>>,
 }

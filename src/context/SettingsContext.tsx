@@ -194,9 +194,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     loadScreenshotBgCountSetting,
   ]);
 
-  // Apply font size as zoom whenever it changes
+  // Apply font size as root font size (scales all rem/em text)
   useEffect(() => {
-    document.documentElement.style.zoom = `${fontSize / 100}`;
+    // Default base font size is 16px (browser default)
+    // Scale it proportionally to the fontSize setting (80-150%)
+    const baseSize = 16;
+    const scaledSize = (fontSize / 100) * baseSize;
+    document.documentElement.style.fontSize = `${scaledSize}px`;
   }, [fontSize]);
 
   const setScanFiles = useCallback(async (value: boolean) => {

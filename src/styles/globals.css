@@ -379,10 +379,13 @@
 }
 
 /* Apply base styles */
-html, body {
+html, body, #root {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  height: 100%;
 }
 
 /* Utility classes that use theme variables */
@@ -449,6 +452,21 @@ html, body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-border);
+}
+
+/* SVG Text Mask Reveal Animation - Effect #8 */
+/* PPGM in white on purple, reveals game cover from bottom to top */
+.svg-text-mask-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.svg-text-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Animation désactivée */
+  display: none;
 }
 
 /* Selection styling */

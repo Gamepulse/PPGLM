@@ -3,7 +3,7 @@ use tauri::State;
 use crate::commands::igdb::{get_igdb_credentials_from_db, get_igdb_token};
 use crate::db::Database;
 use crate::models::igdb::IgdbCover;
-use crate::models::scan_result::{MatchCandidate, MatchConfidence, ScanResult};
+use crate::models::scan_result::{IgdbGenreSimple, MatchCandidate, MatchConfidence, ScanResult};
 use crate::utils::{format_cover_url, levenshtein};
 
 /// Match folder names with IGDB database
@@ -27,14 +27,14 @@ pub async fn match_folder_names(
         // Rate limiting: 4 requests per second max
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
 
-        // Search IGDB with cover
+        // Search IGDB with full metadata
         let client = reqwest::Client::new();
         let response = client
             .post("https://api.igdb.com/v4/games")
             .header("Client-ID", &creds.client_id)
             .header("Authorization", format!("Bearer {}", token))
             .body(format!(
-                "search \"{}\"; fields id,name,slug,cover.url; limit 5;",
+                "search \"{}\"; fields id,name,slug,cover.url,rating,summary,first_release_date,genres.name,game_modes.name,player_perspectives.name,themes.name,platforms.name; limit 5;",
                 display_lower
             ))
             .send()
@@ -76,6 +76,14 @@ pub async fn match_folder_names(
                         })
                         .collect();
 
+                    // Format release date
+                    let release_date = best_match.first_release_date
+                        .map(|ts| {
+                            chrono::DateTime::from_timestamp(ts, 0)
+                                .map(|dt| dt.format("%Y-%m-%d").to_string())
+                                .unwrap_or_default()
+                        });
+                    
                     if best_distance == 0 {
                         // Exact match
                         result.igdb_id = Some(best_match.id);
@@ -84,6 +92,14 @@ pub async fn match_folder_names(
                         result.match_source = format!("igdb_exact_{}", name_used);
                         result.candidates = candidates.clone();
                         result.cover_url = best_match.cover.as_ref().map(|c| format_cover_url(&c.url));
+                        result.synopsis = best_match.summary.clone();
+                        result.release_date = release_date;
+                        result.igdb_rating = best_match.rating;
+                        result.genres = best_match.genres.clone().unwrap_or_default();
+                        result.game_modes = best_match.game_modes.clone().unwrap_or_default();
+                        result.player_perspectives = best_match.player_perspectives.clone().unwrap_or_default();
+                        result.themes = best_match.themes.clone().unwrap_or_default();
+                        result.platforms = best_match.platforms.clone().unwrap_or_default();
                         matched_results.push(result);
                     } else if best_distance <= 2 {
                         // Fuzzy match
@@ -93,6 +109,14 @@ pub async fn match_folder_names(
                         result.match_source = format!("igdb_fuzzy_{}", name_used);
                         result.candidates = candidates.clone();
                         result.cover_url = best_match.cover.as_ref().map(|c| format_cover_url(&c.url));
+                        result.synopsis = best_match.summary.clone();
+                        result.release_date = release_date;
+                        result.igdb_rating = best_match.rating;
+                        result.genres = best_match.genres.clone().unwrap_or_default();
+                        result.game_modes = best_match.game_modes.clone().unwrap_or_default();
+                        result.player_perspectives = best_match.player_perspectives.clone().unwrap_or_default();
+                        result.themes = best_match.themes.clone().unwrap_or_default();
+                        result.platforms = best_match.platforms.clone().unwrap_or_default();
                         matched_results.push(result);
                     } else {
                         // Distance > 2, consider as non-match
@@ -151,6 +175,14 @@ struct IgdbGameWithCover {
     pub name: String,
     pub slug: Option<String>,
     pub cover: Option<IgdbCover>,
+    pub rating: Option<f64>,
+    pub summary: Option<String>,
+    pub first_release_date: Option<i64>,
+    pub genres: Option<Vec<IgdbGenreSimple>>,
+    pub themes: Option<Vec<IgdbGenreSimple>>,
+    pub game_modes: Option<Vec<IgdbGenreSimple>>,
+    pub player_perspectives: Option<Vec<IgdbGenreSimple>>,
+    pub platforms: Option<Vec<IgdbGenreSimple>>,
 }
 
 /// Retry IGDB search with a modified name for an unmatched game
@@ -181,7 +213,7 @@ pub async fn retry_igdb_search(
     let display_lower = modified_name.to_lowercase();
     let folder_lower = folder_name.to_lowercase();
 
-    // Search IGDB with modified name
+    // Search IGDB with modified name and full metadata
     tokio::time::sleep(std::time::Duration::from_millis(250)).await;
 
     let client = reqwest::Client::new();
@@ -190,7 +222,7 @@ pub async fn retry_igdb_search(
         .header("Client-ID", &creds.client_id)
         .header("Authorization", format!("Bearer {}", token))
         .body(format!(
-            "search \"{}\"; fields id,name,slug,cover.url; limit 5;",
+            "search \"{}\"; fields id,name,slug,cover.url,rating,summary,first_release_date,genres.name,game_modes.name,player_perspectives.name,themes.name,platforms.name; limit 5;",
             display_lower
         ))
         .send()
@@ -239,6 +271,14 @@ pub async fn retry_igdb_search(
                     } else {
                         format!("igdb_fuzzy_{}", name_used)
                     };
+                    
+                    // Format release date
+                    let release_date = best_match.first_release_date
+                        .map(|ts| {
+                            chrono::DateTime::from_timestamp(ts, 0)
+                                .map(|dt| dt.format("%Y-%m-%d").to_string())
+                                .unwrap_or_default()
+                        });
 
                     return Ok(Some(ScanResult {
                         folder_name: folder_name.clone(),
@@ -250,14 +290,14 @@ pub async fn retry_igdb_search(
                         igdb_slug: best_match.slug.clone(),
                         match_source,
                         cover_url: best_match.cover.as_ref().map(|c| format_cover_url(&c.url)),
-                        synopsis: None,
-                        release_date: None,
-                        igdb_rating: None,
-                        genres: vec![],
-                        game_modes: vec![],
-                        player_perspectives: vec![],
-                        themes: vec![],
-                        platforms: vec![],
+                        synopsis: best_match.summary.clone(),
+                        release_date,
+                        igdb_rating: best_match.rating,
+                        genres: best_match.genres.clone().unwrap_or_default(),
+                        game_modes: best_match.game_modes.clone().unwrap_or_default(),
+                        player_perspectives: best_match.player_perspectives.clone().unwrap_or_default(),
+                        themes: best_match.themes.clone().unwrap_or_default(),
+                        platforms: best_match.platforms.clone().unwrap_or_default(),
                         platform: None,
                         is_excluded: false,
                         is_rejected: false,
@@ -310,7 +350,7 @@ pub async fn bulk_retry_igdb_search(
             .header("Client-ID", &creds.client_id)
             .header("Authorization", format!("Bearer {}", token))
             .body(format!(
-                "search \"{}\"; fields id,name,slug,cover.url; limit 5;",
+                "search \"{}\"; fields id,name,slug,cover.url,rating,summary,first_release_date,genres.name,game_modes.name,player_perspectives.name,themes.name,platforms.name; limit 5;",
                 display_lower
             ))
             .send()
@@ -361,6 +401,14 @@ pub async fn bulk_retry_igdb_search(
                         } else {
                             format!("igdb_fuzzy_{}", name_used)
                         };
+                        
+                        // Format release date
+                        let release_date = best_match.first_release_date
+                            .map(|ts| {
+                                chrono::DateTime::from_timestamp(ts, 0)
+                                    .map(|dt| dt.format("%Y-%m-%d").to_string())
+                                    .unwrap_or_default()
+                            });
 
                         matched_result = Some(ScanResult {
                             folder_name: folder_name.clone(),
@@ -372,14 +420,14 @@ pub async fn bulk_retry_igdb_search(
                             igdb_slug: best_match.slug.clone(),
                             match_source,
                             cover_url: best_match.cover.as_ref().map(|c| format_cover_url(&c.url)),
-                            synopsis: None,
-                            release_date: None,
-                            igdb_rating: None,
-                            genres: vec![],
-                            game_modes: vec![],
-                            player_perspectives: vec![],
-                            themes: vec![],
-                            platforms: vec![],
+                            synopsis: best_match.summary.clone(),
+                            release_date,
+                            igdb_rating: best_match.rating,
+                            genres: best_match.genres.clone().unwrap_or_default(),
+                            game_modes: best_match.game_modes.clone().unwrap_or_default(),
+                            player_perspectives: best_match.player_perspectives.clone().unwrap_or_default(),
+                            themes: best_match.themes.clone().unwrap_or_default(),
+                            platforms: best_match.platforms.clone().unwrap_or_default(),
                             platform: None,
                             is_excluded: false,
                             is_rejected: false,

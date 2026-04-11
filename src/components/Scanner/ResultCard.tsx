@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { ScanResult, MatchCandidate } from "../../types";
 import { useI18n } from "../../i18n";
 import { getBadgeColor } from "../../utils/colors";
@@ -23,13 +23,14 @@ interface ResultCardProps {
   onRetrySearch?: (folderPath: string, folderName: string, modifiedName: string) => void;
   onToggleExclusion?: (folderPath: string) => void;
   onPromote?: (folderPath: string) => void;
+  onTransferToLibrary?: (folderPath: string) => void;
 }
 
 export function ResultCard({
   result, isNonMatch, isEditing, isRetrying, isExcluded, isRejected, isParent,
   onUpdateDisplayName, onSelectCandidate, onConfirmNonMatch,
   onDelete, onCreateExclusion, onSetEditing, onOpenIgdb,
-  onUpdatePlatform, onRetrySearch, onPromote,
+  onUpdatePlatform, onRetrySearch, onPromote, onTransferToLibrary,
 }: ResultCardProps) {
   const { t } = useI18n();
   const [isCandidatesExpanded, setIsCandidatesExpanded] = useState(false);
@@ -39,12 +40,16 @@ export function ResultCard({
   const [hasNameChanged, setHasNameChanged] = useState(false);
   
   // Handle edit completion - trigger re-search automatically
+  // Use the input ref to get the current value instead of result.display_name (which might be stale)
+  const inputRef = useRef<HTMLInputElement>(null);
+  
   const handleEditComplete = () => {
+    const currentValue = inputRef.current?.value || result.display_name;
     onSetEditing(null);
     setHasNameChanged(false);
     // Automatically trigger re-search when editing is done
     if (onRetrySearch && !isRetrying) {
-      onRetrySearch(result.folder_path, result.folder_name, result.display_name);
+      onRetrySearch(result.folder_path, result.folder_name, currentValue);
     }
   };
 
@@ -112,11 +117,12 @@ export function ResultCard({
                       onKeyDown={handleKeyDown}
                       className="flex-1 px-2 py-1 bg-gray-700 theme-text-primary rounded theme-border border focus:border-blue-500 focus:outline-none"
                       autoFocus 
+                      ref={inputRef}
                     />
                     {/* Re-search button next to text when editing */}
                     {hasNameChanged && onRetrySearch && (
                       <button 
-                        onClick={() => onRetrySearch(result.folder_path, result.folder_name, result.display_name)}
+                        onClick={() => onRetrySearch(result.folder_path, result.folder_name, inputRef.current?.value || result.display_name)}
                         disabled={isRetrying}
                         title={t('retrySearch') || "Re-search IGDB"}
                         className="text-xs px-2 py-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 text-white rounded transition-colors whitespace-nowrap"
@@ -164,16 +170,29 @@ export function ResultCard({
             
             {/* Right side: Action buttons - Fuzzy/Exact first */}
             <div className="flex items-center gap-2 flex-wrap justify-end">
-              {/* Badge - FIRST on the right */}
-              <span className={`px-2 py-1 text-xs rounded-full ${getBadgeColor(result.match_confidence)} text-white whitespace-nowrap`}>
-                {isRejected ? t('rejected') || "Rejected" : isParent ? t('parent') || "Parent" : result.match_confidence === "None" ? t('noMatch') : result.match_confidence}
-              </span>
+              {/* Badge - show for all types to indicate match status */}
+              {(isExcluded || isRejected || isParent) && (
+                <span className={`px-2 py-1 text-xs rounded-full ${getBadgeColor(result.match_confidence)} text-white whitespace-nowrap`}>
+                  {isRejected ? t('rejected') || "Rejected" : isParent ? t('parent') || "Parent" : isExcluded ? t('excluded') || "Excluded" : result.match_confidence === "None" ? t('noMatch') : result.match_confidence}
+                </span>
+              )}
               
-              {/* Promote button for rejected or parent matches */}
-              {(isRejected || isParent) && onPromote && (
+              {/* Add to Library button - for excluded, parent and rejected - always show when onTransferToLibrary is provided */}
+              {(isExcluded || isRejected || isParent) && onTransferToLibrary && (
+                <button 
+                  onClick={() => onTransferToLibrary(result.folder_path)}
+                  title={t('addToLibrary') || "Add to library"}
+                  className="text-xs px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-colors whitespace-nowrap"
+                >
+                  📚 {t('addToLibrary') || "Add to Library"}
+                </button>
+              )}
+              
+              {/* Promote button for rejected matches only */}
+              {isRejected && onPromote && (
                 <button 
                   onClick={() => onPromote(result.folder_path)}
-                  title={isRejected ? t('acceptRejected') || "Accept this match" : t('acceptParent') || "Accept as game"}
+                  title={t('acceptRejected') || "Accept this match"}
                   className="text-xs px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded transition-colors whitespace-nowrap"
                 >
                   ✓ {t('accept') || "Accept"}

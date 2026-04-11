@@ -47,17 +47,23 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
     }
   }, [editableResults, onResultsChange]);
 
-  const matches = editableResults.filter((r) => r.match_confidence === "Exact" || r.match_confidence === "Fuzzy");
-  const nonMatches = editableResults.filter((r) => r.match_confidence === "None");
+  // Separate by type first (parents and rejected should stay in their tabs even if they have a match)
+  const parentFolders = editableResults.filter((r) => r.is_parent);
+  const rejectedMatches = editableResults.filter((r) => r.is_rejected && !r.is_parent); // rejected but not parents
+  
+  // Matches are games with confidence Exact/Fuzzy that are NOT parents or rejected
+  const matches = editableResults.filter((r) => 
+    (r.match_confidence === "Exact" || r.match_confidence === "Fuzzy") && !r.is_parent && !r.is_rejected
+  );
   
   // Separate included and excluded matches
   const includedMatches = matches.filter((r) => !r.is_excluded);
   const excludedMatches = matches.filter((r) => r.is_excluded);
   
-  // Separate non-matches by type
-  const rejectedMatches = nonMatches.filter((r) => r.is_rejected);
-  const parentFolders = nonMatches.filter((r) => r.is_parent);
-  const regularNonMatches = nonMatches.filter((r) => !r.is_rejected && !r.is_parent);
+  // Regular non-matches (no match found, not parent, not rejected)
+  const regularNonMatches = editableResults.filter((r) => 
+    r.match_confidence === "None" && !r.is_rejected && !r.is_parent
+  );
 
   const handleUpdateDisplayName = useCallback((folderPath: string, newName: string) => {
     setEditableResults((prev) => prev.map((r) => r.folder_path === folderPath ? { ...r, display_name: newName } : r));
@@ -65,9 +71,16 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
 
   const handleSelectCandidate = useCallback((folderPath: string, candidate: MatchCandidate) => {
     setEditableResults((prev) => prev.map((r) => r.folder_path === folderPath ? {
-      ...r, igdb_id: candidate.id, igdb_slug: candidate.slug || null, display_name: candidate.name,
+      ...r, 
+      igdb_id: candidate.id, 
+      igdb_slug: candidate.slug || null, 
+      display_name: candidate.name,
       match_confidence: candidate.distance === 0 ? "Exact" : "Fuzzy",
       match_source: candidate.distance === 0 ? "igdb_exact" : "igdb_fuzzy",
+      // Preserve the original exclusion/rejection status
+      is_excluded: r.is_excluded,
+      is_rejected: r.is_rejected,
+      is_parent: r.is_parent,
     } : r));
     setEditingResult(null);
   }, []);
@@ -122,10 +135,19 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
       });
       
       if (result) {
-        // Update the result with new match data
+        // Update the result with new match data, but preserve exclusion/rejection status
         setEditableResults(prev => prev.map(r => 
           r.folder_path === folderPath 
-            ? { ...r, ...result, folder_path: folderPath, folder_name: folderName }
+            ? { 
+                ...r, 
+                ...result, 
+                folder_path: folderPath, 
+                folder_name: folderName,
+                // Preserve the original exclusion/rejection status
+                is_excluded: r.is_excluded,
+                is_rejected: r.is_rejected,
+                is_parent: r.is_parent,
+              }
             : r
         ));
       } else {
@@ -136,7 +158,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
     } finally {
       setRetryingId(null);
     }
-  }, [editableResults, t]);
+  }, [t]);
 
   const handleToggleExclusion = useCallback((folderPath: string) => {
     setEditableResults((prev) => prev.map((r) => 
@@ -145,26 +167,51 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
   }, []);
 
   const handlePromoteResult = useCallback((folderPath: string) => {
-    // Promote a rejected or parent result to a Fuzzy match
-    setEditableResults((prev) => prev.map((r) => {
-      if (r.folder_path === folderPath) {
-        // If it has candidates, use the first one as the match
-        const bestCandidate = r.candidates[0];
-        return {
-          ...r,
-          match_confidence: "Fuzzy",
-          match_source: bestCandidate ? "promoted_from_rejected" : "manual_confirm",
-          igdb_id: bestCandidate?.id || r.igdb_id,
-          igdb_slug: bestCandidate?.slug || r.igdb_slug,
-          display_name: bestCandidate?.name || r.display_name,
-          cover_url: bestCandidate?.cover_url || r.cover_url,
-          is_rejected: false,
-          is_parent: false,
-        };
-      }
-      return r;
-    }));
-  }, []);
+    // Find the result to promote
+    const resultToPromote = editableResults.find(r => r.folder_path === folderPath);
+    if (!resultToPromote) return;
+    
+    // Determine the new match data
+    const bestCandidate = resultToPromote.candidates[0];
+    const promotedResult: ScanResult = {
+      ...resultToPromote,
+      match_confidence: "Fuzzy" as const,
+      match_source: bestCandidate ? "promoted_from_rejected" : "manual_confirm",
+      igdb_id: bestCandidate?.id || resultToPromote.igdb_id,
+      igdb_slug: bestCandidate?.slug || resultToPromote.igdb_slug,
+      display_name: bestCandidate?.name || resultToPromote.display_name,
+      cover_url: bestCandidate?.cover_url || resultToPromote.cover_url,
+      is_excluded: false,
+      is_rejected: false,
+      is_parent: false,
+    };
+    
+    // Immediately save to library
+    onSave([promotedResult]);
+    
+    // Remove from editable results
+    setEditableResults((prev) => prev.filter((r) => r.folder_path !== folderPath));
+  }, [editableResults, onSave]);
+
+  const handleTransferToLibrary = useCallback((folderPath: string) => {
+    // Find the result to transfer
+    const resultToTransfer = editableResults.find(r => r.folder_path === folderPath);
+    if (!resultToTransfer) return;
+    
+    // Create a clean result to save
+    const transferedResult: ScanResult = {
+      ...resultToTransfer,
+      is_excluded: false,
+      is_rejected: false,
+      is_parent: false,
+    };
+    
+    // Immediately save to library
+    onSave([transferedResult]);
+    
+    // Remove from editable results
+    setEditableResults((prev) => prev.filter((r) => r.folder_path !== folderPath));
+  }, [editableResults, onSave]);
 
   const toggleSection = useCallback((section: keyof typeof collapsedSections) => {
     setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -213,10 +260,10 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
       <div className="flex gap-4 text-sm items-center flex-wrap">
         <span className="text-green-400">{t('exact')}: {matches.filter(r => r.match_confidence === "Exact").length}</span>
         <span className="text-blue-400">{t('fuzzy')}: {matches.filter(r => r.match_confidence === "Fuzzy").length}</span>
-        <span className="theme-text-muted" title={`${t('noMatchFolders')}: ${nonMatches.length}, ${t('excludedFolders')}: ${excludedCount}, ${t('rejectedMatches')}: ${rejectedCount}, ${t('parentFolders')}: ${parentCount}`}>
-          {t('noMatch')}: {nonMatches.length + excludedCount + rejectedCount + parentCount}
+        <span className="theme-text-muted" title={`${t('noMatchFolders')}: ${regularNonMatches.length}, ${t('excludedFolders')}: ${excludedCount}, ${t('rejectedMatches')}: ${rejectedCount}, ${t('parentFolders')}: ${parentCount}`}>
+          {t('noMatch')}: {regularNonMatches.length + excludedCount + rejectedCount + parentCount}
           {(excludedCount > 0 || rejectedCount > 0 || parentCount > 0) && (
-            <span className="text-xs ml-1 opacity-75">({nonMatches.length} + {excludedCount + rejectedCount + parentCount})</span>
+            <span className="text-xs ml-1 opacity-75">({regularNonMatches.length} + {excludedCount + rejectedCount + parentCount})</span>
           )}
         </span>
       </div>
@@ -283,7 +330,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                 <span className="text-gray-400">{collapsedSections.matches ? '▶' : '▼'}</span>
               </button>
               {!collapsedSections.matches && (
-                <div className="p-3 space-y-2 max-h-[32rem] overflow-y-auto">
+                <div className="p-3 space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto">
                   {includedMatches.map((r) => (
                     <ResultCard key={r.folder_path} result={r} isNonMatch={false}
                       isEditing={editingResult === r.folder_path}
@@ -320,7 +367,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                 <span className="text-gray-400">{collapsedSections.excluded ? '▶' : '▼'}</span>
               </button>
               {!collapsedSections.excluded && (
-                <div className="p-3 space-y-2 max-h-64 overflow-y-auto opacity-75">
+                <div className="p-3 space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto opacity-75">
                   {excludedMatches.map((r) => (
                     <ResultCard key={r.folder_path} result={r} isNonMatch={false}
                       isEditing={editingResult === r.folder_path}
@@ -331,6 +378,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                       onOpenIgdb={handleOpenIgdb} onUpdatePlatform={handleUpdatePlatform}
                       onRetrySearch={handleRetrySearch}
                       onToggleExclusion={handleToggleExclusion}
+                      onTransferToLibrary={handleTransferToLibrary}
                       isExcluded={true} />
                   ))}
                 </div>
@@ -353,7 +401,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                 <span className="text-orange-400">{collapsedSections.rejected ? '▶' : '▼'}</span>
               </button>
               {!collapsedSections.rejected && (
-                <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
+                <div className="p-3 space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto">
                   {rejectedMatches.map((r) => (
                     <ResultCard key={r.folder_path} result={r} isNonMatch={true}
                       isEditing={editingResult === r.folder_path}
@@ -364,7 +412,8 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                       onCreateExclusion={handleCreateExclusion} onSetEditing={setEditingResult}
                       onOpenIgdb={handleOpenIgdb} onUpdatePlatform={handleUpdatePlatform}
                       onRetrySearch={handleRetrySearch}
-                      onPromote={handlePromoteResult} />
+                      onPromote={handlePromoteResult}
+                      onTransferToLibrary={handleTransferToLibrary} />
                   ))}
                 </div>
               )}
@@ -391,7 +440,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                 <span className="text-purple-400">{collapsedSections.parents ? '▶' : '▼'}</span>
               </button>
               {!collapsedSections.parents && (
-                <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
+                <div className="p-3 space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto">
                   {parentFolders.map((r) => (
                     <ResultCard key={r.folder_path} result={r} isNonMatch={true}
                       isEditing={editingResult === r.folder_path}
@@ -402,7 +451,8 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                       onCreateExclusion={handleCreateExclusion} onSetEditing={setEditingResult}
                       onOpenIgdb={handleOpenIgdb} onUpdatePlatform={handleUpdatePlatform}
                       onRetrySearch={handleRetrySearch}
-                      onPromote={handlePromoteResult} />
+                      onPromote={handlePromoteResult}
+                      onTransferToLibrary={handleTransferToLibrary} />
                   ))}
                 </div>
               )}
@@ -424,7 +474,7 @@ export function ScanResults({ results, onSave, onResultsChange, onCreateExclusio
                 <span className="text-gray-400">{collapsedSections.nonMatches ? '▶' : '▼'}</span>
               </button>
               {!collapsedSections.nonMatches && (
-                <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
+                <div className="p-3 space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto">
                   {regularNonMatches.map((r) => (
                     <ResultCard key={r.folder_path} result={r} isNonMatch={true}
                       isEditing={editingResult === r.folder_path}

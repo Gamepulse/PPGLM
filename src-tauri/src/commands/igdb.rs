@@ -210,14 +210,14 @@ pub async fn match_folders_with_igdb(
         // Rate limiting
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
 
-        // Search IGDB
+        // Search IGDB with full metadata
         let client = reqwest::Client::new();
         let response = client
             .post("https://api.igdb.com/v4/games")
             .header("Client-ID", &creds.client_id)
             .header("Authorization", format!("Bearer {}", token))
             .body(format!(
-                "search \"{}\"; fields id,name,slug; limit 5;",
+                "search \"{}\"; fields id,name,slug,cover.url,rating,summary,first_release_date,genres.name,game_modes.name,player_perspectives.name,themes.name,platforms.name; limit 5;",
                 display_lower
             ))
             .send()
@@ -242,10 +242,35 @@ pub async fn match_folders_with_igdb(
                                 id: g.id,
                                 name: g.name.clone(),
                                 distance: levenshtein(&display_lower, &g.name.to_lowercase()),
-                                cover_url: None,
+                                cover_url: g.cover.as_ref().map(|c| format_cover_url(&c.url)),
                                 slug: g.slug.clone(),
                             })
                             .collect();
+                        // Fill metadata
+                        result.cover_url = best_match.cover.as_ref().map(|c| format_cover_url(&c.url));
+                        result.synopsis = best_match.summary.clone();
+                        result.release_date = best_match.first_release_date
+                            .map(|ts| {
+                                chrono::DateTime::from_timestamp(ts, 0)
+                                    .map(|dt| dt.format("%Y-%m-%d").to_string())
+                                    .unwrap_or_default()
+                            });
+                        result.igdb_rating = best_match.rating;
+                        result.genres = best_match.genres.as_ref().map(|g| 
+                            g.iter().map(|x| IgdbGenreSimple { id: x.id, name: x.name.clone() }).collect()
+                        ).unwrap_or_default();
+                        result.game_modes = best_match.game_modes.as_ref().map(|g| 
+                            g.iter().map(|x| IgdbGenreSimple { id: x.id, name: x.name.clone() }).collect()
+                        ).unwrap_or_default();
+                        result.player_perspectives = best_match.player_perspectives.as_ref().map(|g| 
+                            g.iter().map(|x| IgdbGenreSimple { id: x.id, name: x.name.clone() }).collect()
+                        ).unwrap_or_default();
+                        result.themes = best_match.themes.as_ref().map(|g| 
+                            g.iter().map(|x| IgdbGenreSimple { id: x.id, name: x.name.clone() }).collect()
+                        ).unwrap_or_default();
+                        result.platforms = best_match.platforms.as_ref().map(|g| 
+                            g.iter().map(|x| IgdbGenreSimple { id: x.id, name: x.name.clone() }).collect()
+                        ).unwrap_or_default();
                     }
                 }
             }
@@ -481,35 +506,47 @@ pub async fn get_igdb_screenshots(
         .await
         .map_err(|e| format!("IGDB request failed: {}", e))?;
     
-    let mut igdb_games: Vec<IgdbGame> = response
-        .json()
+    // Get response text for better error handling
+    let response_text = response
+        .text()
         .await
-        .map_err(|e| format!("Failed to parse IGDB response: {}", e))?;
+        .map_err(|e| format!("Failed to read IGDB response: {}", e))?;
     
-    if igdb_games.is_empty() {
+    if response_text.is_empty() {
         return Ok(Vec::new());
     }
     
-    let igdb_game = igdb_games.remove(0);
+    // Try to parse as JSON first
+    let json_result: Result<serde_json::Value, _> = serde_json::from_str(&response_text);
     
-    // Collect screenshot and artwork URLs
-    let mut urls = Vec::new();
-    
-    // Add screenshots
-    if let Some(screenshots) = igdb_game.screenshots {
-        for screenshot in screenshots {
-            let url = format_cover_url(&screenshot.url);
-            urls.push(url);
+    match json_result {
+        Ok(json) => {
+            let mut urls = Vec::new();
+            
+            // Extract screenshots
+            if let Some(screenshots) = json.get(0).and_then(|g| g.get("screenshots")).and_then(|s| s.as_array()) {
+                for screenshot in screenshots {
+                    if let Some(url) = screenshot.get("url").and_then(|u| u.as_str()) {
+                        urls.push(format_cover_url(url));
+                    }
+                }
+            }
+            
+            // Extract artworks
+            if let Some(artworks) = json.get(0).and_then(|g| g.get("artworks")).and_then(|a| a.as_array()) {
+                for artwork in artworks {
+                    if let Some(url) = artwork.get("url").and_then(|u| u.as_str()) {
+                        urls.push(format_cover_url(url));
+                    }
+                }
+            }
+            
+            Ok(urls)
+        }
+        Err(e) => {
+            println!("[get_igdb_screenshots] Failed to parse JSON. Response preview: {}", 
+                &response_text[..response_text.len().min(200)]);
+            Err(format!("Failed to parse IGDB response: {}", e))
         }
     }
-    
-    // Add artworks
-    if let Some(artworks) = igdb_game.artworks {
-        for artwork in artworks {
-            let url = format_cover_url(&artwork.url);
-            urls.push(url);
-        }
-    }
-    
-    Ok(urls)
 }

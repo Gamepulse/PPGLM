@@ -126,7 +126,16 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
       <div className="w-64 flex-shrink-0 space-y-3">
         <div className="relative">
           {game.cover_url ? (
-            <img src={game.cover_url} alt={game.display_name} className="w-full rounded-lg" />
+            <div className="relative overflow-hidden rounded-lg svg-text-mask-container">
+              <img 
+                src={game.cover_url} 
+                alt={game.display_name} 
+                className="w-full rounded-lg" 
+              />
+              <div className="svg-text-mask">
+                <span className="text-4xl font-black text-white drop-shadow-lg" style={{textShadow: '0 2px 8px rgba(0,0,0,0.4)'}}>PPGM</span>
+              </div>
+            </div>
           ) : (
             <div className="w-full h-80 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
               <span className="text-5xl">🎮</span>
@@ -211,7 +220,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             </select>
             {game.igdb_platforms && game.igdb_platforms.length > 0 && (
               <p className="mt-1 text-xs text-gray-500">
-                {t('igdbPlatformsHint') || 'Available on IGDB'}: {game.igdb_platforms.map(p => p.name).join(', ')}
+                IGDB: {game.igdb_platforms.map(p => p.name).join(', ')}
               </p>
             )}
           </div>
@@ -325,13 +334,15 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         )}
 
         {/* Tags */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="theme-text-muted text-sm">{t('tags')}:</span>
-          <TagEditor 
-            gameId={game.id} 
-            tags={game.tags || []} 
-            onTagsChanged={onTagsChanged || (() => {})}
-          />
+        <div className="flex flex-wrap items-start gap-2">
+          <span className="theme-text-muted text-sm pt-1">{t('tags')}:</span>
+          <div className="flex-1 max-h-16 overflow-y-auto">
+            <TagEditor 
+              gameId={game.id} 
+              tags={game.tags || []} 
+              onTagsChanged={onTagsChanged || (() => {})}
+            />
+          </div>
         </div>
 
         {/* Release Date */}
@@ -383,15 +394,6 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           </div>
         </div>
 
-        {/* Synopsis */}
-        {game.synopsis && (
-          <div className="mt-2">
-            <label className="block text-sm font-medium theme-text-secondary mb-1">{t('synopsis')}</label>
-            <p className="theme-text-secondary text-sm leading-relaxed theme-bg-tertiary/50 p-3 rounded-lg max-h-48 overflow-y-auto">
-              {game.synopsis}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

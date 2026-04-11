@@ -3,6 +3,7 @@ import type { Game } from "../../types";
 import { useGames } from "../../hooks/useGames";
 import { GameDetailHeader } from "./GameDetailHeader";
 import { GameDetailBackground } from "./GameDetailBackground";
+import { GameScreenshotsCarousel } from "./GameScreenshotsCarousel";
 // import { GameSoundtrackSection } from "./GameSoundtrackSection"; // Music module - disabled for future build
 import { formatDate } from "../../utils/formatters";
 import { useI18n } from "../../i18n";
@@ -136,9 +137,25 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
         />
         {/* Tags and Info now displayed in Header - removed redundant sections */}
       </div>
+
+      {/* Synopsis - Full Width above carousel */}
+      {game.synopsis && (
+        <div className="mt-6 relative z-10">
+          <label className="block text-base font-semibold theme-text-primary mb-2">{t('synopsis')}</label>
+          <p className="theme-text-secondary text-sm leading-relaxed theme-bg-tertiary/70 p-4 rounded-lg border theme-border">
+            {game.synopsis}
+          </p>
+        </div>
+      )}
+
       {/* <GameSoundtrackSection game={game} /> // Music module - disabled for future build */}
 
-      <div className="pt-4 theme-border border-t mt-4 space-y-4">
+      {/* Screenshots Carousel */}
+      <div className="mt-6 max-w-2xl mx-auto">
+        <GameScreenshotsCarousel gameId={gameId} />
+      </div>
+
+      <div className="pt-4 theme-border border-t mt-6 space-y-4">
         {/* Launch Path / Executable */}
         <div>
           <label className="block text-sm font-medium theme-text-secondary mb-1">{t('executablePath')}</label>
