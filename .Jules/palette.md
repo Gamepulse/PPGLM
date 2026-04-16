@@ -1,0 +1,3 @@
+## 2025-05-15 - [Destructive Action Safety & Detail Accessibility]
+**Learning:** Found that core destructive actions like deleting a game from the detail view lacked a confirmation step, creating a high risk of accidental data loss. Additionally, several icon-only buttons and form controls lacked basic ARIA labels and proper label associations, hindering screen reader support.
+**Action:** Implement custom confirmation modals with loading states for all destructive actions. Ensure icon-only buttons have `aria-label` matching their `title`. Use unique, entity-specific IDs (e.g., `selector-${id}`) for form controls to ensure robust accessibility associations.

@@ -32,6 +32,8 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [notesValue, setNotesValue] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => { loadGame(); }, [gameId]);
 
@@ -64,7 +66,15 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     setGame({ ...game, notes: notesValue });
   };
 
-  const handleDelete = async () => { if (await deleteGame(game.id)) onBack(); };
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    if (await deleteGame(game.id)) {
+      onBack();
+    } else {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
 
   const handlePlayTimeChange = async (hours: number) => {
     if (await updatePlayTime(game.id, hours)) {
@@ -234,12 +244,58 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
           {t('added')}: {formatDate(game.created_at)} · {t('updated')}: {formatDate(game.updated_at)}
         </div>
         <div className="pt-4">
-          <button type="button" onClick={handleDelete}
+          <button type="button" onClick={() => setShowDeleteConfirm(true)}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
             {t('deleteGame')}
           </button>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-gray-900 rounded-xl border border-red-600/60 max-w-md w-full shadow-2xl">
+            <div className="p-6 border-b border-gray-800">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-red-600/20 rounded-full flex items-center justify-center">
+                  <span className="text-lg" aria-hidden="true">🗑</span>
+                </div>
+                <h2 className="text-lg font-bold text-white">{t('deleteGame')}</h2>
+              </div>
+              <p className="theme-text-secondary text-sm">
+                {t('confirmDelete')}
+              </p>
+              <p className="mt-2 text-indigo-400 font-semibold">{game.display_name}</p>
+            </div>
+
+            <div className="p-6 border-t border-gray-800 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-900/50 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                {isDeleting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {t('loading')}
+                  </span>
+                ) : (
+                  t('deleteGame')
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

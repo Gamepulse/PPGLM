@@ -148,6 +148,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
                 <span className="text-yellow-400 drop-shadow-lg">★</span>
@@ -161,10 +162,11 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Platform Selector */}
         {onPlatformChange && (
           <div>
-            <label className="block text-xs font-medium theme-text-secondary mb-1">
+            <label htmlFor={`platform-selector-${game.id}`} className="block text-xs font-medium theme-text-secondary mb-1">
               {t('platforms') || 'Plateformes'}
             </label>
             <select
+              id={`platform-selector-${game.id}`}
               value={game.platform || ''}
               onChange={handlePlatformSelect}
               className="w-full px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
