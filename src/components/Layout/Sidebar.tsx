@@ -59,8 +59,10 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
                 ? "theme-bg-tertiary border-l-2 border-indigo-500 text-indigo-500 -translate-y-0.5 shadow-md"
                 : "theme-text-secondary hover:theme-text-primary hover:theme-bg-tertiary hover:-translate-y-0.5 hover:shadow-md"
             }`}
+            aria-label={getLabel(item.id)}
+            title={getLabel(item.id)}
           >
-            <span className="text-xl flex-shrink-0">{item.icon}</span>
+            <span className="text-xl flex-shrink-0" aria-hidden="true">{item.icon}</span>
             <span
               className={`text-sm transition-opacity ${
                 expanded ? "opacity-100" : "opacity-0"
@@ -75,8 +77,9 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
         onClick={() => setExpanded(!expanded)}
         className="p-4 border-t theme-border theme-text-muted hover:theme-text-primary transition-colors flex items-center justify-center"
         title={expanded ? "Collapse sidebar" : "Expand sidebar"}
+        aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
       >
-        <span className="text-lg">{expanded ? "◀" : "▶"}</span>
+        <span className="text-lg" aria-hidden="true">{expanded ? "◀" : "▶"}</span>
       </button>
     </div>
   );

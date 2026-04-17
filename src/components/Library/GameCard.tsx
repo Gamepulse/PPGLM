@@ -46,6 +46,13 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             }}
             className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
             role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onFilter?.('tag', tag.name);
+              }
+            }}
           >
             {tag.name}
           </span>
@@ -83,6 +90,13 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             }}
             className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
             role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onFilter?.(item.type, item.name);
+              }
+            }}
           >
             {item.name}
           </span>
@@ -106,7 +120,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             }}
           />
           <div className="cover-placeholder hidden absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center">
-            <span className="text-4xl">🎮</span>
+            <span className="text-4xl" aria-hidden="true">🎮</span>
           </div>
         </div>
       );
@@ -115,7 +129,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     // Placeholder gradient for games without cover
     return (
       <div className="relative w-full h-48 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
-        <span className="text-4xl">🎮</span>
+        <span className="text-4xl" aria-hidden="true">🎮</span>
       </div>
     );
   };
@@ -141,6 +155,13 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         }}
         className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
         role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onFilter?.('status', completion_status);
+          }
+        }}
       >
         {label}
       </span>
@@ -159,7 +180,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   const renderFavorite = () => {
     if (!is_favorite) return null;
     return (
-      <span className="text-yellow-400 text-lg">★</span>
+      <span className="text-yellow-400 text-lg" aria-hidden="true">★</span>
     );
   };
 
@@ -187,7 +208,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           <h3 className="theme-text-primary font-semibold text-lg mb-2 truncate flex items-center gap-2">
             {display_name}
             {renderFavorite()}
-            {platformIcon && <span className="text-sm">{platformIcon}</span>}
+            {platformIcon && <span className="text-sm" aria-hidden="true">{platformIcon}</span>}
             {showQuickAssign && (
               <button
                 onClick={(e) => {
@@ -197,8 +218,9 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 }}
                 className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
                 title="Quick assign platform"
+                aria-label="Quick assign platform"
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
@@ -206,13 +228,13 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               {personal_rating != null && (
-                <span className="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full">
-                  ★ {personal_rating}
+                <span className="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full" aria-label={`${t('personalRating')}: ${personal_rating}`}>
+                  <span aria-hidden="true">★</span> {personal_rating}
                 </span>
               )}
               {igdb_rating != null && (
-                <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">
-                  ★ {igdb_rating.toFixed(0)}
+                <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full" aria-label={`${t('communityRating')}: ${igdb_rating.toFixed(0)}`}>
+                  <span aria-hidden="true">★</span> {igdb_rating.toFixed(0)}
                 </span>
               )}
               {renderPlayTime()}
@@ -258,7 +280,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             />
           ) : null}
           <div key={`placeholder-${game.id}`} className={`compact-placeholder ${cover_url ? 'hidden' : ''} absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center`}>
-            <span className="text-2xl">🎮</span>
+            <span className="text-2xl" aria-hidden="true">🎮</span>
           </div>
           
           {/* Status badge - small */}
@@ -297,14 +319,15 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
               }}
               className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
               title="Quick assign platform"
+              aria-label="Quick assign platform"
             >
-              🎮
+              <span aria-hidden="true">🎮</span>
             </button>
           )}
           
           {/* Platform icon - bottom right, separate from quick assign */}
           {platformIcon && (
-            <span className="absolute bottom-1 right-1 text-sm z-10">{platformIcon}</span>
+            <span className="absolute bottom-1 right-1 text-sm z-10" aria-hidden="true">{platformIcon}</span>
           )}
         </div>
         
@@ -315,13 +338,13 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           <div className="flex items-center justify-between mt-1">
             <div className="flex items-center gap-1">
               {personal_rating != null && (
-                <span className="text-[10px] text-yellow-400 bg-yellow-900/40 px-1.5 py-0.5 rounded-full">
-                  ★{personal_rating}
+                <span className="text-[10px] text-yellow-400 bg-yellow-900/40 px-1.5 py-0.5 rounded-full" aria-label={`${t('personalRating')}: ${personal_rating}`}>
+                  <span aria-hidden="true">★</span>{personal_rating}
                 </span>
               )}
               {igdb_rating != null && (
-                <span className="text-[10px] text-gray-400 bg-gray-700/60 px-1.5 py-0.5 rounded-full">
-                  ★{igdb_rating.toFixed(0)}
+                <span className="text-[10px] text-gray-400 bg-gray-700/60 px-1.5 py-0.5 rounded-full" aria-label={`${t('communityRating')}: ${igdb_rating.toFixed(0)}`}>
+                  <span aria-hidden="true">★</span>{igdb_rating.toFixed(0)}
                 </span>
               )}
             </div>
@@ -362,7 +385,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           />
         ) : null}
         <div className={`list-placeholder ${cover_url ? 'hidden' : ''} absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center`}>
-          <span className="text-4xl">🎮</span>
+          <span className="text-4xl" aria-hidden="true">🎮</span>
         </div>
       </div>
       
@@ -371,7 +394,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           <h3 className="theme-text-primary font-semibold text-lg mb-2 flex items-center gap-2">
             {display_name}
             {renderFavorite()}
-            {platformIcon && <span className="text-lg">{platformIcon}</span>}
+            {platformIcon && <span className="text-lg" aria-hidden="true">{platformIcon}</span>}
             {showQuickAssign && (
               <button
                 onClick={(e) => {
@@ -380,8 +403,9 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 }}
                 className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
                 title="Quick assign platform"
+                aria-label="Quick assign platform"
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
@@ -389,13 +413,13 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         
         <div className="flex items-center gap-4 mb-3">
           {personal_rating != null && (
-            <span className="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full">
-              ★ {personal_rating}
+            <span className="text-xs text-yellow-400 bg-yellow-900/40 px-2 py-0.5 rounded-full" aria-label={`${t('personalRating')}: ${personal_rating}`}>
+              <span aria-hidden="true">★</span> {personal_rating}
             </span>
           )}
           {igdb_rating != null && (
-            <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full">
-              ★ {igdb_rating.toFixed(0)}
+            <span className="text-xs text-gray-400 bg-gray-700/60 px-2 py-0.5 rounded-full" aria-label={`${t('communityRating')}: ${igdb_rating.toFixed(0)}`}>
+              <span aria-hidden="true">★</span> {igdb_rating.toFixed(0)}
             </span>
           )}
           {renderPlayTime()}

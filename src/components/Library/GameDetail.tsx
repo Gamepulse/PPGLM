@@ -180,8 +180,9 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
                 onClick={handleClearExecutable}
                 className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                 title="Clear executable path"
+                aria-label="Clear executable path"
               >
-                ✕
+                <span aria-hidden="true">✕</span>
               </button>
             )}
           </div>
@@ -191,7 +192,7 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
               onClick={handleLaunch}
               className="w-full mt-3 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 font-medium"
             >
-              ▶ {t('launchGame')}
+              <span aria-hidden="true">▶</span> {t('launchGame')}
             </button>
           )}
         </div>
