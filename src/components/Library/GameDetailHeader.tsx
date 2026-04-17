@@ -148,11 +148,12 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
-                <span className="text-yellow-400 drop-shadow-lg">★</span>
+                <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
               ) : (
-                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+                <span className="text-gray-400 hover:text-yellow-300" aria-hidden="true">☆</span>
               )}
             </button>
           )}
@@ -234,7 +235,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {game.igdb_id && (
           <button type="button" onClick={handleOpenIgdb}
             className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
-            🌐 {t('igdbPage')} ↗
+            <span aria-hidden="true">🌐</span> {t('igdbPage')} ↗
           </button>
         )}
 
@@ -244,7 +245,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           onClick={handleOpenFolder}
           title={t('openFolder') || "Click to open folder"}
         >
-          <span>📁</span>
+          <span aria-hidden="true">📁</span>
           <span className="truncate">{game.folder_path}</span>
           <span className="text-xs opacity-50">↗</span>
         </p>
