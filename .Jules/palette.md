@@ -1,0 +1,3 @@
+## 2025-05-15 - [Safety and Accessibility in Game Management]
+**Learning:** Destructive actions like deleting a game must be gated by a confirmation dialog to prevent irreversible data loss. Decorative icons (arrows, stars, etc.) should be hidden from screen readers using `aria-hidden="true"` to reduce noise. Icon-only buttons require explicit `aria-label` for accessibility. Unused variables in React components can block production builds due to strict `tsc` settings in this repo.
+**Action:** Always check for confirmation logic on delete buttons. Use `aria-hidden` on non-textual symbols. Ensure all interactive icons have labels. Run `pnpm build` early to catch unused variable errors.

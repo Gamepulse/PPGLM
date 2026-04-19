@@ -150,9 +150,9 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
-                <span className="text-yellow-400 drop-shadow-lg">★</span>
+                <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
               ) : (
-                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+                <span className="text-gray-400 hover:text-yellow-300" aria-hidden="true">☆</span>
               )}
             </button>
           )}
@@ -234,7 +234,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {game.igdb_id && (
           <button type="button" onClick={handleOpenIgdb}
             className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
-            🌐 {t('igdbPage')} ↗
+            <span aria-hidden="true">🌐</span> {t('igdbPage')} <span aria-hidden="true">↗</span>
           </button>
         )}
 
@@ -243,10 +243,11 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
           onClick={handleOpenFolder}
           title={t('openFolder') || "Click to open folder"}
+          aria-label={`${t('openFolder') || "Open folder"}: ${game.folder_path}`}
         >
-          <span>📁</span>
+          <span aria-hidden="true">📁</span>
           <span className="truncate">{game.folder_path}</span>
-          <span className="text-xs opacity-50">↗</span>
+          <span className="text-xs opacity-50" aria-hidden="true">↗</span>
         </p>
 
         {/* Status badges */}
