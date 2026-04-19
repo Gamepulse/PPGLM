@@ -64,7 +64,10 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     setGame({ ...game, notes: notesValue });
   };
 
-  const handleDelete = async () => { if (await deleteGame(game.id)) onBack(); };
+  const handleDelete = async () => {
+    if (!confirm(t('confirmDelete'))) return;
+    if (await deleteGame(game.id)) onBack();
+  };
 
   const handlePlayTimeChange = async (hours: number) => {
     if (await updatePlayTime(game.id, hours)) {
@@ -122,7 +125,7 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
       <GameDetailBackground gameId={gameId} />
       
       <button type="button" onClick={onBack} className="relative z-10 text-indigo-400 hover:text-indigo-300 mb-6 flex items-center gap-2">
-        ← {t('backToLibrary')}
+        <span aria-hidden="true">←</span> {t('backToLibrary')}
       </button>
 
       <div className="relative z-10">
@@ -179,9 +182,10 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
                 type="button"
                 onClick={handleClearExecutable}
                 className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-                title="Clear executable path"
+                title={t('remove') || "Clear executable path"}
+                aria-label={t('remove') || "Clear executable path"}
               >
-                ✕
+                <span aria-hidden="true">✕</span>
               </button>
             )}
           </div>
@@ -191,7 +195,7 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
               onClick={handleLaunch}
               className="w-full mt-3 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 font-medium"
             >
-              ▶ {t('launchGame')}
+              <span aria-hidden="true">▶</span> {t('launchGame')}
             </button>
           )}
         </div>
