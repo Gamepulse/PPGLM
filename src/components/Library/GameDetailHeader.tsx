@@ -148,6 +148,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
                 <span className="text-yellow-400 drop-shadow-lg">★</span>
@@ -364,11 +365,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <label htmlFor={`personal-rating-${game.id}`} className="theme-text-muted text-sm cursor-pointer">
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </label>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
+              id={`personal-rating-${game.id}`}
               type="range"
               min="0"
               max="100"
@@ -390,7 +394,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 
