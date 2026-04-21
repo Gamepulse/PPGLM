@@ -234,6 +234,7 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
               onClick={() => setViewMode("grid")}
               className={`p-1.5 rounded ${viewMode === "grid" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
               title="Grid view"
+              aria-label="Grid view"
             >
               ▦
             </button>
@@ -241,6 +242,7 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
               onClick={() => setViewMode("list")}
               className={`p-1.5 rounded ${viewMode === "list" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
               title="List view"
+              aria-label="List view"
             >
               ☰
             </button>
@@ -248,6 +250,7 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
               onClick={() => setViewMode("compact")}
               className={`p-1.5 rounded ${viewMode === "compact" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
               title="Compact view"
+              aria-label="Compact view"
             >
               ▪
             </button>
