@@ -33,6 +33,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         {displayedTags.map((tag) => (
           <span
             key={tag.id}
+            tabIndex={0}
             onClick={(e) => {
               console.log('[GameCard] Click handler fired for tag:', tag.name);
               e.stopPropagation();
@@ -44,8 +45,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 console.warn('[GameCard] onFilter is undefined!');
               }
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                onFilter?.('tag', tag.name);
+              }
+            }}
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto focus-visible:ring-2 focus-visible:ring-white`}
             role="button"
+            aria-label={t('filterByTag') + ': ' + tag.name}
           >
             {tag.name}
           </span>
@@ -75,14 +84,23 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         {allMetadata.map((item) => (
           <span
             key={`${item.type}-${item.id}`}
+            tabIndex={0}
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
               console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
               onFilter?.(item.type, item.name);
             }}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                onFilter?.(item.type, item.name);
+              }
+            }}
+            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             role="button"
+            aria-label={`${t('filterBy') || 'Filter by'} ${item.type}: ${item.name}`}
           >
             {item.name}
           </span>
@@ -133,14 +151,23 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     
     return (
       <span
+        tabIndex={0}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
           console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            onFilter?.('status', completion_status);
+          }
+        }}
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-white z-20`}
         role="button"
+        aria-label={`${t('filterBy') || 'Filter by'} status: ${label}`}
       >
         {label}
       </span>

@@ -54,6 +54,8 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
           <button
             key={item.id}
             onClick={() => onNavigate(item.id)}
+            title={getLabel(item.id)}
+            aria-label={getLabel(item.id)}
             className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 overflow-hidden whitespace-nowrap ${
               currentView === item.id
                 ? "theme-bg-tertiary border-l-2 border-indigo-500 text-indigo-500 -translate-y-0.5 shadow-md"
