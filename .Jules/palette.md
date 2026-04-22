@@ -1,0 +1,3 @@
+## 2025-05-15 - [Accessibility & Navigation Enhancements]
+**Learning:** Interactive elements implemented as `span` or `div` with `role="button"` frequently lack keyboard support and focus styles in this codebase. Adding `tabIndex={0}`, `onKeyDown` handlers, and `focus-visible` ring styles is essential for a consistent keyboard navigation experience. Additionally, icon-only buttons (like favorites or sidebar items) often lack `aria-label` which is critical for screen readers, even when a `title` is present.
+**Action:** Always check for `role="button"` on non-button elements and ensure they have full keyboard parity. Verify that all icon-only buttons have both `title` (for tooltips) and `aria-label` (for A11y).
