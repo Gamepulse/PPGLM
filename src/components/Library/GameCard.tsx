@@ -20,6 +20,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   
   const platformIcon = platform ? (platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟') : null;
   
+  const handleKeyboardAction = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      action();
+    }
+  };
+
   const renderTags = () => {
     if (tags.length === 0) return null;
     
@@ -44,8 +52,10 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 console.warn('[GameCard] onFilter is undefined!');
               }
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
+            onKeyDown={(e) => handleKeyboardAction(e, () => onFilter?.('tag', tag.name))}
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
             role="button"
+            tabIndex={0}
           >
             {tag.name}
           </span>
@@ -139,8 +149,10 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
+        onKeyDown={(e) => handleKeyboardAction(e, () => onFilter?.('status', completion_status))}
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-opacity cursor-pointer select-none`}
         role="button"
+        tabIndex={0}
       >
         {label}
       </span>
