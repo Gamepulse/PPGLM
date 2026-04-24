@@ -44,8 +44,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 console.warn('[GameCard] onFilter is undefined!');
               }
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                onFilter?.('tag', tag.name);
+              }
+            }}
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto focus-visible:ring-2 focus-visible:ring-white outline-none`}
             role="button"
+            tabIndex={0}
           >
             {tag.name}
           </span>
@@ -81,8 +89,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
               console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
               onFilter?.(item.type, item.name);
             }}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                onFilter?.(item.type, item.name);
+              }
+            }}
+            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none focus-visible:ring-1 focus-visible:ring-indigo-500 outline-none"
             role="button"
+            tabIndex={0}
           >
             {item.name}
           </span>
@@ -139,8 +155,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            onFilter?.('status', completion_status);
+          }
+        }}
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-white outline-none`}
         role="button"
+        tabIndex={0}
       >
         {label}
       </span>
@@ -166,7 +190,9 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   if (viewMode === "grid") {
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+        role="button"
+        tabIndex={0}
         onClick={(e) => {
           // Don't navigate if clicking on an interactive element
           const target = e.target as HTMLElement;
@@ -176,6 +202,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           }
           console.log('[GameCard] Grid click - navigating to game:', game.id);
           onClick(game.id);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            const target = e.target as HTMLElement;
+            // Only trigger if the target is the container itself, or if it's not an interactive element
+            if (target === e.currentTarget) {
+              e.preventDefault();
+              onClick(game.id);
+            }
+          }
         }}
       >
         <div className="relative">
@@ -235,13 +271,24 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   if (viewMode === "compact") {
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+        role="button"
+        tabIndex={0}
         onClick={(e) => {
           const target = e.target as HTMLElement;
           if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
             return;
           }
           onClick(game.id);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            const target = e.target as HTMLElement;
+            if (target === e.currentTarget) {
+              e.preventDefault();
+              onClick(game.id);
+            }
+          }
         }}
       >
         <div className="relative h-24 bg-gray-800">
@@ -339,13 +386,24 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   // List view mode
   return (
     <div
-      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600"
+      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+      role="button"
+      tabIndex={0}
       onClick={(e) => {
         const target = e.target as HTMLElement;
         if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
           return;
         }
         onClick(game.id);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const target = e.target as HTMLElement;
+          if (target === e.currentTarget) {
+            e.preventDefault();
+            onClick(game.id);
+          }
+        }
       }}
     >
       <div className="w-32 h-32 flex-shrink-0 relative bg-gray-800 rounded-lg overflow-hidden">

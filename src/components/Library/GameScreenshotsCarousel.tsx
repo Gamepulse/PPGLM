@@ -20,8 +20,6 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
   const [igdbScreenshots, setIgdbScreenshots] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [hasIgdbId, setHasIgdbId] = useState(false);
-
   useEffect(() => {
     const loadScreenshots = async () => {
       setLoading(true);
@@ -29,7 +27,6 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
         // Load game data to check IGDB ID
         try {
           const game = await invoke<{ igdb_id: number | null }>("get_game_by_id", { id: gameId });
-          setHasIgdbId(!!game?.igdb_id);
           
           // Load IGDB screenshots if available
           if (game?.igdb_id) {
