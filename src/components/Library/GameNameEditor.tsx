@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { Game } from "../../types";
+import { useI18n } from "../../i18n";
 
 interface IgdbGame {
   id: number;
@@ -24,6 +25,7 @@ interface GameNameEditorProps {
 }
 
 export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
+  const { t } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(game.display_name);
   const [isSearching, setIsSearching] = useState(false);
@@ -161,7 +163,8 @@ export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
         <button
           onClick={handleStartEdit}
           className="text-gray-500 hover:text-blue-400 p-1 transition-colors"
-          title="Edit name"
+          title={t('editName')}
+          aria-label={t('editName')}
         >
           ✏️
         </button>
@@ -188,6 +191,7 @@ export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
             disabled={isSearching || !editValue.trim()}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
             title={isSearching ? 'Re-scanning...' : 'Re-Scan IGDB'}
+            aria-label={isSearching ? 'Re-scanning...' : 'Re-Scan IGDB'}
           >
             {isSearching ? (
               <span className="animate-spin">⟳</span>
@@ -200,14 +204,16 @@ export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
           onClick={handleSave}
           disabled={!editValue.trim()}
           className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
-          title="Save"
+          title={t('apply')}
+          aria-label={t('apply')}
         >
           ✓
         </button>
         <button
           onClick={handleCancel}
           className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-          title="Cancel"
+          title={t('cancel')}
+          aria-label={t('cancel')}
         >
           ✕
         </button>
