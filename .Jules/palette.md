@@ -1,0 +1,3 @@
+## 2025-05-15 - [Pascal App Accessibility & UX Patterns]
+**Learning:** Destructive actions like game deletion and tag removal must always have a confirmation step to prevent accidental data loss. Form controls (selects, inputs) must have unique IDs (e.g., suffixed with an entity ID) and corresponding labels using the `htmlFor` attribute to ensure they are accessible to screen readers. Icon-only buttons must include an `aria-label` attribute to provide context to assistive technologies.
+**Action:** Always wrap delete operations in a confirmation dialog using i18n keys. Ensure all form elements in detail views have properly associated labels and unique IDs. Apply `aria-label` to all buttons that use icons or emojis instead of text.
