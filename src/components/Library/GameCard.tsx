@@ -44,8 +44,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 console.warn('[GameCard] onFilter is undefined!');
               }
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+                e.preventDefault();
+                onFilter?.('tag', tag.name);
+              }
+            }}
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto focus-visible:ring-2 focus-visible:ring-indigo-600 outline-none`}
             role="button"
+            tabIndex={0}
           >
             {tag.name}
           </span>
@@ -81,8 +89,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
               console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
               onFilter?.(item.type, item.name);
             }}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+                e.preventDefault();
+                onFilter?.(item.type, item.name);
+              }
+            }}
+            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-indigo-600 outline-none"
             role="button"
+            tabIndex={0}
           >
             {item.name}
           </span>
@@ -139,8 +155,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+            e.preventDefault();
+            onFilter?.('status', completion_status);
+          }
+        }}
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-white outline-none`}
         role="button"
+        tabIndex={0}
       >
         {label}
       </span>
@@ -195,7 +219,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                   e.preventDefault();
                   onQuickAssign?.();
                 }}
-                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
+                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-indigo-600 outline-none"
                 title="Quick assign platform"
               >
                 🎮
@@ -273,7 +297,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 completion_status === 'playing' ? 'bg-blue-600' :
                 completion_status === 'dropped' ? 'bg-red-600' :
                 completion_status === 'wishlist' ? 'bg-purple-600' : 'bg-gray-600'
-              } hover:opacity-80 transition-opacity cursor-pointer`}
+              } hover:opacity-80 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-white outline-none`}
             >
               {completion_status === 'not_started' ? 'Not Started' :
                completion_status === 'playing' ? 'Playing' :
@@ -295,7 +319,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 e.stopPropagation();
                 onQuickAssign?.();
               }}
-              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
+              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10 focus-visible:ring-2 focus-visible:ring-white outline-none"
               title="Quick assign platform"
             >
               🎮
@@ -378,7 +402,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                   e.stopPropagation();
                   onQuickAssign?.();
                 }}
-                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
+                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-indigo-600 outline-none"
                 title="Quick assign platform"
               >
                 🎮
