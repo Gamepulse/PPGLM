@@ -233,21 +233,24 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
             <button
               onClick={() => setViewMode("grid")}
               className={`p-1.5 rounded ${viewMode === "grid" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
-              title="Grid view"
+              title={t('grid') || "Grid view"}
+              aria-label={t('grid') || "Grid view"}
             >
               ▦
             </button>
             <button
               onClick={() => setViewMode("list")}
               className={`p-1.5 rounded ${viewMode === "list" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
-              title="List view"
+              title={t('list') || "List view"}
+              aria-label={t('list') || "List view"}
             >
               ☰
             </button>
             <button
               onClick={() => setViewMode("compact")}
               className={`p-1.5 rounded ${viewMode === "compact" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
-              title="Compact view"
+              title={t('compact') || "Compact view"}
+              aria-label={t('compact') || "Compact view"}
             >
               ▪
             </button>

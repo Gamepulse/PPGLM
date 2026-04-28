@@ -179,7 +179,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                       disabled={platform.disabled}
                       className={platform.disabled ? "text-gray-500" : ""}
                     >
-                      {platform.name}{platform.disabled ? " (non possédé)" : ""}
+                      {platform.name}{platform.disabled ? ` (${t('notOwned')})` : ""}
                     </option>
                   ))}
                 </optgroup>
