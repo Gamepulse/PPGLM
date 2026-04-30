@@ -148,6 +148,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
                 <span className="text-yellow-400 drop-shadow-lg">★</span>
@@ -161,10 +162,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Platform Selector */}
         {onPlatformChange && (
           <div>
-            <label className="block text-xs font-medium theme-text-secondary mb-1">
+            <label
+              htmlFor="platform-select"
+              className="block text-xs font-medium theme-text-secondary mb-1"
+            >
               {t('platforms') || 'Plateformes'}
             </label>
             <select
+              id="platform-select"
               value={game.platform || ''}
               onChange={handlePlatformSelect}
               className="w-full px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
@@ -232,22 +237,28 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         
         {/* IGDB Page button prominently displayed */}
         {game.igdb_id && (
-          <button type="button" onClick={handleOpenIgdb}
-            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handleOpenIgdb}
+            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1"
+            aria-label={t('viewOnIgdb')}
+          >
             🌐 {t('igdbPage')} ↗
           </button>
         )}
 
         {/* Folder path */}
-        <p 
-          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
+        <button
+          type="button"
+          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1 text-left w-full"
           onClick={handleOpenFolder}
           title={t('openFolder') || "Click to open folder"}
+          aria-label={`${t('openFolder') || "Open folder"}: ${game.folder_path}`}
         >
           <span>📁</span>
           <span className="truncate">{game.folder_path}</span>
           <span className="text-xs opacity-50">↗</span>
-        </p>
+        </button>
 
         {/* Status badges */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -364,11 +375,17 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <label
+              htmlFor="personal-rating-input"
+              className="theme-text-muted text-sm"
+            >
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </label>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs theme-text-muted">0</span>
             <input
+              id="personal-rating-input"
               type="range"
               min="0"
               max="100"
