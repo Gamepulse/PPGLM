@@ -1,0 +1,3 @@
+## 2025-05-15 - [A11y: Improving Card Keyboard Navigation]
+**Learning:** For complex card containers that act as a single interactive unit but contain other buttons (like tags or "Quick Action" buttons), simple `onClick` on the container is not enough for keyboard accessibility.
+**Action:** Use `tabIndex={0}` and `onKeyDown` on the container. Crucially, the `onKeyDown` handler must check `if (e.target !== e.currentTarget) return;` to prevent nested interactive elements from double-triggering actions when they are focused and the user presses Enter/Space. Additionally, using `aria-labelledby` linking to the card's title `h3` provides a better experience for screen reader users than just relying on the text content of the entire card.
