@@ -1,0 +1,3 @@
+## 2025-05-22 - [Tauri Application Accessibility and Build Constraints]
+**Learning:** This app is a Tauri-based desktop application where interactive elements rely on the Tauri `invoke` system. Frontend verification requires mocking `window.__TAURI_INTERNALS__.invoke` to avoid render failures. Additionally, the production build (`pnpm build`) includes strict TypeScript linting via `tsc`, meaning unused variables or state declarations will cause build failures and must be removed before submission.
+**Action:** Always mock the Tauri `invoke` system in Playwright scripts and run `pnpm build` to verify that no unused variables or type errors are introduced.
