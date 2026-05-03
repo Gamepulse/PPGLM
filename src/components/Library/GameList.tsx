@@ -232,22 +232,25 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
           <div className="flex items-center gap-1 p-1 rounded-lg theme-bg-tertiary border theme-border">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded ${viewMode === "grid" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
-              title="Grid view"
+              className={`p-1.5 rounded ${viewMode === "grid" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'} focus-visible:ring-2 focus-visible:ring-indigo-500`}
+              title={t('grid') || "Grid view"}
+              aria-label={t('grid') || "Grid view"}
             >
               ▦
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-1.5 rounded ${viewMode === "list" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
-              title="List view"
+              className={`p-1.5 rounded ${viewMode === "list" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'} focus-visible:ring-2 focus-visible:ring-indigo-500`}
+              title={t('list') || "List view"}
+              aria-label={t('list') || "List view"}
             >
               ☰
             </button>
             <button
               onClick={() => setViewMode("compact")}
-              className={`p-1.5 rounded ${viewMode === "compact" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'}`}
-              title="Compact view"
+              className={`p-1.5 rounded ${viewMode === "compact" ? 'theme-accent text-white' : 'theme-text-secondary hover:theme-text-primary'} focus-visible:ring-2 focus-visible:ring-indigo-500`}
+              title={t('compact') || "Compact view"}
+              aria-label={t('compact') || "Compact view"}
             >
               ▪
             </button>
@@ -267,7 +270,9 @@ export function GameList({ onSelectGame, searchQuery, activeFilters: externalFil
           </select>
           <button
             onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-            className="theme-bg-tertiary theme-text-primary px-3 py-2 rounded-lg border theme-border hover:theme-bg-secondary"
+            className="theme-bg-tertiary theme-text-primary px-3 py-2 rounded-lg border theme-border hover:theme-bg-secondary focus-visible:ring-2 focus-visible:ring-indigo-500"
+            aria-label={sortOrder === "asc" ? t('sortAscending') : t('sortDescending')}
+            title={sortOrder === "asc" ? t('sortAscending') : t('sortDescending')}
           >
             {sortOrder === "asc" ? "↑" : "↓"}
           </button>
