@@ -18,7 +18,25 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   const { t } = useI18n();
   const { display_name, cover_url, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes, platform } = game;
   
-  const platformIcon = platform ? (platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟') : null;
+  const platformNames: Record<string, string> = {
+    pc: 'PC',
+    ps5: 'PlayStation 5',
+    ps4: 'PlayStation 4',
+    ps3: 'PlayStation 3',
+    ps2: 'PlayStation 2',
+    ps1: 'PlayStation',
+    xbox_series: 'Xbox Series X|S',
+    xbox_one: 'Xbox One',
+    xbox_360: 'Xbox 360',
+    nintendo_switch: 'Nintendo Switch',
+    mobile: 'Mobile',
+  };
+
+  const platformIcon = platform ? (
+    <span role="img" aria-label={platformNames[platform] || platform}>
+      {platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟'}
+    </span>
+  ) : null;
   
   const renderTags = () => {
     if (tags.length === 0) return null;
@@ -26,26 +44,29 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     const displayedTags = tags.slice(0, 3);
     const remainingCount = tags.length - 3;
     
-    console.log('[GameCard] Rendering tags:', displayedTags.map(t => t.name), 'onFilter exists:', !!onFilter);
-    
     return (
       <div className="flex flex-wrap gap-1 mt-2 pointer-events-auto">
         {displayedTags.map((tag) => (
           <span
             key={tag.id}
             onClick={(e) => {
-              console.log('[GameCard] Click handler fired for tag:', tag.name);
               e.stopPropagation();
               e.preventDefault();
-              console.log('[GameCard] Calling onFilter with:', 'tag', tag.name);
               if (onFilter) {
                 onFilter('tag', tag.name);
-              } else {
-                console.warn('[GameCard] onFilter is undefined!');
               }
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto focus-visible:ring-2 focus-visible:ring-white`}
             role="button"
+            tabIndex={0}
+            aria-label={`${t('filterByTag')}: ${tag.name}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                onFilter?.('tag', tag.name);
+              }
+            }}
           >
             {tag.name}
           </span>
@@ -78,11 +99,19 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
               onFilter?.(item.type, item.name);
             }}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
+            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             role="button"
+            tabIndex={0}
+            aria-label={`${t('filterByTag')}: ${item.name}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                onFilter?.(item.type, item.name);
+              }
+            }}
           >
             {item.name}
           </span>
@@ -136,11 +165,19 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none z-10 focus-visible:ring-2 focus-visible:ring-white`}
         role="button"
+        tabIndex={0}
+        aria-label={`${t('completionStatus')}: ${label}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            onFilter?.('status', completion_status);
+          }
+        }}
       >
         {label}
       </span>
@@ -163,18 +200,26 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     );
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick(game.id);
+    }
+  };
+
   if (viewMode === "grid") {
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
         onClick={(e) => {
           // Don't navigate if clicking on an interactive element
           const target = e.target as HTMLElement;
           if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
-            console.log('[GameCard] Grid click blocked - interactive element');
             return;
           }
-          console.log('[GameCard] Grid click - navigating to game:', game.id);
           onClick(game.id);
         }}
       >
@@ -235,7 +280,9 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   if (viewMode === "compact") {
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
         onClick={(e) => {
           const target = e.target as HTMLElement;
           if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
@@ -339,7 +386,9 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   // List view mode
   return (
     <div
-      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600"
+      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
       onClick={(e) => {
         const target = e.target as HTMLElement;
         if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
