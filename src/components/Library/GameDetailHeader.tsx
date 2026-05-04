@@ -276,8 +276,10 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             {game.genres.map((genre) => (
               <button
                 key={genre.id}
+                type="button"
                 onClick={() => onFilter?.('genre', genre.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-blue-600 hover:bg-blue-500 transition-opacity cursor-pointer"
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-blue-600 hover:bg-blue-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900"
+                aria-label={`${t('genre')}: ${genre.name}`}
               >
                 {genre.name}
               </button>
@@ -292,8 +294,10 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             {game.game_modes.map((mode) => (
               <button
                 key={mode.id}
+                type="button"
                 onClick={() => onFilter?.('mode', mode.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-purple-600 hover:bg-purple-500 transition-opacity cursor-pointer"
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-purple-600 hover:bg-purple-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900"
+                aria-label={`${t('gameMode')}: ${mode.name}`}
               >
                 {mode.name}
               </button>
@@ -308,8 +312,10 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             {game.player_perspectives.map((persp) => (
               <button
                 key={persp.id}
+                type="button"
                 onClick={() => onFilter?.('perspective', persp.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-green-600 hover:bg-green-500 transition-opacity cursor-pointer"
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-green-600 hover:bg-green-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900"
+                aria-label={`${t('perspective')}: ${persp.name}`}
               >
                 {persp.name}
               </button>
@@ -324,8 +330,10 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             {game.themes.map((theme) => (
               <button
                 key={theme.id}
+                type="button"
                 onClick={() => onFilter?.('theme', theme.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-orange-600 hover:bg-orange-500 transition-opacity cursor-pointer"
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-orange-600 hover:bg-orange-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900"
+                aria-label={`${t('theme')}: ${theme.name}`}
               >
                 {theme.name}
               </button>
