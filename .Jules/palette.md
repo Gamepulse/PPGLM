@@ -1,0 +1,3 @@
+## 2026-05-05 - [Accessibility & Keyboard Navigation in Card-based UIs]
+**Learning:** Interactive cards that contain nested buttons (like tags, status badges) require careful event management. Using `tabIndex={0}` on the container makes it keyboard-accessible, but an `onKeyDown` handler must use `if (e.target !== e.currentTarget) return;` to prevent the card's primary action (navigation) from firing when a nested interactive element is activated. Semantic `<button>` elements should always be preferred over `<span role="button">` to ensure consistent screen reader behavior and native keyboard support.
+**Action:** Use semantic `<button>` for all interactive elements and implement specific target checks in parent container key handlers to prevent event collision.
