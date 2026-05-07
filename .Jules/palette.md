@@ -1,0 +1,3 @@
+## 2025-05-14 - [Semantic Buttons and Card Accessibility]
+**Learning:** Using semantic `<button type="button">` instead of `<span>` with `role="button"` provides native keyboard support (Enter/Space) and focusability without manual implementation. For card containers that should be focusable, adding `tabIndex={0}`, `role="button"`, and a targeted `onKeyDown` handler (checking `e.target === e.currentTarget`) ensures the entire card is accessible while preventing nested interactive elements from double-triggering actions.
+**Action:** Always prefer semantic buttons for interactive elements. When making containers focusable, use `e.target === e.currentTarget` in keyboard handlers to avoid event bubbling issues from nested buttons or links.
