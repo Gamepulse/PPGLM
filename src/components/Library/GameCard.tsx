@@ -18,7 +18,12 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   const { t } = useI18n();
   const { display_name, cover_url, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes, platform } = game;
   
-  const platformIcon = platform ? (platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟') : null;
+  const platformLabel = platform ? (platform.startsWith('ps') ? 'PlayStation' : platform.startsWith('xbox') ? 'Xbox' : platform.startsWith('nintendo') ? 'Nintendo' : platform === 'pc' ? 'PC' : platform === 'mobile' ? 'Mobile' : 'Other') : '';
+  const platformIcon = platform ? (
+    <span role="img" aria-label={platformLabel}>
+      {platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟'}
+    </span>
+  ) : null;
   
   const renderTags = () => {
     if (tags.length === 0) return null;
@@ -31,24 +36,19 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     return (
       <div className="flex flex-wrap gap-1 mt-2 pointer-events-auto">
         {displayedTags.map((tag) => (
-          <span
+          <button
             key={tag.id}
+            type="button"
             onClick={(e) => {
-              console.log('[GameCard] Click handler fired for tag:', tag.name);
               e.stopPropagation();
               e.preventDefault();
-              console.log('[GameCard] Calling onFilter with:', 'tag', tag.name);
-              if (onFilter) {
-                onFilter('tag', tag.name);
-              } else {
-                console.warn('[GameCard] onFilter is undefined!');
-              }
+              onFilter?.('tag', tag.name);
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
-            role="button"
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-white`}
+            aria-label={`${t('filterByTag')}: ${tag.name}`}
           >
             {tag.name}
-          </span>
+          </button>
         ))}
         
         {remainingCount > 0 && (
@@ -72,21 +72,24 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     
     return (
       <div className="flex flex-wrap gap-1 mt-1">
-        {allMetadata.map((item) => (
-          <span
-            key={`${item.type}-${item.id}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
-              onFilter?.(item.type, item.name);
-            }}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
-            role="button"
-          >
-            {item.name}
-          </span>
-        ))}
+        {allMetadata.map((item) => {
+          const typeLabelKey = item.type === 'mode' ? 'gameMode' : item.type === 'perspective' ? 'playerPerspective' : item.type;
+          return (
+            <button
+              key={`${item.type}-${item.id}`}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onFilter?.(item.type, item.name);
+              }}
+              className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              aria-label={`${t(typeLabelKey as any)}: ${item.name}`}
+            >
+              {item.name}
+            </button>
+          );
+        })}
       </div>
     );
   };
@@ -106,7 +109,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             }}
           />
           <div className="cover-placeholder hidden absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center">
-            <span className="text-4xl">🎮</span>
+            <span className="text-4xl" role="img" aria-hidden="true">🎮</span>
           </div>
         </div>
       );
@@ -115,7 +118,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     // Placeholder gradient for games without cover
     return (
       <div className="relative w-full h-48 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
-        <span className="text-4xl">🎮</span>
+        <span className="text-4xl" role="img" aria-hidden="true">🎮</span>
       </div>
     );
   };
@@ -132,18 +135,18 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     const label = COMPLETION_STATUS_LABELS[completion_status as keyof typeof COMPLETION_STATUS_LABELS] || completion_status;
     
     return (
-      <span
+      <button
+        type="button"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
-        role="button"
+        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none z-10 focus-visible:ring-2 focus-visible:ring-white`}
+        aria-label={`${t('completionStatus')}: ${label}`}
       >
         {label}
-      </span>
+      </button>
     );
   };
 
@@ -159,22 +162,22 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   const renderFavorite = () => {
     if (!is_favorite) return null;
     return (
-      <span className="text-yellow-400 text-lg">★</span>
+      <span className="text-yellow-400 text-lg" role="img" aria-label={t('isFavorite')}>★</span>
     );
   };
 
   if (viewMode === "grid") {
+    const titleId = `game-title-grid-${game.id}`;
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500"
+        aria-labelledby={titleId}
         onClick={(e) => {
           // Don't navigate if clicking on an interactive element
           const target = e.target as HTMLElement;
           if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
-            console.log('[GameCard] Grid click blocked - interactive element');
             return;
           }
-          console.log('[GameCard] Grid click - navigating to game:', game.id);
           onClick(game.id);
         }}
       >
@@ -184,21 +187,23 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         </div>
         
         <div className="p-4">
-          <h3 className="theme-text-primary font-semibold text-lg mb-2 truncate flex items-center gap-2">
+          <h3 id={titleId} className="theme-text-primary font-semibold text-lg mb-2 truncate flex items-center gap-2">
             {display_name}
             {renderFavorite()}
-            {platformIcon && <span className="text-sm">{platformIcon}</span>}
+            {platformIcon}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   onQuickAssign?.();
                 }}
-                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
-                title="Quick assign platform"
+                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-orange-400"
+                title={t('platforms') || "Quick assign platform"}
+                aria-label={t('platforms') || "Quick assign platform"}
               >
-                🎮
+                <span role="img" aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
@@ -233,9 +238,11 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
 
   // Compact view mode
   if (viewMode === "compact") {
+    const titleId = `game-title-compact-${game.id}`;
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative focus-within:ring-2 focus-within:ring-indigo-500"
+        aria-labelledby={titleId}
         onClick={(e) => {
           const target = e.target as HTMLElement;
           if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
@@ -258,22 +265,24 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             />
           ) : null}
           <div key={`placeholder-${game.id}`} className={`compact-placeholder ${cover_url ? 'hidden' : ''} absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center`}>
-            <span className="text-2xl">🎮</span>
+            <span className="text-2xl" role="img" aria-hidden="true">🎮</span>
           </div>
           
           {/* Status badge - small */}
           {completion_status && completion_status !== 'not_started' && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onFilter?.('status', completion_status);
               }}
-              className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] text-white z-10 ${
+              className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] text-white z-10 focus-visible:ring-1 focus-visible:ring-white ${
                 completion_status === 'completed' ? 'bg-green-600' :
                 completion_status === 'playing' ? 'bg-blue-600' :
                 completion_status === 'dropped' ? 'bg-red-600' :
                 completion_status === 'wishlist' ? 'bg-purple-600' : 'bg-gray-600'
               } hover:opacity-80 transition-opacity cursor-pointer`}
+              aria-label={`${t('completionStatus')}: ${COMPLETION_STATUS_LABELS[completion_status as keyof typeof COMPLETION_STATUS_LABELS] || completion_status}`}
             >
               {completion_status === 'not_started' ? 'Not Started' :
                completion_status === 'playing' ? 'Playing' :
@@ -291,14 +300,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           {/* Quick assign button - bottom left, above platform icon */}
           {showQuickAssign && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickAssign?.();
               }}
-              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
-              title="Quick assign platform"
+              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10 focus-visible:ring-1 focus-visible:ring-orange-400"
+              title={t('platforms') || "Quick assign platform"}
+              aria-label={t('platforms') || "Quick assign platform"}
             >
-              🎮
+              <span role="img" aria-hidden="true">🎮</span>
             </button>
           )}
           
@@ -309,7 +320,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
         </div>
         
         <div className="p-2">
-          <h3 className="theme-text-primary font-medium text-xs truncate" title={display_name}>
+          <h3 id={titleId} className="theme-text-primary font-medium text-xs truncate" title={display_name}>
             {display_name}
           </h3>
           <div className="flex items-center justify-between mt-1">
@@ -337,9 +348,11 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   }
 
   // List view mode
+  const listTitleId = `game-title-list-${game.id}`;
   return (
     <div
-      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600"
+      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500"
+      aria-labelledby={listTitleId}
       onClick={(e) => {
         const target = e.target as HTMLElement;
         if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
@@ -362,26 +375,28 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           />
         ) : null}
         <div className={`list-placeholder ${cover_url ? 'hidden' : ''} absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center`}>
-          <span className="text-4xl">🎮</span>
+          <span className="text-4xl" role="img" aria-hidden="true">🎮</span>
         </div>
       </div>
       
         <div className="flex-1">
         <div className="flex items-start justify-between">
-          <h3 className="theme-text-primary font-semibold text-lg mb-2 flex items-center gap-2">
+          <h3 id={listTitleId} className="theme-text-primary font-semibold text-lg mb-2 flex items-center gap-2">
             {display_name}
             {renderFavorite()}
-            {platformIcon && <span className="text-lg">{platformIcon}</span>}
+            {platformIcon}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onQuickAssign?.();
                 }}
-                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
-                title="Quick assign platform"
+                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-orange-400"
+                title={t('platforms') || "Quick assign platform"}
+                aria-label={t('platforms') || "Quick assign platform"}
               >
-                🎮
+                <span role="img" aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
