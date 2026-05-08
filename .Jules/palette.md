@@ -1,0 +1,3 @@
+## 2025-05-14 - [A11y] Semantic Buttons and Card Accessibility
+**Learning:** Interactive elements implemented as `<span>` or `<p>` with click handlers are invisible to screen readers and keyboard-only users. Converting these to `<button type="button">` with focus-visible rings and ARIA labels significantly improves accessibility without changing the visual design. For complex card components, `focus-within:ring-2` provides excellent feedback when tabbing through internal actions.
+**Action:** Always prefer `<button type="button">` for interactive elements. Use `aria-labelledby` on card containers to provide context, and ensure all icons have appropriate `aria-label` or `aria-hidden` attributes.

@@ -20,7 +20,6 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
   const [igdbScreenshots, setIgdbScreenshots] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [hasIgdbId, setHasIgdbId] = useState(false);
 
   useEffect(() => {
     const loadScreenshots = async () => {
@@ -29,7 +28,6 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
         // Load game data to check IGDB ID
         try {
           const game = await invoke<{ igdb_id: number | null }>("get_game_by_id", { id: gameId });
-          setHasIgdbId(!!game?.igdb_id);
           
           // Load IGDB screenshots if available
           if (game?.igdb_id) {
@@ -109,8 +107,9 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
         <div className="w-full h-48 bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-600 flex flex-col items-center justify-center gap-3">
           <div className="text-gray-400 text-sm">No screenshots yet</div>
           <button
+            type="button"
             onClick={handleAddScreenshot}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm focus-visible:ring-2 focus-visible:ring-indigo-400"
           >
             + Add Screenshot
           </button>
@@ -142,14 +141,18 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
         {allImages.length > 1 && (
           <>
             <button
+              type="button"
               onClick={() => setCurrentIndex((prev) => (prev - 1 + allImages.length) % allImages.length)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Previous screenshot"
             >
               ←
             </button>
             <button
+              type="button"
               onClick={() => setCurrentIndex((prev) => (prev + 1) % allImages.length)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Next screenshot"
             >
               →
             </button>
@@ -169,6 +172,7 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
         {/* Delete button for local screenshots */}
         {currentIndex >= igdbScreenshots.length && screenshots.length > 0 && (
           <button
+            type="button"
             onClick={() => {
               const localIndex = currentIndex - igdbScreenshots.length;
               const screenshot = screenshots[localIndex];
@@ -176,7 +180,8 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
                 handleDeleteScreenshot(screenshot.id);
               }
             }}
-            className="absolute bottom-2 right-2 px-3 py-1 bg-red-600/80 hover:bg-red-700 text-white rounded text-sm transition-colors"
+            className="absolute bottom-2 right-2 px-3 py-1 bg-red-600/80 hover:bg-red-700 text-white rounded text-sm transition-colors focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Delete local screenshot"
           >
             🗑️ Delete
           </button>
@@ -189,10 +194,13 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
           {allImages.map((url, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => setCurrentIndex(index)}
-              className={`flex-shrink-0 w-20 h-12 rounded overflow-hidden border-2 transition-colors ${
+              className={`flex-shrink-0 w-20 h-12 rounded overflow-hidden border-2 transition-colors focus-within:ring-2 focus-within:ring-indigo-500 ${
                 index === currentIndex ? "border-indigo-500" : "border-transparent hover:border-gray-500"
               }`}
+              aria-label={`View screenshot ${index + 1}`}
+              aria-pressed={index === currentIndex}
             >
               <img
                 src={url}
@@ -206,8 +214,9 @@ export function GameScreenshotsCarousel({ gameId }: GameScreenshotsCarouselProps
 
       {/* Add screenshot button */}
       <button
+        type="button"
         onClick={handleAddScreenshot}
-        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm focus-visible:ring-2 focus-visible:ring-indigo-400"
       >
         + Add Screenshot
       </button>
