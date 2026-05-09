@@ -127,6 +127,7 @@ export function TagEditor({ gameId, tags, onTagsChanged }: TagEditorProps) {
               onClick={() => handleRemoveTag(tag.id)}
               className="ml-1 text-white hover:text-gray-200"
               aria-label={`Remove tag ${tag.name}`}
+              title={`Remove tag ${tag.name}`}
             >
               ×
             </button>
