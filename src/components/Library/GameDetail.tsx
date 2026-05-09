@@ -64,7 +64,11 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     setGame({ ...game, notes: notesValue });
   };
 
-  const handleDelete = async () => { if (await deleteGame(game.id)) onBack(); };
+  const handleDelete = async () => {
+    if (window.confirm(t("confirmDelete"))) {
+      if (await deleteGame(game.id)) onBack();
+    }
+  };
 
   const handlePlayTimeChange = async (hours: number) => {
     if (await updatePlayTime(game.id, hours)) {
@@ -158,9 +162,10 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
       <div className="pt-4 theme-border border-t mt-6 space-y-4">
         {/* Launch Path / Executable */}
         <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('executablePath')}</label>
+          <label htmlFor={`executable-path-${game.id}`} className="block text-sm font-medium theme-text-secondary mb-1">{t('executablePath')}</label>
           <div className="flex gap-2">
             <input
+              id={`executable-path-${game.id}`}
               type="text"
               value={game.executable_path || ''}
               readOnly
@@ -180,6 +185,7 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
                 onClick={handleClearExecutable}
                 className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                 title="Clear executable path"
+                aria-label="Clear executable path"
               >
                 ✕
               </button>
@@ -198,8 +204,9 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
 
         {/* Completion Status */}
         <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('completionStatus')}</label>
+          <label htmlFor={`completion-status-${game.id}`} className="block text-sm font-medium theme-text-secondary mb-1">{t('completionStatus')}</label>
           <select
+            id={`completion-status-${game.id}`}
             value={game.completion_status || 'playing'}
             onChange={(e) => handleStatusChange(e.target.value)}
             className="w-full px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
@@ -213,8 +220,9 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
 
         {/* Play Time */}
         <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('playTime')} ({t('hours')})</label>
+          <label htmlFor={`play-time-${game.id}`} className="block text-sm font-medium theme-text-secondary mb-1">{t('playTime')} ({t('hours')})</label>
           <input
+            id={`play-time-${game.id}`}
             type="number"
             min="0"
             step="0.1"
@@ -224,8 +232,8 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium theme-text-secondary mb-1">{t('notes')}</label>
-          <textarea value={notesValue} onChange={(e) => setNotesValue(e.target.value)}
+          <label htmlFor={`notes-${game.id}`} className="block text-sm font-medium theme-text-secondary mb-1">{t('notes')}</label>
+          <textarea id={`notes-${game.id}`} value={notesValue} onChange={(e) => setNotesValue(e.target.value)}
             onBlur={handleSaveNotes} rows={4}
             className="w-full px-3 py-2 theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             placeholder={t('addNotes')} />
