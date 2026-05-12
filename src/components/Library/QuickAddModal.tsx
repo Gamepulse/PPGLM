@@ -89,7 +89,7 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium theme-text-secondary mb-1">
+            <label htmlFor="game-name" className="block text-sm font-medium theme-text-secondary mb-1">
               {t('name')} *
             </label>
             <input
@@ -105,7 +105,7 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium theme-text-secondary mb-1">
+            <label htmlFor="folder-path" className="block text-sm font-medium theme-text-secondary mb-1">
               Folder Path
             </label>
             <div className="flex gap-2">
@@ -130,7 +130,7 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium theme-text-secondary mb-1">
+            <label htmlFor="executable-path" className="block text-sm font-medium theme-text-secondary mb-1">
               {t('executablePath')}
             </label>
             <div className="flex gap-2">
@@ -155,7 +155,7 @@ export function QuickAddModal({ isOpen, onClose, onGameAdded }: QuickAddModalPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium theme-text-secondary mb-1">
+            <label htmlFor="igdb-id" className="block text-sm font-medium theme-text-secondary mb-1">
               IGDB ID
             </label>
             <input

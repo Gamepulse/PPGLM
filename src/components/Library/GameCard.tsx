@@ -197,6 +197,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 }}
                 className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
                 title="Quick assign platform"
+                aria-label="Quick assign platform"
               >
                 🎮
               </button>
@@ -297,6 +298,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
               }}
               className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
               title="Quick assign platform"
+              aria-label="Quick assign platform"
             >
               🎮
             </button>
@@ -380,6 +382,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 }}
                 className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
                 title="Quick assign platform"
+                aria-label="Quick assign platform"
               >
                 🎮
               </button>
