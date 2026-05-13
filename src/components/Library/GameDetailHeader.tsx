@@ -147,6 +147,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               type="button"
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
@@ -161,10 +162,11 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Platform Selector */}
         {onPlatformChange && (
           <div>
-            <label className="block text-xs font-medium theme-text-secondary mb-1">
+            <label htmlFor="platform-selector" className="block text-xs font-medium theme-text-secondary mb-1">
               {t('platforms') || 'Plateformes'}
             </label>
             <select
+              id="platform-selector"
               value={game.platform || ''}
               onChange={handlePlatformSelect}
               className="w-full px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
@@ -364,11 +366,12 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <label htmlFor="personal-rating-range" className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></label>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
+              id="personal-rating-range"
               type="range"
               min="0"
               max="100"
@@ -390,7 +393,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 

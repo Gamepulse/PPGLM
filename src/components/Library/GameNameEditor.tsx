@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { useI18n } from "../../i18n";
 import type { Game } from "../../types";
 
 interface IgdbGame {
@@ -24,6 +25,7 @@ interface GameNameEditorProps {
 }
 
 export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
+  const { t } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(game.display_name);
   const [isSearching, setIsSearching] = useState(false);
@@ -161,9 +163,10 @@ export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
         <button
           onClick={handleStartEdit}
           className="text-gray-500 hover:text-blue-400 p-1 transition-colors"
-          title="Edit name"
+          aria-label={t('editName')}
+          title={t('editName')}
         >
-          ✏️
+          <span aria-hidden="true">✏️</span>
         </button>
       </div>
     );
@@ -187,12 +190,13 @@ export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
             onClick={handleSearchIgdb}
             disabled={isSearching || !editValue.trim()}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
+            aria-label={t('reSearch')}
             title={isSearching ? 'Re-scanning...' : 'Re-Scan IGDB'}
           >
             {isSearching ? (
-              <span className="animate-spin">⟳</span>
+              <span className="animate-spin" aria-hidden="true">⟳</span>
             ) : (
-              <span>🔄</span>
+              <span aria-hidden="true">🔄</span>
             )}
           </button>
         )}
@@ -200,16 +204,18 @@ export function GameNameEditor({ game, onGameUpdated }: GameNameEditorProps) {
           onClick={handleSave}
           disabled={!editValue.trim()}
           className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
-          title="Save"
+          aria-label={t('apply')}
+          title={t('apply')}
         >
-          ✓
+          <span aria-hidden="true">✓</span>
         </button>
         <button
           onClick={handleCancel}
           className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-          title="Cancel"
+          aria-label={t('cancel')}
+          title={t('cancel')}
         >
-          ✕
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
 
