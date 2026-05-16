@@ -1,0 +1,4 @@
+## 2025-05-15 - [GameCard Accessibility & Keyboard Navigation]
+**Learning:** Interactive card containers that act as buttons should include `tabIndex={0}`, `role="button"`, and an `aria-label` based on their primary content. When nesting interactive elements (like tags or buttons) within these cards, use `if (e.target !== e.currentTarget) return;` in the container's keydown handler and `e.stopPropagation()` in the child's click handler to prevent event bubbling from triggering the card's primary action.
+
+**Action:** Prefer semantic `<button type="button">` over `<span role="button">` for all interactive tags and badges to gain native keyboard support and reduce custom accessibility logic. Always use `focus-within:ring-2` on card containers to provide a clear focus indicator when any child element receives focus.
