@@ -1,0 +1,3 @@
+## 2025-05-15 - [Accessible Card Pattern with Nested Interactivity]
+**Learning:** When building complex card components that are themselves interactive (like `GameCard`), adding `role="button"` to the entire container while also containing internal `<button>` elements (e.g., for tags or status badges) creates a nested interactivity anti-pattern. This confuses screen readers and violates ARIA specifications.
+**Action:** Avoid nesting focusable elements within an element with `role="button"`. Instead, use a "stretched link" approach for the card's primary action or keep the container purely stylistic while providing distinct, non-nested buttons for internal actions.
