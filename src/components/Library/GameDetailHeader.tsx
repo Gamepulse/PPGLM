@@ -132,7 +132,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 alt={game.display_name} 
                 className="w-full rounded-lg" 
               />
-              <div className="svg-text-mask">
+              <div className="svg-text-mask" aria-hidden="true">
                 <span className="text-4xl font-black text-white drop-shadow-lg" style={{textShadow: '0 2px 8px rgba(0,0,0,0.4)'}}>PPGM</span>
               </div>
             </div>
@@ -148,11 +148,12 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
-                <span className="text-yellow-400 drop-shadow-lg">★</span>
+                <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
               ) : (
-                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+                <span className="text-gray-400 hover:text-yellow-300" aria-hidden="true">☆</span>
               )}
             </button>
           )}
@@ -364,7 +365,20 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <div className="flex items-center gap-2">
+              <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+              {game.personal_rating !== null && game.personal_rating !== undefined && (
+                <button
+                  type="button"
+                  onClick={() => onRatingChange?.(null)}
+                  className="text-gray-500 hover:text-red-500 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1"
+                  title={t('clearRating')}
+                  aria-label={t('clearRating')}
+                >
+                  <span aria-hidden="true">✕</span>
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs theme-text-muted">0</span>
