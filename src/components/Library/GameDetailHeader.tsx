@@ -364,7 +364,20 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <div className="flex items-center gap-2">
+              <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+              {game.personal_rating !== null && game.personal_rating !== undefined && (
+                <button
+                  type="button"
+                  onClick={() => onRatingChange?.(null)}
+                  className="theme-text-muted hover:text-red-400 transition-colors focus-visible:ring-1 focus-visible:ring-red-400 rounded p-0.5"
+                  aria-label={t('clearRating')}
+                  title={t('clearRating')}
+                >
+                  <span aria-hidden="true">✕</span>
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs theme-text-muted">0</span>
