@@ -49,6 +49,7 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Personal Rating',
+    clearRating: 'Clear Rating',
     notes: 'Notes',
     saveNotes: 'Save Notes',
     deleteGame: 'Delete Game',
@@ -291,7 +292,7 @@ export const translations = {
     playTime: 'Play Time',
     hours: 'hours',
     platform: 'Platform',
-    platforms: 'Plateformes',
+    platforms: 'Platforms',
     selectPlatform: 'Select platform...',
     noPlatform: 'No platform',
     availableOnIGDB: 'Available on',
@@ -435,6 +436,7 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Note personnelle',
+    clearRating: 'Effacer la note',
     notes: 'Notes',
     saveNotes: 'Sauvegarder les notes',
     deleteGame: 'Supprimer le jeu',
