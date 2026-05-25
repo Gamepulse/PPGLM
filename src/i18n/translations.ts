@@ -49,6 +49,7 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Personal Rating',
+    clearRating: 'Clear Rating',
     notes: 'Notes',
     saveNotes: 'Save Notes',
     deleteGame: 'Delete Game',
@@ -294,6 +295,7 @@ export const translations = {
     platforms: 'Plateformes',
     selectPlatform: 'Select platform...',
     noPlatform: 'No platform',
+    quickAssignPlatform: 'Quick Assign Platform',
     availableOnIGDB: 'Available on',
     igdbPlatformsHint: 'Select the platform you actually own from the list above',
     completionStatus: 'Status',
@@ -435,6 +437,7 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Note personnelle',
+    clearRating: 'Effacer la note',
     notes: 'Notes',
     saveNotes: 'Sauvegarder les notes',
     deleteGame: 'Supprimer le jeu',
@@ -680,6 +683,7 @@ export const translations = {
     platforms: 'Plateformes',
     selectPlatform: 'Sélectionnez la plateforme...',
     noPlatform: 'Aucune plateforme',
+    quickAssignPlatform: 'Assigner rapidement une plateforme',
     availableOnIGDB: 'Disponible sur',
     igdbPlatformsHint: 'Sélectionnez la plateforme que vous possédez réellement dans la liste ci-dessus',
     completionStatus: 'Statut',
