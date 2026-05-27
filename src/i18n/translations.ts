@@ -343,6 +343,8 @@ export const translations = {
     more: 'more',
     clearAll: 'Clear All',
     tryAdjustingFilters: 'Try adjusting your filters',
+    clearRating: 'Clear Rating',
+    quickAssignPlatform: 'Quick Assign Platform',
     
     // Screenshot Background
     screenshotBackground: 'Game Detail Background',
@@ -729,6 +731,8 @@ export const translations = {
     more: 'de plus',
     clearAll: 'Tout effacer',
     tryAdjustingFilters: 'Essayez d\'ajuster vos filtres',
+    clearRating: 'Effacer la note',
+    quickAssignPlatform: 'Assignation rapide de plateforme',
     
     // Screenshot Background
     screenshotBackground: 'Arrière-plan de la fiche jeu',
