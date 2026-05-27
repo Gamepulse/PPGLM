@@ -64,7 +64,11 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
     setGame({ ...game, notes: notesValue });
   };
 
-  const handleDelete = async () => { if (await deleteGame(game.id)) onBack(); };
+  const handleDelete = async () => {
+    if (window.confirm(t('confirmDelete'))) {
+      if (await deleteGame(game.id)) onBack();
+    }
+  };
 
   const handlePlayTimeChange = async (hours: number) => {
     if (await updatePlayTime(game.id, hours)) {
@@ -179,7 +183,8 @@ export function GameDetail({ gameId, onBack, onFilter }: GameDetailProps) {
                 type="button"
                 onClick={handleClearExecutable}
                 className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-                title="Clear executable path"
+                title={t('remove') || "Remove"}
+                aria-label={t('remove') || "Remove"}
               >
                 ✕
               </button>
