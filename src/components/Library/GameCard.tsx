@@ -31,24 +31,19 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     return (
       <div className="flex flex-wrap gap-1 mt-2 pointer-events-auto">
         {displayedTags.map((tag) => (
-          <span
+          <button
             key={tag.id}
+            type="button"
             onClick={(e) => {
-              console.log('[GameCard] Click handler fired for tag:', tag.name);
               e.stopPropagation();
               e.preventDefault();
-              console.log('[GameCard] Calling onFilter with:', 'tag', tag.name);
-              if (onFilter) {
-                onFilter('tag', tag.name);
-              } else {
-                console.warn('[GameCard] onFilter is undefined!');
-              }
+              onFilter?.('tag', tag.name);
             }}
-            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto`}
-            role="button"
+            className={`relative z-20 px-2 py-0.5 text-xs rounded-full text-white ${getCategoryColor(tag.category)} hover:opacity-80 hover:scale-110 hover:shadow-md transition-all cursor-pointer select-none border border-transparent hover:border-white/30 pointer-events-auto focus-visible:ring-2 focus-visible:ring-white/50 outline-none`}
+            aria-label={`${t('tags')}: ${tag.name}`}
           >
             {tag.name}
-          </span>
+          </button>
         ))}
         
         {remainingCount > 0 && (
@@ -73,19 +68,19 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     return (
       <div className="flex flex-wrap gap-1 mt-1">
         {allMetadata.map((item) => (
-          <span
+          <button
             key={`${item.type}-${item.id}`}
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              console.log('[GameCard] Metadata tag clicked:', item.type, item.name);
               onFilter?.(item.type, item.name);
             }}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none"
-            role="button"
+            className="px-1.5 py-0.5 text-xs rounded bg-gray-700/50 theme-text-muted hover:bg-indigo-600/30 transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+            aria-label={`${t(item.type as any) || item.type}: ${item.name}`}
           >
             {item.name}
-          </span>
+          </button>
         ))}
       </div>
     );
@@ -132,18 +127,18 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
     const label = COMPLETION_STATUS_LABELS[completion_status as keyof typeof COMPLETION_STATUS_LABELS] || completion_status;
     
     return (
-      <span
+      <button
+        type="button"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          console.log('[GameCard] Status badge clicked:', completion_status);
           onFilter?.('status', completion_status);
         }}
-        className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none`}
-        role="button"
+        className={`absolute top-2 left-2 z-10 px-2 py-1 rounded-full text-xs text-white ${statusColors[completion_status] || 'bg-gray-600'} hover:opacity-80 transition-opacity cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-white/50 outline-none`}
+        aria-label={`${t('completionStatus')}: ${label}`}
       >
         {label}
-      </span>
+      </button>
     );
   };
 
@@ -190,15 +185,17 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {platformIcon && <span className="text-sm">{platformIcon}</span>}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   onQuickAssign?.();
                 }}
-                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
-                title="Quick assign platform"
+                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-orange-400 outline-none"
+                title={t('quickAssignPlatform')}
+                aria-label={t('quickAssignPlatform')}
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
@@ -264,6 +261,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           {/* Status badge - small */}
           {completion_status && completion_status !== 'not_started' && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onFilter?.('status', completion_status);
@@ -273,7 +271,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 completion_status === 'playing' ? 'bg-blue-600' :
                 completion_status === 'dropped' ? 'bg-red-600' :
                 completion_status === 'wishlist' ? 'bg-purple-600' : 'bg-gray-600'
-              } hover:opacity-80 transition-opacity cursor-pointer`}
+              } hover:opacity-80 transition-opacity cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/50`}
+              aria-label={`${t('completionStatus')}: ${
+                completion_status === 'not_started' ? 'Not Started' :
+                completion_status === 'playing' ? 'Playing' :
+                completion_status === 'completed' ? 'Completed' :
+                completion_status === 'dropped' ? 'Dropped' :
+                completion_status === 'wishlist' ? 'Wishlist' : completion_status
+              }`}
             >
               {completion_status === 'not_started' ? 'Not Started' :
                completion_status === 'playing' ? 'Playing' :
@@ -291,14 +296,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           {/* Quick assign button - bottom left, above platform icon */}
           {showQuickAssign && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickAssign?.();
               }}
-              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
-              title="Quick assign platform"
+              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10 focus-visible:ring-2 focus-visible:ring-orange-400 outline-none"
+              title={t('quickAssignPlatform')}
+              aria-label={t('quickAssignPlatform')}
             >
-              🎮
+              <span aria-hidden="true">🎮</span>
             </button>
           )}
           
@@ -374,14 +381,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {platformIcon && <span className="text-lg">{platformIcon}</span>}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onQuickAssign?.();
                 }}
-                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
-                title="Quick assign platform"
+                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-orange-400 outline-none"
+                title={t('quickAssignPlatform')}
+                aria-label={t('quickAssignPlatform')}
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
