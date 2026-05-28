@@ -146,8 +146,9 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
-              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
+              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110 focus-visible:outline-none"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               {game.is_favorite ? (
                 <span className="text-yellow-400 drop-shadow-lg">★</span>
@@ -252,15 +253,20 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Status badges */}
         <div className="flex items-center gap-2 flex-wrap">
           {game.completion_status && game.completion_status !== 'not_started' && (
-            <span className={`px-2 py-1 text-xs rounded-full text-white ${
-              game.completion_status === 'completed' ? 'bg-green-600' :
-              game.completion_status === 'playing' ? 'bg-blue-600' :
-              game.completion_status === 'dropped' ? 'bg-red-600' :
-              game.completion_status === 'wishlist' ? 'bg-purple-600' :
-              'bg-gray-600'
-            }`}>
+            <button
+              type="button"
+              onClick={() => onFilter?.('status', game.completion_status!)}
+              className={`px-2 py-1 text-xs rounded-full text-white ${
+                game.completion_status === 'completed' ? 'bg-green-600' :
+                game.completion_status === 'playing' ? 'bg-blue-600' :
+                game.completion_status === 'dropped' ? 'bg-red-600' :
+                game.completion_status === 'wishlist' ? 'bg-purple-600' :
+                'bg-gray-600'
+              } hover:opacity-80 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50`}
+              aria-label={`${t('completionStatus')}: ${t(game.completion_status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}`}
+            >
               {t(game.completion_status as 'notStarted' | 'playing' | 'completed' | 'dropped' | 'wishlist')}
-            </span>
+            </button>
           )}
           {game.completion_status !== 'not_started' && game.play_time && game.play_time > 0 && (
             <span className="px-2 py-1 text-xs rounded-full bg-indigo-600 text-white">
@@ -365,6 +371,17 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            {game.personal_rating !== null && game.personal_rating !== undefined && (
+              <button
+                type="button"
+                onClick={() => onRatingChange?.(null)}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 px-1.5 py-0.5 rounded border border-red-900/30 hover:bg-red-900/20"
+                title={t('clearRating')}
+                aria-label={t('clearRating')}
+              >
+                ✕ {t('clearRating')}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs theme-text-muted">0</span>
@@ -388,7 +405,9 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:bg-indigo-500 
                 [&::-moz-range-thumb]:rounded-full 
                 [&::-moz-range-thumb]:cursor-pointer
-                [&::-moz-range-thumb]:border-0"
+                [&::-moz-range-thumb]:border-0
+                focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              aria-label={t('personalRating')}
             />
             <span className="text-xs theme-text-muted">100</span>
           </div>
