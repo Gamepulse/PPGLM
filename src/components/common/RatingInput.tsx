@@ -58,9 +58,10 @@ export function RatingInput({ value, onChange, disabled }: RatingInputProps) {
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
               }
             `}
-            aria-label={`Rating ${rating}`}
+            aria-label={`Rate ${rating} out of 10`}
+            aria-pressed={value === rating}
           >
-            {rating}
+            <span aria-hidden="true">{rating}</span>
           </button>
         );
       })}
