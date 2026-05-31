@@ -1,0 +1,3 @@
+## 2025-05-15 - [Range Input Null State & Accessibility]
+**Learning:** Native HTML range inputs (`type="range"`) do not support a `null` or "unset" state once a value is interacted with. For features like personal ratings where "no rating" is a valid state, providing a separate "Clear" button is essential for usability. From an accessibility standpoint, range inputs must be explicitly associated with a `<label>` via `id`/`htmlFor`, and any purely decorative boundary markers (like "0" and "100" text) should be marked with `aria-hidden="true"` to avoid redundant screen reader announcements.
+**Action:** When using range sliders for optional numeric values, always include an explicit "Clear" action and verify proper ARIA labeling and marker hiding.
