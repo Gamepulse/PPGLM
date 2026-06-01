@@ -190,15 +190,17 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {platformIcon && <span className="text-sm">{platformIcon}</span>}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   onQuickAssign?.();
                 }}
-                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
-                title="Quick assign platform"
+                className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-white"
+                title={t('selectPlatform')}
+                aria-label={t('selectPlatform')}
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
@@ -291,14 +293,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           {/* Quick assign button - bottom left, above platform icon */}
           {showQuickAssign && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickAssign?.();
               }}
-              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
-              title="Quick assign platform"
+              className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10 focus-visible:ring-1 focus-visible:ring-white"
+              title={t('selectPlatform')}
+              aria-label={t('selectPlatform')}
             >
-              🎮
+              <span aria-hidden="true">🎮</span>
             </button>
           )}
           
@@ -374,14 +378,16 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {platformIcon && <span className="text-lg">{platformIcon}</span>}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onQuickAssign?.();
                 }}
-                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
-                title="Quick assign platform"
+                className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors focus-visible:ring-2 focus-visible:ring-white"
+                title={t('selectPlatform')}
+                aria-label={t('selectPlatform')}
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
               </button>
             )}
           </h3>
