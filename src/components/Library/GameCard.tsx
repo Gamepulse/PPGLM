@@ -17,6 +17,15 @@ interface GameCardProps {
 const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, showQuickAssign, onQuickAssign }) => {
   const { t } = useI18n();
   const { display_name, cover_url, personal_rating, igdb_rating, tags, release_date, completion_status, play_time, is_favorite, genres, game_modes, player_perspectives, themes, platform } = game;
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      if (e.target === e.currentTarget) {
+        e.preventDefault();
+        onClick(game.id);
+      }
+    }
+  };
   
   const platformIcon = platform ? (platform.startsWith('ps') ? '🎮' : platform.startsWith('xbox') ? '🎯' : platform.startsWith('nintendo') ? '🕹️' : platform === 'pc' ? '💻' : platform === 'mobile' ? '📱' : '📟') : null;
   
@@ -166,12 +175,17 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   if (viewMode === "grid") {
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 outline-none"
+        role="button"
+        tabIndex={0}
+        aria-label={display_name}
+        onKeyDown={handleKeyDown}
         onClick={(e) => {
-          // Don't navigate if clicking on an interactive element
+          // Don't navigate if clicking on an interactive element (excluding the container itself)
           const target = e.target as HTMLElement;
-          if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
-            console.log('[GameCard] Grid click blocked - interactive element');
+          const interactiveChild = target.closest('button, a, [role="button"]');
+          if (interactiveChild && interactiveChild !== e.currentTarget) {
+            console.log('[GameCard] Grid click blocked - interactive child');
             return;
           }
           console.log('[GameCard] Grid click - navigating to game:', game.id);
@@ -190,6 +204,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {platformIcon && <span className="text-sm">{platformIcon}</span>}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -197,6 +212,7 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
                 }}
                 className="ml-auto text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
                 title="Quick assign platform"
+                aria-label={t('quickAdd')}
               >
                 🎮
               </button>
@@ -235,10 +251,15 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   if (viewMode === "compact") {
     return (
       <div
-        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative"
+        className="theme-card theme-border border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-gray-600 relative focus-within:ring-2 focus-within:ring-indigo-500 outline-none"
+        role="button"
+        tabIndex={0}
+        aria-label={display_name}
+        onKeyDown={handleKeyDown}
         onClick={(e) => {
           const target = e.target as HTMLElement;
-          if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
+          const interactiveChild = target.closest('button, a, [role="button"]');
+          if (interactiveChild && interactiveChild !== e.currentTarget) {
             return;
           }
           onClick(game.id);
@@ -291,12 +312,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
           {/* Quick assign button - bottom left, above platform icon */}
           {showQuickAssign && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickAssign?.();
               }}
               className="absolute bottom-1 left-1 w-5 h-5 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors z-10"
               title="Quick assign platform"
+              aria-label={t('quickAdd')}
             >
               🎮
             </button>
@@ -339,10 +362,15 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
   // List view mode
   return (
     <div
-      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600"
+      className="theme-card theme-border border rounded-lg p-4 flex gap-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 outline-none"
+      role="button"
+      tabIndex={0}
+      aria-label={display_name}
+      onKeyDown={handleKeyDown}
       onClick={(e) => {
         const target = e.target as HTMLElement;
-        if (target.closest('[role="button"]') || target.closest('button') || target.closest('a')) {
+        const interactiveChild = target.closest('button, a, [role="button"]');
+        if (interactiveChild && interactiveChild !== e.currentTarget) {
           return;
         }
         onClick(game.id);
@@ -374,12 +402,14 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick, viewMode, onFilter, 
             {platformIcon && <span className="text-lg">{platformIcon}</span>}
             {showQuickAssign && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onQuickAssign?.();
                 }}
                 className="ml-2 text-xs px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded transition-colors"
                 title="Quick assign platform"
+                aria-label={t('quickAdd')}
               >
                 🎮
               </button>
