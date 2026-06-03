@@ -132,7 +132,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 alt={game.display_name} 
                 className="w-full rounded-lg" 
               />
-              <div className="svg-text-mask">
+              <div className="svg-text-mask" aria-hidden="true">
                 <span className="text-4xl font-black text-white drop-shadow-lg" style={{textShadow: '0 2px 8px rgba(0,0,0,0.4)'}}>PPGM</span>
               </div>
             </div>
@@ -146,13 +146,15 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
-              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
+              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110 focus-visible:ring-2 ring-yellow-400 ring-offset-2 ring-offset-gray-900 rounded-full outline-none"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-pressed={game.is_favorite || false}
             >
               {game.is_favorite ? (
-                <span className="text-yellow-400 drop-shadow-lg">★</span>
+                <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
               ) : (
-                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+                <span className="text-gray-400 hover:text-yellow-300" aria-hidden="true">☆</span>
               )}
             </button>
           )}
@@ -161,10 +163,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Platform Selector */}
         {onPlatformChange && (
           <div>
-            <label className="block text-xs font-medium theme-text-secondary mb-1">
+            <label
+              htmlFor={`platform-select-${game.id}`}
+              className="block text-xs font-medium theme-text-secondary mb-1"
+            >
               {t('platforms') || 'Plateformes'}
             </label>
             <select
+              id={`platform-select-${game.id}`}
               value={game.platform || ''}
               onChange={handlePlatformSelect}
               className="w-full px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
@@ -233,21 +239,23 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* IGDB Page button prominently displayed */}
         {game.igdb_id && (
           <button type="button" onClick={handleOpenIgdb}
-            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
-            🌐 {t('igdbPage')} ↗
+            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1 focus-visible:ring-2 ring-blue-500 outline-none">
+            <span aria-hidden="true">🌐</span> {t('igdbPage')} <span aria-hidden="true">↗</span>
           </button>
         )}
 
         {/* Folder path */}
-        <p 
-          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
+        <button
+          type="button"
+          className="theme-text-muted text-sm font-mono hover:text-blue-400 hover:underline transition-colors flex items-center gap-1 text-left w-full focus-visible:ring-2 ring-blue-500 rounded outline-none"
           onClick={handleOpenFolder}
           title={t('openFolder') || "Click to open folder"}
+          aria-label={`${t('openFolder') || "Open folder"}: ${game.folder_path}`}
         >
-          <span>📁</span>
+          <span aria-hidden="true">📁</span>
           <span className="truncate">{game.folder_path}</span>
-          <span className="text-xs opacity-50">↗</span>
-        </p>
+          <span className="text-xs opacity-50" aria-hidden="true">↗</span>
+        </button>
 
         {/* Status badges */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -364,10 +372,22 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <span className="theme-text-muted text-sm">
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </span>
+            {game.personal_rating !== null && game.personal_rating !== undefined && onRatingChange && (
+              <button
+                type="button"
+                onClick={() => onRatingChange(null)}
+                className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 theme-text-primary rounded transition-colors focus-visible:ring-2 ring-indigo-500 outline-none"
+                aria-label={t('clearRating')}
+              >
+                {t('clearRating')}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
               type="range"
               min="0"
@@ -375,6 +395,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               step="1"
               value={game.personal_rating || 0}
               onChange={(e) => onRatingChange?.(parseInt(e.target.value) || 0)}
+              aria-label={t('personalRating')}
               className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer
                 [&::-webkit-slider-thumb]:appearance-none 
                 [&::-webkit-slider-thumb]:w-4 
@@ -390,7 +411,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 
