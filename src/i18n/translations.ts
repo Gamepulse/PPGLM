@@ -342,6 +342,7 @@ export const translations = {
     manual: 'Manual',
     more: 'more',
     clearAll: 'Clear All',
+    clearRating: 'Clear',
     tryAdjustingFilters: 'Try adjusting your filters',
     
     // Screenshot Background
@@ -728,6 +729,7 @@ export const translations = {
     manual: 'Manuel',
     more: 'de plus',
     clearAll: 'Tout effacer',
+    clearRating: 'Réinitialiser',
     tryAdjustingFilters: 'Essayez d\'ajuster vos filtres',
     
     // Screenshot Background

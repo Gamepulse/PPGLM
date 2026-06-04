@@ -138,7 +138,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             </div>
           ) : (
             <div className="w-full h-80 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg flex items-center justify-center">
-              <span className="text-5xl">🎮</span>
+              <span className="text-5xl" aria-hidden="true">🎮</span>
             </div>
           )}
           {/* Favorite Star - top right corner */}
@@ -146,13 +146,15 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
-              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
+              className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110 focus-visible:ring-2 ring-offset-2 ring-offset-gray-900 rounded-full"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-pressed={!!game.is_favorite}
             >
               {game.is_favorite ? (
-                <span className="text-yellow-400 drop-shadow-lg">★</span>
+                <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
               ) : (
-                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+                <span className="text-gray-400 hover:text-yellow-300" aria-hidden="true">☆</span>
               )}
             </button>
           )}
@@ -233,8 +235,8 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* IGDB Page button prominently displayed */}
         {game.igdb_id && (
           <button type="button" onClick={handleOpenIgdb}
-            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
-            🌐 {t('igdbPage')} ↗
+            className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1 focus-visible:ring-2 ring-offset-1 ring-offset-gray-900">
+            <span aria-hidden="true">🌐</span> {t('igdbPage')} ↗
           </button>
         )}
 
@@ -244,7 +246,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           onClick={handleOpenFolder}
           title={t('openFolder') || "Click to open folder"}
         >
-          <span>📁</span>
+          <span aria-hidden="true">📁</span>
           <span className="truncate">{game.folder_path}</span>
           <span className="text-xs opacity-50">↗</span>
         </p>
@@ -364,11 +366,23 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <label htmlFor={`rating-${game.id}`} className="theme-text-muted text-sm cursor-pointer">
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </label>
+            {game.personal_rating !== null && game.personal_rating !== undefined && onRatingChange && (
+              <button
+                type="button"
+                onClick={() => onRatingChange(null)}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors focus-visible:ring-1 ring-red-400 rounded px-1"
+              >
+                {t('clearRating')}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
+              id={`rating-${game.id}`}
               type="range"
               min="0"
               max="100"
@@ -383,6 +397,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-webkit-slider-thumb]:rounded-full 
                 [&::-webkit-slider-thumb]:cursor-pointer
                 [&::-webkit-slider-thumb]:hover:bg-indigo-400
+                focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none
                 [&::-moz-range-thumb]:w-4 
                 [&::-moz-range-thumb]:h-4 
                 [&::-moz-range-thumb]:bg-indigo-500 
@@ -390,7 +405,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 
