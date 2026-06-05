@@ -1,0 +1,3 @@
+## 2025-05-15 - [Accessible Rating Resets]
+**Learning:** Native HTML range inputs used for ratings cannot represent a 'null' or un-set state once interaction begins. For a better UX, providing a separate 'Clear' or 'Remove' button allows users to unset numeric values. Additionally, slider boundary labels (e.g., '0' and '100') should be hidden from screen readers if the input itself is appropriately labeled to reduce auditory clutter.
+**Action:** Always include a reset mechanism for numeric inputs that map to nullable database fields, and ensure range inputs have both a descriptive 'aria-label' and 'aria-hidden' boundary markers.
