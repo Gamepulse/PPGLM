@@ -148,11 +148,13 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-pressed={!!game.is_favorite}
             >
               {game.is_favorite ? (
-                <span className="text-yellow-400 drop-shadow-lg">★</span>
+                <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
               ) : (
-                <span className="text-gray-400 hover:text-yellow-300">☆</span>
+                <span className="text-gray-400 hover:text-yellow-300" aria-hidden="true">☆</span>
               )}
             </button>
           )}
@@ -161,10 +163,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Platform Selector */}
         {onPlatformChange && (
           <div>
-            <label className="block text-xs font-medium theme-text-secondary mb-1">
+            <label
+              htmlFor={`platform-select-${game.id}`}
+              className="block text-xs font-medium theme-text-secondary mb-1"
+            >
               {t('platforms') || 'Plateformes'}
             </label>
             <select
+              id={`platform-select-${game.id}`}
               value={game.platform || ''}
               onChange={handlePlatformSelect}
               className="w-full px-2 py-1.5 text-sm theme-bg-tertiary theme-border border rounded-lg theme-text-primary focus:ring-2 focus:ring-indigo-500"
@@ -233,21 +239,25 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* IGDB Page button prominently displayed */}
         {game.igdb_id && (
           <button type="button" onClick={handleOpenIgdb}
+            title={`${t('viewOnIgdb')} - ${game.display_name}`}
+            aria-label={`${t('viewOnIgdb')} - ${game.display_name}`}
             className="text-blue-400 hover:text-blue-300 text-sm px-3 py-1.5 bg-blue-900/40 rounded-lg hover:bg-blue-900/60 transition-colors inline-flex items-center gap-1">
-            🌐 {t('igdbPage')} ↗
+            <span aria-hidden="true">🌐</span> {t('igdbPage')} ↗
           </button>
         )}
 
         {/* Folder path */}
-        <p 
-          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
+        <button
+          type="button"
+          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1 w-full text-left"
           onClick={handleOpenFolder}
-          title={t('openFolder') || "Click to open folder"}
+          title={`${t('openFolder')}: ${game.folder_path}`}
+          aria-label={`${t('openFolder')}: ${game.folder_path}`}
         >
-          <span>📁</span>
+          <span aria-hidden="true">📁</span>
           <span className="truncate">{game.folder_path}</span>
-          <span className="text-xs opacity-50">↗</span>
-        </p>
+          <span className="text-xs opacity-50" aria-hidden="true">↗</span>
+        </button>
 
         {/* Status badges */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -364,11 +374,28 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <label
+              htmlFor={`rating-range-${game.id}`}
+              className="theme-text-muted text-sm"
+            >
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </label>
+            {game.personal_rating !== null && game.personal_rating !== undefined && (
+              <button
+                type="button"
+                onClick={() => onRatingChange?.(null)}
+                className="text-xs theme-text-muted hover:theme-text-primary transition-colors flex items-center gap-1"
+                title={t('clearRating')}
+                aria-label={t('clearRating')}
+              >
+                ✕ {t('clearRating')}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
+              id={`rating-range-${game.id}`}
               type="range"
               min="0"
               max="100"
@@ -390,7 +417,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 
