@@ -1,0 +1,3 @@
+## 2025-05-14 - Rating Reset & Accessible Form Controls
+**Learning:** Native HTML range inputs cannot represent a 'null' state once interacted with, necessitating a separate 'Clear' action for numeric values like personal ratings. Additionally, ARIA compliance for these controls requires explicit labeling via `htmlFor` and suppressing decorative min/max text labels with `aria-hidden` to avoid screen reader redundancy.
+**Action:** Always provide a 'Clear' button for optional numeric inputs and ensure all form controls in `GameDetailHeader` (and similar components) use unique IDs with matching labels.
