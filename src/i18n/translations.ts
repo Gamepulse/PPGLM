@@ -330,6 +330,7 @@ export const translations = {
     deselectAll: 'Deselect All',
     apply: 'Apply',
     quickAdd: 'Quick Add',
+    quickAssign: 'Quick assign platform',
     addGameManually: 'Add Game Manually',
     exportCSV: 'Export to CSV',
     searchHistory: 'Search History',
@@ -342,6 +343,7 @@ export const translations = {
     manual: 'Manual',
     more: 'more',
     clearAll: 'Clear All',
+    clearRating: 'Clear Rating',
     tryAdjustingFilters: 'Try adjusting your filters',
     
     // Screenshot Background
@@ -716,6 +718,7 @@ export const translations = {
     deselectAll: 'Tout désélectionner',
     apply: 'Appliquer',
     quickAdd: 'Ajout rapide',
+    quickAssign: 'Assignation rapide de plateforme',
     addGameManually: 'Ajouter un jeu manuellement',
     exportCSV: 'Exporter en CSV',
     searchHistory: 'Historique de recherche',
@@ -728,6 +731,7 @@ export const translations = {
     manual: 'Manuel',
     more: 'de plus',
     clearAll: 'Tout effacer',
+    clearRating: 'Effacer la note',
     tryAdjustingFilters: 'Essayez d\'ajuster vos filtres',
     
     // Screenshot Background
