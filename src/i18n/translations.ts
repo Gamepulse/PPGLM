@@ -46,6 +46,7 @@ export const translations = {
     name: 'Name',
     rating: 'Rating',
     dateAdded: 'Date Added',
+    clearRating: 'Clear Rating',
     
     // Game Detail
     personalRating: 'Personal Rating',
@@ -432,6 +433,7 @@ export const translations = {
     name: 'Nom',
     rating: 'Note',
     dateAdded: 'Date d\'ajout',
+    clearRating: 'Effacer la note',
     
     // Game Detail
     personalRating: 'Note personnelle',

@@ -1,0 +1,3 @@
+## 2025-05-14 - [Accessibility & UX Polish]
+**Learning:** Replacing non-semantic interactive elements (like `<span>` with `role="button"`) with semantic `<button>` elements significantly improves keyboard accessibility and reduces custom logic. Additionally, providing a 'Clear' button for numeric range inputs allows users to reach a `null` state which is otherwise impossible with standard HTML range inputs.
+**Action:** Always prefer semantic `<button type="button">` for interactive elements and ensure all form controls have associated `<label>`s with `htmlFor`. Provide explicit 'Clear' actions for inputs where a "no value" state is semantically different from a "zero" value.
