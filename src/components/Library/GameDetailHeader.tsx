@@ -364,10 +364,22 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <span className="theme-text-muted text-sm">
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </span>
+            {game.personal_rating !== null && game.personal_rating !== undefined && (
+              <button
+                type="button"
+                onClick={() => onRatingChange?.(null)}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 px-2 py-1 rounded hover:bg-red-900/20"
+                title={t('clearRating')}
+              >
+                ✕ {t('clearRating')}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
               type="range"
               min="0"
@@ -375,6 +387,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               step="1"
               value={game.personal_rating || 0}
               onChange={(e) => onRatingChange?.(parseInt(e.target.value) || 0)}
+              aria-label={t('personalRating')}
               className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer
                 [&::-webkit-slider-thumb]:appearance-none 
                 [&::-webkit-slider-thumb]:w-4 
@@ -390,7 +403,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 
