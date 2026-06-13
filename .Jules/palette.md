@@ -1,0 +1,3 @@
+## 2025-05-15 - Enhancing Rating UX and Component Accessibility
+**Learning:** Native HTML range inputs cannot represent a `null` state visually or interactively once a value is set. Providing a explicit "Clear" button is essential for allowing users to unset numeric values (like personal ratings) while maintaining internationalization and visual consistency. Additionally, converting purely stylistic interactive elements (like `p` tags with `onClick`) into proper `button` elements significantly improves keyboard discoverability and screen reader utility.
+**Action:** Always pair range inputs with a "Clear" action when the value is optional, and ensure all interactive text/path elements use semantic `button` tags with appropriate ARIA labels.
