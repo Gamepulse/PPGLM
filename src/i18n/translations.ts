@@ -49,6 +49,7 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Personal Rating',
+    clearRating: 'Clear Rating',
     notes: 'Notes',
     saveNotes: 'Save Notes',
     deleteGame: 'Delete Game',
@@ -435,6 +436,7 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Note personnelle',
+    clearRating: 'Effacer la note',
     notes: 'Notes',
     saveNotes: 'Sauvegarder les notes',
     deleteGame: 'Supprimer le jeu',
