@@ -239,15 +239,17 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         )}
 
         {/* Folder path */}
-        <p 
-          className="theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1"
+        <button
+          type="button"
+          className="w-full text-left theme-text-muted text-sm font-mono cursor-pointer hover:text-blue-400 hover:underline transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none rounded"
           onClick={handleOpenFolder}
           title={t('openFolder') || "Click to open folder"}
+          aria-label={`${t('openFolder')}: ${game.folder_path}`}
         >
-          <span>📁</span>
+          <span aria-hidden="true">📁</span>
           <span className="truncate">{game.folder_path}</span>
-          <span className="text-xs opacity-50">↗</span>
-        </p>
+          <span className="text-xs opacity-50" aria-hidden="true">↗</span>
+        </button>
 
         {/* Status badges */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -364,11 +366,28 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
         {/* Personal Rating */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="theme-text-muted text-sm">{t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span></span>
+            <label
+              htmlFor={`rating-range-${game.id}`}
+              className="theme-text-muted text-sm cursor-pointer"
+            >
+              {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
+            </label>
+            {game.personal_rating !== null && game.personal_rating !== undefined && (
+              <button
+                type="button"
+                onClick={() => onRatingChange?.(null)}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 px-2 py-1 rounded hover:bg-red-900/20"
+                title={t('clearRating')}
+                aria-label={t('clearRating')}
+              >
+                <span>✕</span> {t('clearRating')}
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs theme-text-muted">0</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">0</span>
             <input
+              id={`rating-range-${game.id}`}
               type="range"
               min="0"
               max="100"
@@ -390,7 +409,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
                 [&::-moz-range-thumb]:cursor-pointer
                 [&::-moz-range-thumb]:border-0"
             />
-            <span className="text-xs theme-text-muted">100</span>
+            <span className="text-xs theme-text-muted" aria-hidden="true">100</span>
           </div>
         </div>
 
