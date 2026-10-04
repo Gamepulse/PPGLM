@@ -1,0 +1,27 @@
+import type { Game } from "../../../types";
+
+export const gameFixture: Game = {
+  id: 7,
+  folder_name: "Witcher 3",
+  folder_path: "/games/Witcher 3",
+  display_name: "The Witcher 3",
+  igdb_id: 1942,
+  igdb_slug: "the-witcher-3-wild-hunt",
+  personal_rating: 85,
+  igdb_rating: 92,
+  notes: null,
+  cover_url: "https://example.test/cover.jpg",
+  synopsis: null,
+  release_date: "2015-05-19",
+  created_at: "2026-01-01",
+  updated_at: "2026-01-01",
+  tags: [{ id: 1, name: "Backlog", category: "custom" }],
+  genres: [{ id: 2, name: "RPG" }],
+  game_modes: [{ id: 3, name: "Single player" }],
+  player_perspectives: [{ id: 4, name: "Third person" }],
+  themes: [{ id: 5, name: "Fantasy" }],
+  completion_status: "playing",
+  play_time: 10,
+  is_favorite: true,
+  platform: "ps5",
+};

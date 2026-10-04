@@ -49,6 +49,13 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Personal Rating',
+    clearRating: 'Clear Rating',
+    openGameDetails: 'Open game details',
+    quickAssignPlatform: 'Quick assign platform',
+    previousScreenshot: 'Previous screenshot',
+    nextScreenshot: 'Next screenshot',
+    viewScreenshot: 'View screenshot',
+    deleteLocalScreenshot: 'Delete local screenshot',
     notes: 'Notes',
     saveNotes: 'Save Notes',
     deleteGame: 'Delete Game',
@@ -291,7 +298,7 @@ export const translations = {
     playTime: 'Play Time',
     hours: 'hours',
     platform: 'Platform',
-    platforms: 'Plateformes',
+    platforms: 'Platforms',
     selectPlatform: 'Select platform...',
     noPlatform: 'No platform',
     availableOnIGDB: 'Available on',
@@ -435,6 +442,13 @@ export const translations = {
     
     // Game Detail
     personalRating: 'Note personnelle',
+    clearRating: 'Effacer la note',
+    openGameDetails: 'Ouvrir la fiche du jeu',
+    quickAssignPlatform: 'Assigner rapidement une plateforme',
+    previousScreenshot: 'Capture précédente',
+    nextScreenshot: 'Capture suivante',
+    viewScreenshot: 'Afficher la capture',
+    deleteLocalScreenshot: 'Supprimer la capture locale',
     notes: 'Notes',
     saveNotes: 'Sauvegarder les notes',
     deleteGame: 'Supprimer le jeu',
