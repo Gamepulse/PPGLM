@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useI18n } from "../../i18n";
 import { GameNameEditor } from "./GameNameEditor";
 import { TagEditor } from "./TagEditor";
+import { FilterChip } from "./FilterChip";
 import { useSettings, AVAILABLE_CONSOLES } from "../../context/SettingsContext";
 import { getMappedPlatformsFromIgdb } from "../../utils/platformMapping";
 import { formatDate } from "../../utils/formatters";
@@ -149,6 +150,7 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               className="absolute -top-2 -right-2 w-10 h-10 flex items-center justify-center text-3xl transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none rounded-full"
               title={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
               aria-label={game.is_favorite ? t('removeFromFavorites') : t('addToFavorites')}
+              aria-pressed={!!game.is_favorite}
             >
               {game.is_favorite ? (
                 <span className="text-yellow-400 drop-shadow-lg" aria-hidden="true">★</span>
@@ -281,13 +283,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           <div className="flex flex-wrap items-center gap-2">
             <span className="theme-text-muted text-sm">{t('genres')}:</span>
             {game.genres.map((genre) => (
-              <button
+              <FilterChip
                 key={genre.id}
-                onClick={() => onFilter?.('genre', genre.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-blue-600 hover:bg-blue-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none"
+                label={`${t('genres')}: ${genre.name}`}
+                onActivate={onFilter ? () => onFilter('genre', genre.name) : undefined}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-blue-600 transition-opacity"
               >
                 {genre.name}
-              </button>
+              </FilterChip>
             ))}
           </div>
         )}
@@ -297,13 +300,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           <div className="flex flex-wrap items-center gap-2">
             <span className="theme-text-muted text-sm">{t('gameModes')}:</span>
             {game.game_modes.map((mode) => (
-              <button
+              <FilterChip
                 key={mode.id}
-                onClick={() => onFilter?.('mode', mode.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-purple-600 hover:bg-purple-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none"
+                label={`${t('gameModes')}: ${mode.name}`}
+                onActivate={onFilter ? () => onFilter('mode', mode.name) : undefined}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-purple-600 transition-opacity"
               >
                 {mode.name}
-              </button>
+              </FilterChip>
             ))}
           </div>
         )}
@@ -313,13 +317,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           <div className="flex flex-wrap items-center gap-2">
             <span className="theme-text-muted text-sm">{t('perspective')}:</span>
             {game.player_perspectives.map((persp) => (
-              <button
+              <FilterChip
                 key={persp.id}
-                onClick={() => onFilter?.('perspective', persp.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-green-600 hover:bg-green-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none"
+                label={`${t('perspective')}: ${persp.name}`}
+                onActivate={onFilter ? () => onFilter('perspective', persp.name) : undefined}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-green-600 transition-opacity"
               >
                 {persp.name}
-              </button>
+              </FilterChip>
             ))}
           </div>
         )}
@@ -329,13 +334,14 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
           <div className="flex flex-wrap items-center gap-2">
             <span className="theme-text-muted text-sm">{t('themes')}:</span>
             {game.themes.map((theme) => (
-              <button
+              <FilterChip
                 key={theme.id}
-                onClick={() => onFilter?.('theme', theme.name)}
-                className="px-2 py-0.5 text-xs rounded-full text-white bg-orange-600 hover:bg-orange-500 transition-opacity cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none"
+                label={`${t('themes')}: ${theme.name}`}
+                onActivate={onFilter ? () => onFilter('theme', theme.name) : undefined}
+                className="px-2 py-0.5 text-xs rounded-full text-white bg-orange-600 transition-opacity"
               >
                 {theme.name}
-              </button>
+              </FilterChip>
             ))}
           </div>
         )}
@@ -377,14 +383,15 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
             >
               {t('personalRating')} (0-100): <span className="text-purple-500 font-semibold">{game.personal_rating !== null && game.personal_rating !== undefined ? `${game.personal_rating}/100` : '-'}</span>
             </label>
-            {game.personal_rating !== null && game.personal_rating !== undefined && (
+            {game.personal_rating != null && onRatingChange && (
               <button
                 type="button"
-                onClick={() => onRatingChange?.(null)}
+                onClick={() => onRatingChange(null)}
                 className="text-xs theme-text-muted hover:theme-text-primary transition-colors flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none"
                 title={t('clearRating')}
+                aria-label={t('clearRating')}
               >
-                ✕ {t('clearRating')}
+                <span aria-hidden="true">✕</span> {t('clearRating')}
               </button>
             )}
           </div>
@@ -396,7 +403,8 @@ export function GameDetailHeader({ game, onGameUpdated, onPlatformChange, onFilt
               min="0"
               max="100"
               step="1"
-              value={game.personal_rating || 0}
+              value={game.personal_rating ?? 0}
+              disabled={!onRatingChange}
               onChange={(e) => onRatingChange?.(parseInt(e.target.value) || 0)}
               className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer
                 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 focus-visible:outline-none
