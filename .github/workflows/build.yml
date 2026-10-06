@@ -51,8 +51,8 @@ jobs:
         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
         with:
           workspaces: './src-tauri -> target'
-          # Separate matrix targets and exact dependency/config identities, including fallback restores.
-          prefix-key: ppglm-rust-v1-${{ runner.os }}-${{ runner.arch }}-${{ matrix.rust-target || 'native' }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml', '**/rust-toolchain*', '**/.cargo/config*') }}
+          # Separate matrix targets; let the action hash dependencies and restore compatible prior caches.
+          prefix-key: ppglm-rust-v1-${{ runner.os }}-${{ runner.arch }}-${{ matrix.rust-target || 'native' }}
           cache-bin: false
           save-if: ${{ github.ref == 'refs/heads/release' || github.ref == 'refs/heads/Dev' }}
 
